@@ -16,8 +16,8 @@ public class WorkhorseController
 
     private readonly int _entityId;
     private readonly Transform _transform;
-    private readonly SkeletonType _type;
-    private readonly SkeletonAnimator _animator;
+    private readonly WorkhorseType _type;
+    private readonly WorkhorseAnimator _animator;
 
     private SkeletonState _state = SkeletonState.Idle;
     private int? _assignedWorkspaceId;
@@ -35,7 +35,7 @@ public class WorkhorseController
     private float _attackChance = 0.2f;
     private float _workingAnimationInterval = 0.8f;
 
-    public WorkhorseController(Transform transform, SkeletonType type, SkeletonAnimator animator)
+    public WorkhorseController(Transform transform, WorkhorseType type, WorkhorseAnimator animator)
     {
         _entityId = _nextEntityId++;
         _transform = transform;
@@ -46,8 +46,8 @@ public class WorkhorseController
     }
 
     public int EntityId => _entityId;
-    public SkeletonType Type => _type;
-    public SkeletonAnimator Animator => _animator;
+    public WorkhorseType Type => _type;
+    public WorkhorseAnimator Animator => _animator;
     public SkeletonState State => _state;
     public Vector3 Position => _transform.position;
     public int? AssignedWorkspaceId => _assignedWorkspaceId;

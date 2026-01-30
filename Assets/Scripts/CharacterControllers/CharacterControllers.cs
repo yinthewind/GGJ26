@@ -23,7 +23,7 @@ public class CharacterControllers
 
     // Event fired when a monster is spawned
     // Parameters: entityId, skeletonType
-    public event Action<int, SkeletonType> OnMonsterSpawned;
+    public event Action<int, WorkhorseType> OnMonsterSpawned;
 
     public IReadOnlyList<WorkhorseController> Skeletons => _skeletonControllers;
 
@@ -95,14 +95,14 @@ public class CharacterControllers
     /// Spawns a new skeleton at the specified position.
     /// Creates the visual, controller, registers with all managers, and updates PlayProgress.
     /// </summary>
-    public WorkhorseController SpawnSkeleton(SkeletonType type, Vector3 position)
+    public WorkhorseController SpawnSkeleton(WorkhorseType type, Vector3 position)
     {
-        string prefabPath = SkeletonPrefabs.GetPrefabPath(type);
-        GameObject go = SkeletonAnimator.Create(position, Quaternion.identity, prefabPath, type.ToString());
-        SkeletonAnimator animator = go.GetComponent<SkeletonAnimator>();
+        string prefabPath = WorkhorsePrefabs.GetPrefabPath(type);
+        GameObject go = WorkhorseAnimator.Create(position, Quaternion.identity, prefabPath, type.ToString());
+        WorkhorseAnimator animator = go.GetComponent<WorkhorseAnimator>();
 
         WorkhorseController controller = new WorkhorseController(go.transform, type, animator);
-        SkeletonAnimator.Register(controller.EntityId, animator);
+        WorkhorseAnimator.Register(controller.EntityId, animator);
         Add(controller);
 
         // If spawned above ground, animate fall

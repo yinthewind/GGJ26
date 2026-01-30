@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using TMPro;
 using DG.Tweening;
 
-public class SkeletonAnimator : MonoBehaviour
+public class WorkhorseAnimator : MonoBehaviour
 {
-    public static string Tag = "SkeletonAnimator";
+    public static string Tag = "WorkhorseAnimator";
 
     // Static registry
-    private static readonly Dictionary<int, SkeletonAnimator> _animators = new();
+    private static readonly Dictionary<int, WorkhorseAnimator> _animators = new();
 
-    public static void Register(int entityId, SkeletonAnimator animator) => _animators[entityId] = animator;
+    public static void Register(int entityId, WorkhorseAnimator animator) => _animators[entityId] = animator;
     public static void Unregister(int entityId) => _animators.Remove(entityId);
-    public static SkeletonAnimator GetAnimator(int entityId) => _animators.TryGetValue(entityId, out var animator) ? animator : null;
+    public static WorkhorseAnimator GetAnimator(int entityId) => _animators.TryGetValue(entityId, out var animator) ? animator : null;
     public static void ClearRegistry() => _animators.Clear();
 
     // Default skeleton prefab path in Resources
@@ -41,7 +41,7 @@ public class SkeletonAnimator : MonoBehaviour
         var go = new GameObject($"{Tag}:{id}");
         go.transform.SetPositionAndRotation(position, rotation);
 
-        var animator = go.AddComponent<SkeletonAnimator>();
+        var animator = go.AddComponent<WorkhorseAnimator>();
         animator.LoadPrefab(prefabPath ?? DefaultPrefabPath);
 
         return go;
@@ -87,7 +87,7 @@ public class SkeletonAnimator : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"SkeletonAnimator {_spumPrefabs.name}: Shadow object not found for disabling.");
+            Debug.LogWarning($"WorkhorseAnimator {_spumPrefabs.name}: Shadow object not found for disabling.");
         }
 
         // Cache sprite renderers for tinting
