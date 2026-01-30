@@ -204,7 +204,7 @@ public class WorkhorseShopPanel : MonoBehaviour
         if (slot.Workhorse == null || slot.IsLocked || slot.IsEmpty)
             return;
 
-        int price = GameSettings.WorkhorsePrices[slot.Workhorse.Type];
+        int price = GameSettings.ShopWorkhorsePrice;
 
         if (!PlayerProgress.Instance.TrySpendGold(price))
             return;

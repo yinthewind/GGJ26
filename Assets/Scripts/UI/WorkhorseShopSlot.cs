@@ -289,17 +289,17 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
             WorkhorseType type = _workhorse.Type;
             _nameText.text = type.ToString();
             _iconImage.color = GameSettings.WorkhorseColors[type];
-            _priceText.text = $"{GameSettings.WorkhorsePrices[type]}g";
             _productivityText.text = $"+{GameSettings.WorkhorseProductivityRates[type]:F1}";
         }
         else
         {
-            // Masked: hide info
+            // Masked: hide info (except price)
             _nameText.text = "???";
             _iconImage.color = new Color(0.4f, 0.4f, 0.4f);
-            _priceText.text = "???";
             _productivityText.text = "???";
         }
+        // Price is always visible
+        _priceText.text = $"{GameSettings.ShopWorkhorsePrice}g";
         UpdateBuyButtonState();
     }
 
@@ -323,7 +323,6 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        int price = GameSettings.WorkhorsePrices[_workhorse.Type];
-        _buyButton.interactable = PlayerProgress.Instance.CanAfford(price);
+        _buyButton.interactable = PlayerProgress.Instance.CanAfford(GameSettings.ShopWorkhorsePrice);
     }
 }

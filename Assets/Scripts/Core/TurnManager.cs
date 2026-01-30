@@ -58,6 +58,15 @@ public class TurnManager
             }
         }
 
+        // Increment rounds worked for all working skeletons
+        foreach (var skeleton in CharacterControllers.Instance.Skeletons)
+        {
+            if (skeleton.State == SkeletonState.Working && skeleton.AssignedWorkspaceId.HasValue)
+            {
+                skeleton.IncrementRoundsWorked();
+            }
+        }
+
         OnTurnEnded?.Invoke();
 
         // Advance turn
@@ -125,7 +134,8 @@ public class TurnManager
                 {
                     WorkerId = skeleton.EntityId,
                     WorkspaceId = skeleton.AssignedWorkspaceId.Value,
-                    Type = skeleton.Type
+                    Type = skeleton.Type,
+                    RoundsWorked = skeleton.RoundsWorked
                 });
             }
         }

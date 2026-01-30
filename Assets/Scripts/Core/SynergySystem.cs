@@ -7,42 +7,35 @@ public class SynergySystem : ISynergyReference
     private readonly List<Synergy> _globalSynergies;
     private readonly List<Synergy> _adjacentSynergies;
     private readonly List<Synergy> _positionSynergies;
+    private readonly List<Synergy> _abilitySynergies;
     private readonly List<Synergy> _allSynergies;
 
     public List<Synergy> GlobalSynergies => _globalSynergies;
     public List<Synergy> AdjacentSynergies => _adjacentSynergies;
     public List<Synergy> PositionSynergies => _positionSynergies;
+    public List<Synergy> AbilitySynergies => _abilitySynergies;
     public List<Synergy> AllSynergies => _allSynergies;
 
     public SynergySystem()
     {
-        _globalSynergies = new List<Synergy>
-        {
-            new DiverseTeamSynergy(),
-            new FullHouseSynergy(),
-            new MagicCouncilSynergy()
-        };
+        // Old synergies disabled - no longer compatible with new workhorse types
+        _globalSynergies = new List<Synergy>();
+        _adjacentSynergies = new List<Synergy>();
+        _positionSynergies = new List<Synergy>();
 
-        _adjacentSynergies = new List<Synergy>
+        // New ability synergies for the new workhorse types
+        _abilitySynergies = new List<Synergy>
         {
-            new FrontlineDuoSynergy(),
-            new RangedSupportSynergy(),
-            new BattleBrothersSynergy(),
-            new BladeMastersSynergy()
-        };
-
-        _positionSynergies = new List<Synergy>
-        {
-            new CenteredSynergy(),
-            new CorneredSynergy(),
-            new GroundedSynergy(),
-            new ElevatedSynergy()
+            new ToxicWolfSynergy(),
+            new EncouragerSynergy(),
+            new RisingStarSynergy(),
+            new FreeSpiritSynergy(),
+            new PessimistSynergy(),
+            new SaboteurSynergy()
         };
 
         _allSynergies = new List<Synergy>();
-        _allSynergies.AddRange(_globalSynergies);
-        _allSynergies.AddRange(_adjacentSynergies);
-        _allSynergies.AddRange(_positionSynergies);
+        _allSynergies.AddRange(_abilitySynergies);
     }
 
     public List<SynergyResult> GetActiveSynergies(List<Workspace> workspaces, List<WorkhorseAssignment> assignments)

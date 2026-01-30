@@ -46,9 +46,9 @@ public class GameInstance : MonoBehaviour
     {
         // Spawn a few workers above ground level (they will fall down)
         CharacterControllers.Instance.SpawnSkeleton(
-            WorkhorseType.Swordsman, new Vector3(-3f, 1f, 0f));
+            WorkhorseType.InternNiuma, new Vector3(-3f, 1f, 0f));
         CharacterControllers.Instance.SpawnSkeleton(
-            WorkhorseType.Archer, new Vector3(3f, 1f, 0f));
+            WorkhorseType.RegularNiuma, new Vector3(3f, 1f, 0f));
     }
 
     private void SetupHUD()

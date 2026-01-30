@@ -79,34 +79,51 @@ public class SynergyPanel : MonoBehaviour
 
     private void CreateSynergyRows(Transform parent, float width)
     {
-        var allSynergies = SynergySystem.Instance.AllSynergies;
         float rowHeight = 18f;
         float startY = -28f; // Below title
         float currentY = startY;
 
-        // Global synergies section
-        CreateSectionHeader(parent, "Global", ref currentY);
-        foreach (var synergy in SynergySystem.Instance.GlobalSynergies)
+        // Ability synergies section (workhorse-specific abilities)
+        if (SynergySystem.Instance.AbilitySynergies.Count > 0)
         {
-            CreateRow(parent, synergy, width, rowHeight, ref currentY);
+            CreateSectionHeader(parent, "Abilities", ref currentY);
+            foreach (var synergy in SynergySystem.Instance.AbilitySynergies)
+            {
+                CreateRow(parent, synergy, width, rowHeight, ref currentY);
+            }
+            currentY -= 5f;
         }
 
-        currentY -= 5f; // Section spacing
+        // Global synergies section
+        if (SynergySystem.Instance.GlobalSynergies.Count > 0)
+        {
+            CreateSectionHeader(parent, "Global", ref currentY);
+            foreach (var synergy in SynergySystem.Instance.GlobalSynergies)
+            {
+                CreateRow(parent, synergy, width, rowHeight, ref currentY);
+            }
+            currentY -= 5f;
+        }
 
         // Adjacent synergies section
-        CreateSectionHeader(parent, "Adjacent", ref currentY);
-        foreach (var synergy in SynergySystem.Instance.AdjacentSynergies)
+        if (SynergySystem.Instance.AdjacentSynergies.Count > 0)
         {
-            CreateRow(parent, synergy, width, rowHeight, ref currentY);
+            CreateSectionHeader(parent, "Adjacent", ref currentY);
+            foreach (var synergy in SynergySystem.Instance.AdjacentSynergies)
+            {
+                CreateRow(parent, synergy, width, rowHeight, ref currentY);
+            }
+            currentY -= 5f;
         }
 
-        currentY -= 5f; // Section spacing
-
         // Position synergies section
-        CreateSectionHeader(parent, "Position", ref currentY);
-        foreach (var synergy in SynergySystem.Instance.PositionSynergies)
+        if (SynergySystem.Instance.PositionSynergies.Count > 0)
         {
-            CreateRow(parent, synergy, width, rowHeight, ref currentY);
+            CreateSectionHeader(parent, "Position", ref currentY);
+            foreach (var synergy in SynergySystem.Instance.PositionSynergies)
+            {
+                CreateRow(parent, synergy, width, rowHeight, ref currentY);
+            }
         }
     }
 
@@ -169,7 +186,15 @@ public class SynergyPanel : MonoBehaviour
 
     private void ShowTooltip(Synergy synergy, RectTransform rowRect)
     {
-        _tooltipText.text = $"+{synergy.BonusPercent:F0}% Productivity\n{synergy.Description}";
+        // For ability synergies, show just the description; for others show bonus + description
+        if (synergy.Type == SynergyType.WorkhorseAbility)
+        {
+            _tooltipText.text = synergy.Description;
+        }
+        else
+        {
+            _tooltipText.text = $"+{synergy.BonusPercent:F0}% Productivity\n{synergy.Description}";
+        }
 
         // Force layout update to get proper text bounds
         _tooltipText.ForceMeshUpdate();
@@ -250,7 +275,15 @@ public class SynergyPanel : MonoBehaviour
 
         TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
         text.raycastTarget = false;
-        text.text = $"{synergy.Name} (+{synergy.BonusPercent:F0}%)";
+        // For ability synergies, show just the name; for others show name + bonus
+        if (synergy.Type == SynergyType.WorkhorseAbility)
+        {
+            text.text = synergy.Name;
+        }
+        else
+        {
+            text.text = $"{synergy.Name} (+{synergy.BonusPercent:F0}%)";
+        }
         text.fontSize = 11;
         text.color = InactiveColor;
         text.alignment = TextAlignmentOptions.Left;

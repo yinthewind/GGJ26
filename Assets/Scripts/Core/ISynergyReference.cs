@@ -5,7 +5,8 @@ public enum SynergyType
 {
     Global,
     Adjacent,
-    Position
+    Position,
+    WorkhorseAbility  // Special abilities tied to specific workhorse types
 }
 
 public struct SynergyDefinition
@@ -57,6 +58,7 @@ public struct WorkhorseAssignment
     public int WorkerId;
     public int WorkspaceId;
     public WorkhorseType Type;
+    public int RoundsWorked;
 }
 
 public interface ISynergyReference
@@ -64,5 +66,6 @@ public interface ISynergyReference
     List<Synergy> GlobalSynergies { get; }
     List<Synergy> AdjacentSynergies { get; }
     List<Synergy> PositionSynergies { get; }
+    List<Synergy> AbilitySynergies { get; }
     List<Synergy> AllSynergies { get; }
 }

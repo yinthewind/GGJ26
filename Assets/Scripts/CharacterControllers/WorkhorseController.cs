@@ -23,6 +23,7 @@ public class WorkhorseController
     private int? _assignedWorkspaceId;
     private SkeletonState _stateBeforeDrag;
     private bool _isRevealed = false;
+    private int _roundsWorked = 0;
     private float _stateTimer;
     private Vector3 _walkDirection;
     private float _walkSpeed = 1.5f;
@@ -57,6 +58,7 @@ public class WorkhorseController
     public Vector3 Position => _transform.position;
     public int? AssignedWorkspaceId => _assignedWorkspaceId;
     public bool IsRevealed => _isRevealed;
+    public int RoundsWorked => _roundsWorked;
 
     public void Update(float deltaTime)
     {
@@ -245,6 +247,7 @@ public class WorkhorseController
     public void UnassignFromWorkspace()
     {
         _assignedWorkspaceId = null;
+        ResetRoundsWorked();
 
         // Fall to ground if above ground level
         if (_transform.position.y > 0)
@@ -263,5 +266,15 @@ public class WorkhorseController
         _isRevealed = true;
         _animator.SetMaskVisible(false);
         CheckModeManager.Instance.NotifyWorkhorseRevealed(_entityId, _type);
+    }
+
+    public void IncrementRoundsWorked()
+    {
+        _roundsWorked++;
+    }
+
+    public void ResetRoundsWorked()
+    {
+        _roundsWorked = 0;
     }
 }

@@ -176,29 +176,47 @@ public class SynergyModal : MonoBehaviour
         float rowHeight = 32f;
         float currentY = 0f;
 
-        // Global synergies
-        CreateSectionHeader(contentObj.transform, "GLOBAL SYNERGIES", ref currentY);
-        foreach (var synergy in SynergySystem.Instance.GlobalSynergies)
+        // Ability synergies (workhorse-specific abilities)
+        if (SynergySystem.Instance.AbilitySynergies.Count > 0)
         {
-            CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
+            CreateSectionHeader(contentObj.transform, "WORKHORSE ABILITIES", ref currentY);
+            foreach (var synergy in SynergySystem.Instance.AbilitySynergies)
+            {
+                CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
+            }
+            currentY -= 15f;
         }
 
-        currentY -= 15f;
+        // Global synergies
+        if (SynergySystem.Instance.GlobalSynergies.Count > 0)
+        {
+            CreateSectionHeader(contentObj.transform, "GLOBAL SYNERGIES", ref currentY);
+            foreach (var synergy in SynergySystem.Instance.GlobalSynergies)
+            {
+                CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
+            }
+            currentY -= 15f;
+        }
 
         // Adjacent synergies
-        CreateSectionHeader(contentObj.transform, "ADJACENT SYNERGIES", ref currentY);
-        foreach (var synergy in SynergySystem.Instance.AdjacentSynergies)
+        if (SynergySystem.Instance.AdjacentSynergies.Count > 0)
         {
-            CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
+            CreateSectionHeader(contentObj.transform, "ADJACENT SYNERGIES", ref currentY);
+            foreach (var synergy in SynergySystem.Instance.AdjacentSynergies)
+            {
+                CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
+            }
+            currentY -= 15f;
         }
 
-        currentY -= 15f;
-
         // Position synergies
-        CreateSectionHeader(contentObj.transform, "POSITION SYNERGIES", ref currentY);
-        foreach (var synergy in SynergySystem.Instance.PositionSynergies)
+        if (SynergySystem.Instance.PositionSynergies.Count > 0)
         {
-            CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
+            CreateSectionHeader(contentObj.transform, "POSITION SYNERGIES", ref currentY);
+            foreach (var synergy in SynergySystem.Instance.PositionSynergies)
+            {
+                CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
+            }
         }
     }
 
@@ -262,7 +280,15 @@ public class SynergyModal : MonoBehaviour
         nameRect.offsetMax = Vector2.zero;
 
         TextMeshProUGUI nameText = nameObj.AddComponent<TextMeshProUGUI>();
-        nameText.text = $"{synergy.Name} (+{synergy.BonusPercent:F0}%)";
+        // For ability synergies, show just the name; for others show name + bonus
+        if (synergy.Type == SynergyType.WorkhorseAbility)
+        {
+            nameText.text = synergy.Name;
+        }
+        else
+        {
+            nameText.text = $"{synergy.Name} (+{synergy.BonusPercent:F0}%)";
+        }
         nameText.fontSize = 18;
         nameText.fontStyle = FontStyles.Bold;
         nameText.color = InactiveColor;
