@@ -19,6 +19,9 @@ public static class GameSettings
     public const int TotalShopSlots = 5;
     public const int InitialActiveSlots = 3;
 
+    // Reveal settings
+    public const int RevealCost = 5;  // Gold cost to reveal a masked workhorse
+
     // Productivity multipliers per workspace type
     public static readonly Dictionary<WorkspaceType, float> WorkspaceProductivityMultipliers = new()
     {

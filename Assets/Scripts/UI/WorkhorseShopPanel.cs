@@ -132,6 +132,7 @@ public class WorkhorseShopPanel : MonoBehaviour
         {
             WorkhorseShopSlot slot = WorkhorseShopSlot.Create(parent, width, slotHeight);
             slot.OnBuyClicked += HandleSlotBuyClicked;
+            slot.OnSlotClicked += HandleSlotClicked;
 
             // Initialize as locked if beyond active slots
             bool isLocked = i >= _activeSlots;
@@ -185,22 +186,37 @@ public class WorkhorseShopPanel : MonoBehaviour
         _fireZone = WorkhorseFireZone.Create(parent, width, height);
     }
 
+    private void HandleSlotClicked(WorkhorseShopSlot slot)
+    {
+        if (!CheckModeManager.Instance.IsCheckModeActive) return;
+        if (slot.IsRevealed || slot.IsEmpty || slot.IsLocked) return;
+        if (slot.Workhorse == null) return;
+
+        if (PlayerProgress.Instance.TrySpendGold(GameSettings.RevealCost))
+        {
+            slot.Workhorse.Reveal();  // Reuse existing reveal logic
+            slot.RefreshDisplay();    // Update UI to show revealed info
+        }
+    }
+
     private void HandleSlotBuyClicked(WorkhorseShopSlot slot)
     {
-        if (slot.StockedType == null || slot.IsLocked || slot.IsEmpty)
+        if (slot.Workhorse == null || slot.IsLocked || slot.IsEmpty)
             return;
 
-        WorkhorseType type = slot.StockedType.Value;
-        int price = GameSettings.WorkhorsePrices[type];
+        int price = GameSettings.WorkhorsePrices[slot.Workhorse.Type];
 
         if (!PlayerProgress.Instance.TrySpendGold(price))
             return;
 
-        // Spawn the workhorse
-        CharacterControllers.Instance.SpawnSkeleton(type, SpawnPosition);
+        // Enable and position the existing workhorse (already has correct reveal state)
+        WorkhorseController workhorse = slot.Workhorse;
+        workhorse.Transform.gameObject.SetActive(true);
+        workhorse.SetPosition(SpawnPosition);
+        workhorse.StartFallingIfAboveGround();
 
-        // Mark slot as empty
-        slot.SetEmpty();
+        // Clear slot without destroying workhorse
+        slot.ClearWithoutDestroy();
     }
 
     private void HandleRefreshClick()

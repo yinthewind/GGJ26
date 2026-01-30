@@ -43,6 +43,13 @@ public class DragDropInputSystem : MonoBehaviour
 
         var clickWorldPos = GetMouseWorldPosition();
 
+        // Check mode: clicking reveals masked workhorses
+        if (CheckModeManager.Instance.IsCheckModeActive)
+        {
+            if (TryRevealWorkhorse(clickWorldPos))
+                return;  // Consumed click, don't start drag
+        }
+
         // Priority 1: Try to start dragging a skeleton
         foreach (var controller in CharacterControllers.Instance.Skeletons)
         {
@@ -243,6 +250,33 @@ public class DragDropInputSystem : MonoBehaviour
         var mousePos = (Vector3)Mouse.current.position.ReadValue();
         mousePos.z = -_mainCamera.transform.position.z;
         return _mainCamera.ScreenToWorldPoint(mousePos);
+    }
+
+    private bool TryRevealWorkhorse(Vector2 clickWorldPos)
+    {
+        foreach (var controller in CharacterControllers.Instance.Skeletons)
+        {
+            var distance = Vector2.Distance(clickWorldPos, controller.Position);
+            if (distance < HitRadius)
+            {
+                if (controller.IsRevealed)
+                    continue;  // Already revealed
+
+                if (!PlayerProgress.Instance.CanAfford(GameSettings.RevealCost))
+                {
+                    controller.Animator.ShowFloatingText("Need gold!");
+                    return true;
+                }
+
+                if (PlayerProgress.Instance.TrySpendGold(GameSettings.RevealCost))
+                {
+                    controller.Reveal();
+                    controller.Animator.ShowFloatingText($"-{GameSettings.RevealCost}g");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void OnModalStateChanged(bool hasModal)

@@ -24,12 +24,8 @@ public class EndTurnButton : MonoBehaviour
 
     private void BuildUI(GameObject root, float width, float height)
     {
+        // RectTransform for sizing (positioning handled by parent container)
         RectTransform rect = root.AddComponent<RectTransform>();
-        rect.anchorMin = new Vector2(1f, 0f);
-        rect.anchorMax = new Vector2(1f, 0f);
-        rect.pivot = new Vector2(1f, 0f);
-        rect.sizeDelta = new Vector2(width, height);
-        rect.anchoredPosition = new Vector2(-20f, 20f);
 
         _background = root.AddComponent<Image>();
         _background.color = new Color(0.2f, 0.6f, 0.3f, 1f);

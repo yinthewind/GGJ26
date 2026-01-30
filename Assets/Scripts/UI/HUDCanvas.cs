@@ -14,6 +14,8 @@ public class HUDCanvas : MonoBehaviour
     public ShowSynergiesButton ShowSynergiesButton { get; private set; }
     public SynergyModal SynergyModal { get; private set; }
     public WorkhorseShopPanel ShopPanel { get; private set; }
+    public CheckButton CheckButton { get; private set; }
+    public ButtonContainer ButtonContainer { get; private set; }
 
     public static HUDCanvas Create()
     {
@@ -48,14 +50,21 @@ public class HUDCanvas : MonoBehaviour
         // Create Goal Panel (top-right)
         GoalPanel = GoalPanel.Create(Canvas.transform, 200f, 80f);
 
-        // Create End Turn Button (bottom-right)
-        EndTurnButton = EndTurnButton.Create(Canvas.transform, 140f, 50f);
+        // Create Button Container (bottom-right) for stacked buttons
+        ButtonContainer = ButtonContainer.Create(Canvas.transform, 140f);
+
+        // Create buttons and add to container (order: EndTurn at bottom, Check above, Synergies on top)
+        EndTurnButton = EndTurnButton.Create(ButtonContainer.transform, 140f, 50f);
+        ButtonContainer.AddButton(EndTurnButton.gameObject, 50f);
+
+        CheckButton = CheckButton.Create(ButtonContainer.transform, 140f, 40f);
+        ButtonContainer.AddButton(CheckButton.gameObject, 40f);
+
+        ShowSynergiesButton = ShowSynergiesButton.Create(ButtonContainer.transform, 140f, 40f);
+        ButtonContainer.AddButton(ShowSynergiesButton.gameObject, 40f);
 
         // Create Synergy Panel (bottom-left)
         SynergyPanel = SynergyPanel.Create(Canvas.transform, 200f, 320f);
-
-        // Create Show Synergies Button (bottom-right, above End Turn)
-        ShowSynergiesButton = ShowSynergiesButton.Create(Canvas.transform, 140f, 40f);
 
         // Create Synergy Modal (hidden by default, on top of everything)
         SynergyModal = SynergyModal.Create(Canvas.transform);

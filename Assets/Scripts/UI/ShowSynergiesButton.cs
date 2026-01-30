@@ -27,12 +27,8 @@ public class ShowSynergiesButton : MonoBehaviour
 
     private void BuildUI(GameObject root, float width, float height)
     {
+        // RectTransform for sizing (positioning handled by parent container)
         RectTransform rect = root.AddComponent<RectTransform>();
-        rect.anchorMin = new Vector2(1f, 0f);
-        rect.anchorMax = new Vector2(1f, 0f);
-        rect.pivot = new Vector2(1f, 0f);
-        rect.sizeDelta = new Vector2(width, height);
-        rect.anchoredPosition = new Vector2(-20f, 80f); // Above end turn button
 
         _background = root.AddComponent<Image>();
         _background.color = new Color(0.3f, 0.4f, 0.6f, 1f);

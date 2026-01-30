@@ -1,11 +1,13 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
-public class WorkhorseShopSlot : MonoBehaviour
+public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
 {
     public event Action<WorkhorseShopSlot> OnBuyClicked;
+    public event Action<WorkhorseShopSlot> OnSlotClicked;
 
     private Image _background;
     private Image _iconImage;
@@ -16,12 +18,15 @@ public class WorkhorseShopSlot : MonoBehaviour
     private TextMeshProUGUI _buyButtonText;
     private GameObject _lockedOverlay;
     private TextMeshProUGUI _lockedText;
+    private GameObject _contentContainer;
 
-    private WorkhorseType? _stockedType;
+    private WorkhorseController _workhorse;
     private bool _isLocked;
     private bool _isEmpty;
 
-    public WorkhorseType? StockedType => _stockedType;
+    public WorkhorseController Workhorse => _workhorse;
+    public WorkhorseType? StockedType => _workhorse?.Type;
+    public bool IsRevealed => _workhorse?.IsRevealed ?? false;
     public bool IsLocked => _isLocked;
     public bool IsEmpty => _isEmpty;
 
@@ -46,8 +51,19 @@ public class WorkhorseShopSlot : MonoBehaviour
         _background = root.AddComponent<Image>();
         _background.color = new Color(0.15f, 0.15f, 0.2f, 0.95f);
 
-        // Horizontal layout
-        HorizontalLayoutGroup layout = root.AddComponent<HorizontalLayoutGroup>();
+        // Content container for icon, info, and buy button
+        _contentContainer = new GameObject("Content");
+        _contentContainer.transform.SetParent(root.transform, false);
+
+        RectTransform contentRect = _contentContainer.AddComponent<RectTransform>();
+        contentRect.anchorMin = Vector2.zero;
+        contentRect.anchorMax = Vector2.one;
+        contentRect.sizeDelta = Vector2.zero;
+        contentRect.offsetMin = Vector2.zero;
+        contentRect.offsetMax = Vector2.zero;
+
+        // Horizontal layout on content container
+        HorizontalLayoutGroup layout = _contentContainer.AddComponent<HorizontalLayoutGroup>();
         layout.padding = new RectOffset(8, 8, 4, 4);
         layout.spacing = 8f;
         layout.childAlignment = TextAnchor.MiddleLeft;
@@ -57,9 +73,9 @@ public class WorkhorseShopSlot : MonoBehaviour
         layout.childForceExpandHeight = false;
 
         float iconSize = height - 8f;
-        CreateIcon(root.transform, iconSize);
-        CreateInfoSection(root.transform, width - iconSize - 80f - 32f, height - 8f);
-        CreateBuyButton(root.transform, 60f, height - 12f);
+        CreateIcon(_contentContainer.transform, iconSize);
+        CreateInfoSection(_contentContainer.transform, width - iconSize - 80f - 32f, height - 8f);
+        CreateBuyButton(_contentContainer.transform, 60f, height - 12f);
         CreateLockedOverlay(root.transform, width, height);
     }
 
@@ -211,45 +227,89 @@ public class WorkhorseShopSlot : MonoBehaviour
         OnBuyClicked?.Invoke(this);
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        OnSlotClicked?.Invoke(this);
+    }
+
     public void SetStock(WorkhorseType type)
     {
-        _stockedType = type;
+        // Destroy previous workhorse if exists
+        if (_workhorse != null)
+        {
+            CharacterControllers.Instance.DestroySkeleton(_workhorse);
+        }
+
+        // Create workhorse but keep hidden (disabled)
+        _workhorse = CharacterControllers.Instance.SpawnSkeleton(type, new Vector3(-100f, -100f, 0f));
+        _workhorse.Transform.gameObject.SetActive(false);
+
         _isEmpty = false;
-
-        _nameText.text = type.ToString();
-        _iconImage.color = GameSettings.WorkhorseColors[type];
-
-        int price = GameSettings.WorkhorsePrices[type];
-        _priceText.text = $"{price}g";
-
-        float productivity = GameSettings.WorkhorseProductivityRates[type];
-        _productivityText.text = $"+{productivity:F1}";
-
-        UpdateBuyButtonState();
+        UpdateDisplay();
     }
 
     public void SetEmpty()
     {
-        _stockedType = null;
+        if (_workhorse != null)
+        {
+            CharacterControllers.Instance.DestroySkeleton(_workhorse);
+            _workhorse = null;
+        }
         _isEmpty = true;
+        UpdateDisplay();
+    }
 
-        _nameText.text = "---";
-        _iconImage.color = new Color(0.3f, 0.3f, 0.3f);
-        _priceText.text = "";
-        _productivityText.text = "";
-        _buyButton.interactable = false;
+    public void ClearWithoutDestroy()
+    {
+        _workhorse = null;  // Release reference without destroying
+        _isEmpty = true;
+        UpdateDisplay();
+    }
+
+    public void RefreshDisplay()
+    {
+        UpdateDisplay();
+    }
+
+    private void UpdateDisplay()
+    {
+        if (_isEmpty || _workhorse == null)
+        {
+            _nameText.text = "---";
+            _iconImage.color = new Color(0.3f, 0.3f, 0.3f);
+            _priceText.text = "";
+            _productivityText.text = "";
+            _buyButton.interactable = false;
+            return;
+        }
+
+        if (_workhorse.IsRevealed)
+        {
+            // Revealed: show actual info
+            WorkhorseType type = _workhorse.Type;
+            _nameText.text = type.ToString();
+            _iconImage.color = GameSettings.WorkhorseColors[type];
+            _priceText.text = $"{GameSettings.WorkhorsePrices[type]}g";
+            _productivityText.text = $"+{GameSettings.WorkhorseProductivityRates[type]:F1}";
+        }
+        else
+        {
+            // Masked: hide info
+            _nameText.text = "???";
+            _iconImage.color = new Color(0.4f, 0.4f, 0.4f);
+            _priceText.text = "???";
+            _productivityText.text = "???";
+        }
+        UpdateBuyButtonState();
     }
 
     public void SetLocked(bool locked)
     {
         _isLocked = locked;
         _lockedOverlay.SetActive(locked);
+        _contentContainer.SetActive(!locked);
 
-        if (locked)
-        {
-            _buyButton.interactable = false;
-        }
-        else
+        if (!locked)
         {
             UpdateBuyButtonState();
         }
@@ -257,13 +317,13 @@ public class WorkhorseShopSlot : MonoBehaviour
 
     public void UpdateBuyButtonState()
     {
-        if (_isLocked || _isEmpty || !_stockedType.HasValue)
+        if (_isLocked || _isEmpty || _workhorse == null)
         {
             _buyButton.interactable = false;
             return;
         }
 
-        int price = GameSettings.WorkhorsePrices[_stockedType.Value];
+        int price = GameSettings.WorkhorsePrices[_workhorse.Type];
         _buyButton.interactable = PlayerProgress.Instance.CanAfford(price);
     }
 }

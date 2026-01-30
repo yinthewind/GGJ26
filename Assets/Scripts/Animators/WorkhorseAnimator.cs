@@ -22,6 +22,7 @@ public class WorkhorseAnimator : MonoBehaviour
     private readonly Dictionary<PlayerState, int> _animationIndices = new();
     private SpriteRenderer[] _spriteRenderers;
     private LineRenderer _dragCircle;
+    private MaskAnimator _maskAnimator;
 
     private static readonly Color DragCircleColor = new Color(0.3f, 0.7f, 1f, 0.8f);
     private const float CircleRadius = 0.6f;
@@ -94,6 +95,9 @@ public class WorkhorseAnimator : MonoBehaviour
         _spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
 
         CreateDragCircle();
+
+        // Create mask for reveal system
+        _maskAnimator = MaskAnimator.Create(transform);
     }
 
     private void CreateDragCircle()
@@ -195,5 +199,13 @@ public class WorkhorseAnimator : MonoBehaviour
         seq.Join(textGo.transform.DOMove(targetPos, FloatingTextDuration).SetEase(Ease.OutQuad));
         seq.Join(tmp.DOFade(0f, FloatingTextDuration).SetEase(Ease.InQuad));
         seq.OnComplete(() => Destroy(textGo));
+    }
+
+    public bool IsMaskVisible => _maskAnimator?.IsVisible ?? false;
+
+    public void SetMaskVisible(bool visible)
+    {
+        _maskAnimator?.SetVisible(visible);
+        SetVisible(!visible);  // Hide real sprites when masked
     }
 }

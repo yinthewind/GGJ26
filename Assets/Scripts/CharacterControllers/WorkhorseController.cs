@@ -22,6 +22,7 @@ public class WorkhorseController
     private SkeletonState _state = SkeletonState.Idle;
     private int? _assignedWorkspaceId;
     private SkeletonState _stateBeforeDrag;
+    private bool _isRevealed = false;
     private float _stateTimer;
     private Vector3 _walkDirection;
     private float _walkSpeed = 1.5f;
@@ -43,6 +44,9 @@ public class WorkhorseController
         _animator = animator;
 
         EnterState(SkeletonState.Idle);
+
+        // Start masked
+        _animator.SetMaskVisible(true);
     }
 
     public int EntityId => _entityId;
@@ -52,6 +56,7 @@ public class WorkhorseController
     public Transform Transform => _transform;
     public Vector3 Position => _transform.position;
     public int? AssignedWorkspaceId => _assignedWorkspaceId;
+    public bool IsRevealed => _isRevealed;
 
     public void Update(float deltaTime)
     {
@@ -209,6 +214,14 @@ public class WorkhorseController
         _transform.position = position;
     }
 
+    public void StartFallingIfAboveGround()
+    {
+        if (_transform.position.y > 0)
+        {
+            EnterState(SkeletonState.Falling);
+        }
+    }
+
     public void AlignToWorkspaceCenter(Vector3 workspaceCenter)
     {
         // Align skeleton bottom with workspace bottom
@@ -242,5 +255,13 @@ public class WorkhorseController
         {
             EnterState(SkeletonState.Idle);
         }
+    }
+
+    public void Reveal()
+    {
+        if (_isRevealed) return;
+        _isRevealed = true;
+        _animator.SetMaskVisible(false);
+        CheckModeManager.Instance.NotifyWorkhorseRevealed(_entityId, _type);
     }
 }
