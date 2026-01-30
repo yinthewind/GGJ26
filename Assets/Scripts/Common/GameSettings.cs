@@ -11,18 +11,17 @@ public enum WorkspaceType
 public static class GameSettings
 {
     public static float WorldWidth = 10f;  // Total world width
-    public static float ManaGenerationInterval = 2.0f;  // Seconds between mana generation ticks
 
-    // Mana multipliers per workspace type
-    public static readonly Dictionary<WorkspaceType, float> WorkspaceManaMultipliers = new()
+    // Productivity multipliers per workspace type
+    public static readonly Dictionary<WorkspaceType, float> WorkspaceProductivityMultipliers = new()
     {
         { WorkspaceType.Basic, 1.0f },
         { WorkspaceType.Advanced, 1.5f },
         { WorkspaceType.Elite, 2.0f },
     };
 
-    // Base mana generation per skeleton type
-    public static readonly Dictionary<WorkhorseType, float> WorkhorseManaRates = new()
+    // Base productivity generation per worker type
+    public static readonly Dictionary<WorkhorseType, float> WorkhorseProductivityRates = new()
     {
         { WorkhorseType.Swordsman, 1.0f },
         { WorkhorseType.Archer, 1.0f },
@@ -36,7 +35,7 @@ public static class GameSettings
         { WorkhorseType.Berserker, 1.5f },
     };
 
-    // Purchase prices for each skeleton type
+    // Purchase prices for each worker type
     public static readonly Dictionary<WorkhorseType, int> WorkhorsePrices = new()
     {
         { WorkhorseType.Swordsman, 10 },
@@ -51,7 +50,7 @@ public static class GameSettings
         { WorkhorseType.Berserker, 30 },
     };
 
-    // Placeholder colors for skeleton type icons (until sprites are added)
+    // Placeholder colors for worker type icons (until sprites are added)
     public static readonly Dictionary<WorkhorseType, Color> WorkhorseColors = new()
     {
         { WorkhorseType.Swordsman, new Color(0.6f, 0.6f, 0.7f) },    // Steel gray
@@ -66,10 +65,10 @@ public static class GameSettings
         { WorkhorseType.Berserker, new Color(0.8f, 0.3f, 0.3f) },    // Blood red
     };
 
-    public static float CalculateMana(WorkspaceType workspaceType, WorkhorseType skeletonType)
+    public static float CalculateProductivity(WorkspaceType workspaceType, WorkhorseType workerType)
     {
-        var workspaceMultiplier = WorkspaceManaMultipliers[workspaceType];
-        var skeletonRate = WorkhorseManaRates[skeletonType];
-        return workspaceMultiplier * skeletonRate;
+        var workspaceMultiplier = WorkspaceProductivityMultipliers[workspaceType];
+        var workerRate = WorkhorseProductivityRates[workerType];
+        return workspaceMultiplier * workerRate;
     }
 }

@@ -17,6 +17,7 @@ public class GameInstance : MonoBehaviour
 
     private void Update()
     {
+        // Update character animations and state (no mana generation)
         CharacterControllers.Instance.Update(Time.deltaTime);
     }
 
@@ -43,7 +44,7 @@ public class GameInstance : MonoBehaviour
 
     private void SpawnInitialCharacters()
     {
-        // Spawn a few skeletons above ground level (they will fall down)
+        // Spawn a few workers above ground level (they will fall down)
         CharacterControllers.Instance.SpawnSkeleton(
             WorkhorseType.Swordsman, new Vector3(-3f, 1f, 0f));
         CharacterControllers.Instance.SpawnSkeleton(

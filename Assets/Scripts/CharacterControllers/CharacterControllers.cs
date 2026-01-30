@@ -3,26 +3,14 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public struct ManaGenerationEntry
-{
-    public int SkeletonId;
-    public float Amount;
-}
-
 public class CharacterControllers
 {
     public static CharacterControllers Instance { get; } = new();
 
     private readonly List<WorkhorseController> _skeletonControllers = new();
 
-    private float _manaTimer = 0f;
-
-    // Event fired when mana is generated
-    // Parameters: List of (skeletonId, manaAmount) entries
-    public event Action<List<ManaGenerationEntry>> OnManaGenerated;
-
-    // Event fired when a monster is spawned
-    // Parameters: entityId, skeletonType
+    // Event fired when a worker is spawned
+    // Parameters: entityId, workerType
     public event Action<int, WorkhorseType> OnMonsterSpawned;
 
     public IReadOnlyList<WorkhorseController> Skeletons => _skeletonControllers;
@@ -43,37 +31,6 @@ public class CharacterControllers
         {
             controller.Update(deltaTime);
         }
-
-        // Global mana generation
-        _manaTimer += deltaTime;
-        if (_manaTimer >= GameSettings.ManaGenerationInterval)
-        {
-            _manaTimer = 0f;
-            GenerateMana();
-        }
-    }
-
-    private void GenerateMana()
-    {
-        var entries = new List<ManaGenerationEntry>();
-
-        foreach (var skeleton in _skeletonControllers)
-        {
-            if (skeleton.State != SkeletonState.Working || !skeleton.AssignedWorkspaceId.HasValue)
-                continue;
-
-            var workspace = WorkspaceControllers.Instance.GetByEntityId(skeleton.AssignedWorkspaceId.Value);
-            if (workspace == null)
-                continue;
-
-            var mana = GameSettings.CalculateMana(workspace.Type, skeleton.Type);
-            entries.Add(new ManaGenerationEntry { SkeletonId = skeleton.EntityId, Amount = mana });
-        }
-
-        if (entries.Count > 0)
-        {
-            OnManaGenerated?.Invoke(entries);
-        }
     }
 
     public void Clear()
@@ -92,8 +49,8 @@ public class CharacterControllers
     }
 
     /// <summary>
-    /// Spawns a new skeleton at the specified position.
-    /// Creates the visual, controller, registers with all managers, and updates PlayProgress.
+    /// Spawns a new worker at the specified position.
+    /// Creates the visual, controller, registers with all managers.
     /// </summary>
     public WorkhorseController SpawnSkeleton(WorkhorseType type, Vector3 position)
     {
@@ -111,7 +68,7 @@ public class CharacterControllers
             AnimateFall(go.transform, position.y);
         }
 
-        // Notify listeners about the new monster
+        // Notify listeners about the new worker
         OnMonsterSpawned?.Invoke(controller.EntityId, type);
 
         return controller;
@@ -121,5 +78,33 @@ public class CharacterControllers
     {
         float fallDuration = startY * 0.15f; // ~0.75s for 5 units
         target.DOMoveY(0f, fallDuration).SetEase(Ease.InQuad);
+    }
+
+    /// <summary>
+    /// Gets the count of workers currently assigned to workspaces.
+    /// </summary>
+    public int GetWorkingCount()
+    {
+        int count = 0;
+        foreach (var controller in _skeletonControllers)
+        {
+            if (controller.State == SkeletonState.Working)
+                count++;
+        }
+        return count;
+    }
+
+    /// <summary>
+    /// Gets workers by their assigned workspace state.
+    /// </summary>
+    public List<WorkhorseController> GetWorkingWorkers()
+    {
+        var result = new List<WorkhorseController>();
+        foreach (var controller in _skeletonControllers)
+        {
+            if (controller.State == SkeletonState.Working)
+                result.Add(controller);
+        }
+        return result;
     }
 }
