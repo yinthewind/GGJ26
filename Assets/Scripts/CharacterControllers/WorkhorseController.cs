@@ -49,6 +49,7 @@ public class WorkhorseController
     public WorkhorseType Type => _type;
     public WorkhorseAnimator Animator => _animator;
     public SkeletonState State => _state;
+    public Transform Transform => _transform;
     public Vector3 Position => _transform.position;
     public int? AssignedWorkspaceId => _assignedWorkspaceId;
 

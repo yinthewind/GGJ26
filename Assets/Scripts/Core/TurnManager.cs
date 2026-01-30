@@ -49,6 +49,13 @@ public class TurnManager
         {
             PlayerProgress.Instance.AddProductivity(productivity);
             OnProductivityGained?.Invoke(productivity);
+
+            // Award gold based on productivity
+            int goldEarned = Mathf.RoundToInt(productivity);
+            if (goldEarned > 0)
+            {
+                PlayerProgress.Instance.AddGold(goldEarned);
+            }
         }
 
         OnTurnEnded?.Invoke();

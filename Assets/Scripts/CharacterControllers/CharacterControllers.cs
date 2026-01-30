@@ -107,4 +107,32 @@ public class CharacterControllers
         }
         return result;
     }
+
+    /// <summary>
+    /// Destroys a worker and removes it from all managers.
+    /// </summary>
+    public void DestroySkeleton(WorkhorseController controller)
+    {
+        if (controller == null)
+            return;
+
+        // Unassign from workspace if assigned
+        if (controller.AssignedWorkspaceId.HasValue)
+        {
+            var workspace = WorkspaceControllers.Instance.GetByEntityId(controller.AssignedWorkspaceId.Value);
+            workspace?.UnassignSkeleton();
+        }
+
+        // Unregister from animator system
+        WorkhorseAnimator.Unregister(controller.EntityId);
+
+        // Remove from controller list
+        Remove(controller);
+
+        // Destroy the GameObject
+        if (controller.Transform != null)
+        {
+            UnityEngine.Object.Destroy(controller.Transform.gameObject);
+        }
+    }
 }

@@ -13,6 +13,7 @@ public class HUDCanvas : MonoBehaviour
     public SynergyPanel SynergyPanel { get; private set; }
     public ShowSynergiesButton ShowSynergiesButton { get; private set; }
     public SynergyModal SynergyModal { get; private set; }
+    public WorkhorseShopPanel ShopPanel { get; private set; }
 
     public static HUDCanvas Create()
     {
@@ -59,5 +60,13 @@ public class HUDCanvas : MonoBehaviour
         // Create Synergy Modal (hidden by default, on top of everything)
         SynergyModal = SynergyModal.Create(Canvas.transform);
         ShowSynergiesButton.BindModal(SynergyModal);
+
+        // Create Workhorse Shop Panel (always visible, right side)
+        ShopPanel = WorkhorseShopPanel.Create(
+            Canvas.transform,
+            220f,
+            450f,
+            GameSettings.TotalShopSlots,
+            GameSettings.InitialActiveSlots);
     }
 }

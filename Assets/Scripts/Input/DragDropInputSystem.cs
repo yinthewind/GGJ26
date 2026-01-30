@@ -111,6 +111,14 @@ public class DragDropInputSystem : MonoBehaviour
         if (controller == null) return;
 
         controller.SetPosition(new Vector3(mouseWorldPos.x, mouseWorldPos.y, controller.Position.z));
+
+        // Update fire zone highlighting
+        var fireZone = WorkhorseShopPanel.Instance?.FireZone;
+        if (fireZone != null)
+        {
+            bool isOverFireZone = fireZone.ContainsScreenPoint(Mouse.current.position.ReadValue());
+            fireZone.SetHighlighted(isOverFireZone, isOverFireZone ? controller.Type : null);
+        }
     }
 
     private void UpdateWorkspaceDrag(Vector2 mouseWorldPos)
@@ -150,6 +158,19 @@ public class DragDropInputSystem : MonoBehaviour
         if (controller == null) return;
 
         controller.Animator.SetDragIndicator(false);
+
+        // Check if dropped on fire zone first
+        var fireZone = WorkhorseShopPanel.Instance?.FireZone;
+        if (fireZone != null)
+        {
+            if (fireZone.ContainsScreenPoint(Mouse.current.position.ReadValue()))
+            {
+                fireZone.HandleDrop(controller);
+                return;
+            }
+            // Clear highlighting when drag ends
+            fireZone.SetHighlighted(false);
+        }
 
         var dropPos = GetMouseWorldPosition();
         var workspace = WorkspaceControllers.Instance.FindAtPosition(dropPos);

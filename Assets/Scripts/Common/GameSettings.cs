@@ -12,6 +12,13 @@ public static class GameSettings
 {
     public static float WorldWidth = 10f;  // Total world width
 
+    // Shop settings
+    public const int StartingGold = 50;
+    public const float SellPriceMultiplier = 0.5f;
+    public const int ShopRefreshCost = 5;
+    public const int TotalShopSlots = 5;
+    public const int InitialActiveSlots = 3;
+
     // Productivity multipliers per workspace type
     public static readonly Dictionary<WorkspaceType, float> WorkspaceProductivityMultipliers = new()
     {
@@ -70,5 +77,14 @@ public static class GameSettings
         var workspaceMultiplier = WorkspaceProductivityMultipliers[workspaceType];
         var workerRate = WorkhorseProductivityRates[workerType];
         return workspaceMultiplier * workerRate;
+    }
+
+    public static int GetSellPrice(WorkhorseType type)
+    {
+        if (WorkhorsePrices.TryGetValue(type, out int price))
+        {
+            return Mathf.RoundToInt(price * SellPriceMultiplier);
+        }
+        return 0;
     }
 }
