@@ -60,12 +60,12 @@ public class SkeletonAnimator : MonoBehaviour
         instance.transform.localPosition = Vector3.zero;
         instance.transform.localScale = Vector3.one;
         _spumPrefabs = instance;
+
+        InitializeAfterLoad();
     }
 
-    private void Awake()
+    private void InitializeAfterLoad()
     {
-        if (_spumPrefabs == null) return;
-
         // Initialize animation system
         if (!_spumPrefabs.allListsHaveItemsExist())
         {
