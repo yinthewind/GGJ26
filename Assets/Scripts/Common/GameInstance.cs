@@ -23,6 +23,7 @@ public class GameInstance : MonoBehaviour
 
     private void SetupGame()
     {
+        FloorGridAnimator.Create();
         new GameObject("DragDropInputSystem").AddComponent<DragDropInputSystem>();
         LevelManager.Instance.LoadLevel(LevelDefinitions.FirstLevelId);
     }

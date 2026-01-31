@@ -14,7 +14,6 @@ public class WorkspaceAnimator : MonoBehaviour
     public static WorkspaceAnimator GetAnimator(Guid entityId) => _animators.TryGetValue(entityId, out var animator) ? animator : null;
     public static void ClearRegistry() => _animators.Clear();
 
-    private static readonly Color WorkspaceColor = new Color(0.5f, 0.5f, 0.5f, 1f);
     private static readonly Color DragTintColor = new Color(0.5f, 0.7f, 1f, 1f);
     private static readonly Color OutlineColor = Color.black;
     private const float OutlineWidth = 0.05f;
@@ -45,22 +44,12 @@ public class WorkspaceAnimator : MonoBehaviour
         var offsetX = (_gridSize.x - 1) * 0.5f;
         var offsetY = (_gridSize.y - 1) * 0.5f;
         visualGo.transform.localPosition = new Vector3(offsetX, offsetY, 0f);
-        visualGo.transform.localRotation = Quaternion.Euler(0, 0, 45f);
         visualGo.transform.localScale = new Vector3(_gridSize.x, _gridSize.y, 1f);
 
         _spriteRenderer = visualGo.AddComponent<SpriteRenderer>();
-        _spriteRenderer.sprite = CreateWhiteSquareSprite();
-        _spriteRenderer.color = WorkspaceColor;
+        _spriteRenderer.sprite = SpriteLoader.Instance.GetSprite("Sprites/desk");
+        _spriteRenderer.color = Color.white;
         _spriteRenderer.sortingOrder = -1;
-    }
-
-    private static Sprite CreateWhiteSquareSprite()
-    {
-        var texture = new Texture2D(1, 1);
-        texture.SetPixel(0, 0, Color.white);
-        texture.Apply();
-
-        return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
     }
 
     private void CreateOutline()
@@ -98,7 +87,7 @@ public class WorkspaceAnimator : MonoBehaviour
     {
         if (_spriteRenderer != null)
         {
-            _spriteRenderer.color = isDragging ? DragTintColor : WorkspaceColor;
+            _spriteRenderer.color = isDragging ? DragTintColor : Color.white;
         }
     }
 

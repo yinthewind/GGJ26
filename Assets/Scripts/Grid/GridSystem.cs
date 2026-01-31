@@ -33,6 +33,13 @@ public static class GridSystem
 
     public static Vector3 GridToWorld(Vector2Int gridPosition)
     {
+        // Use mapped position for valid workspace grid positions
+        if (WorkspacePositionMap.IsValidPosition(gridPosition))
+        {
+            return WorkspacePositionMap.GetWorldPosition(gridPosition);
+        }
+
+        // Fallback for non-workspace grid cells
         return new Vector3(
             gridPosition.x * CellSize,
             gridPosition.y * CellSize,
