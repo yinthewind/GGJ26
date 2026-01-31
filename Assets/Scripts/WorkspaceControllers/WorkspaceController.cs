@@ -1,35 +1,37 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WorkspaceController
 {
-    private static int _nextEntityId = 0;
-
-    public static void ResetEntityIdCounter() => _nextEntityId = 0;
-
-    private readonly int _entityId;
+    private readonly Guid _entityId;
     private readonly Transform _transform;
     private readonly Vector2Int _gridSize;
     private readonly WorkspaceType _type;
     private readonly WorkspaceAnimator _animator;
 
-    private int? _assignedSkeletonId;
+    private Guid? _assignedSkeletonId;
     private bool _isDragging;
     private Vector3 _originalPosition;
 
     public WorkspaceController(Transform transform, Vector2Int gridSize, WorkspaceType type, WorkspaceAnimator animator)
+        : this(Guid.NewGuid(), transform, gridSize, type, animator)
     {
-        _entityId = _nextEntityId++;
+    }
+
+    public WorkspaceController(Guid entityId, Transform transform, Vector2Int gridSize, WorkspaceType type, WorkspaceAnimator animator)
+    {
+        _entityId = entityId;
         _transform = transform;
         _gridSize = gridSize;
         _type = type;
         _animator = animator;
     }
 
-    public int EntityId => _entityId;
+    public Guid EntityId => _entityId;
     public WorkspaceAnimator Animator => _animator;
     public Vector3 Position => _transform.position;
-    public int? AssignedSkeletonId => _assignedSkeletonId;
+    public Guid? AssignedSkeletonId => _assignedSkeletonId;
     public bool IsOccupied => _assignedSkeletonId.HasValue;
     public bool IsDragging => _isDragging;
     public Vector2Int GridPosition => GridSystem.WorldToGrid(_transform.position);
@@ -49,7 +51,7 @@ public class WorkspaceController
         }
     }
 
-    public void AssignSkeleton(int skeletonEntityId)
+    public void AssignSkeleton(Guid skeletonEntityId)
     {
         _assignedSkeletonId = skeletonEntityId;
     }

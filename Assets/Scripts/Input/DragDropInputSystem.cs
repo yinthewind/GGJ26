@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,13 +6,16 @@ public class DragDropInputSystem : MonoBehaviour
 {
     private const float HitRadius = 0.75f;
 
-    private enum DragType { None, Skeleton, Workspace }
+    private enum DragType { None, Skeleton }
 
     private DragType _dragType = DragType.None;
-    private int? _draggedEntityId;
+    private Guid? _draggedEntityId;
     private Camera _mainCamera;
     private WorkspacePreviewAnimator _placementPreview;
     private bool _dragEnabled = true;
+    private bool _isPlacingNewWorkspace = false;
+
+    public event Action OnWorkspacePlaced;
 
     private void Start()
     {
@@ -28,6 +32,19 @@ public class DragDropInputSystem : MonoBehaviour
     {
         var mouse = Mouse.current;
         if (mouse == null) return;
+
+        // Handle new workspace placement mode
+        if (_isPlacingNewWorkspace)
+        {
+            UpdateWorkspacePlacement();
+
+            if (mouse.leftButton.wasPressedThisFrame)
+                TryConfirmWorkspacePlacement();
+            else if (mouse.rightButton.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame)
+                CancelWorkspacePlacement();
+
+            return; // Don't process other input while placing
+        }
 
         if (mouse.leftButton.wasPressedThisFrame)
             TryStartDrag();
@@ -73,29 +90,6 @@ public class DragDropInputSystem : MonoBehaviour
             }
         }
 
-        // Priority 2: Try to start dragging a workspace
-        var workspace = WorkspaceControllers.Instance.FindAtPosition(clickWorldPos);
-        if (workspace != null)
-        {
-            _dragType = DragType.Workspace;
-            _draggedEntityId = workspace.EntityId;
-            workspace.OnDragStart();
-
-            // Make workspace transparent during drag
-            workspace.Animator.SetTransparent(true);
-
-            // Also make assigned skeleton transparent
-            if (workspace.AssignedSkeletonId.HasValue)
-            {
-                var skeleton = CharacterControllers.Instance.GetByEntityId(workspace.AssignedSkeletonId.Value);
-                skeleton?.Animator.SetTransparent(true);
-            }
-
-            // Show and configure preview at current position
-            _placementPreview.SetSize(workspace.GridSize);
-            _placementPreview.Show();
-            _placementPreview.UpdatePreview(workspace.Position, true);
-        }
     }
 
     private void UpdateDrag()
@@ -105,10 +99,6 @@ public class DragDropInputSystem : MonoBehaviour
         if (_dragType == DragType.Skeleton)
         {
             UpdateSkeletonDrag(mouseWorldPos);
-        }
-        else if (_dragType == DragType.Workspace)
-        {
-            UpdateWorkspaceDrag(mouseWorldPos);
         }
     }
 
@@ -128,31 +118,11 @@ public class DragDropInputSystem : MonoBehaviour
         }
     }
 
-    private void UpdateWorkspaceDrag(Vector2 mouseWorldPos)
-    {
-        var workspace = WorkspaceControllers.Instance.GetByEntityId(_draggedEntityId.Value);
-        if (workspace == null) return;
-
-        // Only move the preview, NOT the actual workspace or skeleton
-        var snappedPos = GridSystem.SnapToGrid(new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0f));
-        var previewGridPos = GridSystem.WorldToGrid(snappedPos);
-
-        // Check validity against preview position (workspace hasn't moved)
-        var isValid = WorkspaceControllers.Instance.IsValidPlacement(
-            previewGridPos, workspace.GridSize, workspace.EntityId);
-
-        _placementPreview.UpdatePreview(snappedPos, isValid);
-    }
-
     private void EndDrag()
     {
         if (_dragType == DragType.Skeleton)
         {
             EndSkeletonDrag();
-        }
-        else if (_dragType == DragType.Workspace)
-        {
-            EndWorkspaceDrag();
         }
 
         _dragType = DragType.None;
@@ -206,43 +176,49 @@ public class DragDropInputSystem : MonoBehaviour
         }
     }
 
-    private void EndWorkspaceDrag()
+    public void EnterWorkspacePlacementMode()
     {
-        var workspace = WorkspaceControllers.Instance.GetByEntityId(_draggedEntityId.Value);
-        if (workspace == null) return;
+        _isPlacingNewWorkspace = true;
+        _placementPreview.SetSize(new Vector2Int(1, 1));
+        _placementPreview.Show();
+    }
 
+    private void UpdateWorkspacePlacement()
+    {
+        var mouseWorldPos = GetMouseWorldPosition();
+        var snappedPos = GridSystem.SnapToGrid(new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0f));
+        var gridPos = GridSystem.WorldToGrid(snappedPos);
+        var isValid = WorkspaceControllers.Instance.IsValidPlacement(gridPos, new Vector2Int(1, 1));
+        _placementPreview.UpdatePreview(snappedPos, isValid);
+    }
+
+    private void TryConfirmWorkspacePlacement()
+    {
+        var gridPos = _placementPreview.GridPosition;
+        var gridSize = new Vector2Int(1, 1);
+
+        if (!WorkspaceControllers.Instance.IsValidPlacement(gridPos, gridSize))
+            return; // Invalid position, do nothing
+
+        if (!PlayerProgress.Instance.TrySpendDollar(GameSettings.WorkspacePrice))
+            return; // Can't afford
+
+        // Spawn workspace at valid position
+        var worldPos = GridSystem.GridToWorld(gridPos);
+        WorkspaceControllers.Instance.SpawnWorkspace(
+            worldPos, gridSize, WorkspaceType.Basic,
+            $"Workspace{WorkspaceControllers.Instance.Workspaces.Count + 1}");
+
+        // Exit placement mode and notify shop
+        _isPlacingNewWorkspace = false;
         _placementPreview.Hide();
+        OnWorkspacePlaced?.Invoke();
+    }
 
-        // Get preview position for final validation
-        var previewGridPos = _placementPreview.GridPosition;
-        var isValid = WorkspaceControllers.Instance.IsValidPlacement(
-            previewGridPos, workspace.GridSize, workspace.EntityId);
-
-        if (isValid)
-        {
-            // Move workspace to new position
-            workspace.SetPosition(GridSystem.GridToWorld(previewGridPos));
-
-            // Move assigned skeleton to new center
-            if (workspace.AssignedSkeletonId.HasValue)
-            {
-                var skeleton = CharacterControllers.Instance.GetByEntityId(workspace.AssignedSkeletonId.Value);
-                if (skeleton != null) skeleton.AlignToWorkspaceCenter(workspace.WorldCenter);
-            }
-        }
-        // else: workspace never moved, skeleton already at correct position
-
-        workspace.OnDragEnd();
-
-        // Restore workspace opacity
-        workspace.Animator.SetTransparent(false);
-
-        // Restore skeleton opacity
-        if (workspace.AssignedSkeletonId.HasValue)
-        {
-            var skeleton = CharacterControllers.Instance.GetByEntityId(workspace.AssignedSkeletonId.Value);
-            skeleton?.Animator.SetTransparent(false);
-        }
+    private void CancelWorkspacePlacement()
+    {
+        _isPlacingNewWorkspace = false;
+        _placementPreview.Hide();
     }
 
     private Vector2 GetMouseWorldPosition()

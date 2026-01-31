@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using DG.Tweening;
 
 public enum SkeletonState
 {
@@ -12,17 +14,13 @@ public enum SkeletonState
 
 public class WorkhorseController
 {
-    private static int _nextEntityId = 0;
-
-    public static void ResetEntityIdCounter() => _nextEntityId = 0;
-
-    private readonly int _entityId;
+    private readonly Guid _entityId;
     private readonly Transform _transform;
     private readonly WorkhorseType _type;
     private readonly WorkhorseAnimator _animator;
 
     private SkeletonState _state = SkeletonState.Idle;
-    private int? _assignedWorkspaceId;
+    private Guid? _assignedWorkspaceId;
     private SkeletonState _stateBeforeDrag;
     private bool _isRevealed = false;
     private int _roundsWorked = 0;
@@ -40,8 +38,13 @@ public class WorkhorseController
     private float _workingAnimationInterval = 0.8f;
 
     public WorkhorseController(Transform transform, WorkhorseType type, WorkhorseAnimator animator)
+        : this(Guid.NewGuid(), transform, type, animator)
     {
-        _entityId = _nextEntityId++;
+    }
+
+    public WorkhorseController(Guid entityId, Transform transform, WorkhorseType type, WorkhorseAnimator animator)
+    {
+        _entityId = entityId;
         _transform = transform;
         _type = type;
         _animator = animator;
@@ -52,13 +55,13 @@ public class WorkhorseController
         _animator.SetMaskVisible(true);
     }
 
-    public int EntityId => _entityId;
+    public Guid EntityId => _entityId;
     public WorkhorseType Type => _type;
     public WorkhorseAnimator Animator => _animator;
     public SkeletonState State => _state;
     public Transform Transform => _transform;
     public Vector3 Position => _transform.position;
-    public int? AssignedWorkspaceId => _assignedWorkspaceId;
+    public Guid? AssignedWorkspaceId => _assignedWorkspaceId;
     public bool IsRevealed => _isRevealed;
     public int RoundsWorked => _roundsWorked;
 
@@ -93,7 +96,7 @@ public class WorkhorseController
     {
         if (_stateTimer <= 0)
         {
-            if (Random.value < _attackChance)
+            if (UnityEngine.Random.value < _attackChance)
             {
                 EnterState(SkeletonState.Attacking);
             }
@@ -151,12 +154,12 @@ public class WorkhorseController
         switch (newState)
         {
             case SkeletonState.Idle:
-                _stateTimer = Random.Range(_minIdleTime, _maxIdleTime);
+                _stateTimer = UnityEngine.Random.Range(_minIdleTime, _maxIdleTime);
                 _animator.PlayIdle();
                 break;
 
             case SkeletonState.Walking:
-                _stateTimer = Random.Range(_minWalkTime, _maxWalkTime);
+                _stateTimer = UnityEngine.Random.Range(_minWalkTime, _maxWalkTime);
                 _walkDirection = PickRandomDirection();
                 _animator.SetFacing(_walkDirection.x > 0);
                 _animator.PlayMove();
@@ -192,7 +195,7 @@ public class WorkhorseController
             return Vector3.left;
 
         // In the middle - random direction
-        return Random.value > 0.5f ? Vector3.right : Vector3.left;
+        return UnityEngine.Random.value > 0.5f ? Vector3.right : Vector3.left;
     }
 
     public void SetDragging(bool dragging)
@@ -241,8 +244,10 @@ public class WorkhorseController
         _transform.position = alignedPosition;
     }
 
-    public void AssignToWorkspace(int workspaceId, Vector3 workspacePosition)
+    public void AssignToWorkspace(Guid workspaceId, Vector3 workspacePosition)
     {
+        Debug.Log($"[Assign] Workhorse {_entityId} -> Workspace {workspaceId} at {workspacePosition}");
+        DOTween.Kill(_transform);  // Stop any running position animations
         _assignedWorkspaceId = workspaceId;
         AlignToWorkspaceCenter(workspacePosition);
         EnterState(SkeletonState.Working);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -26,7 +27,7 @@ public static class ProductivityCalculator
         var abilitySynergies = synergyRef.AllSynergies.OfType<AbilitySynergy>().ToList();
 
         // Step 1-3: Calculate productivity per worker with ability effects
-        var workerProductivities = new Dictionary<int, float>();
+        var workerProductivities = new Dictionary<Guid, float>();
 
         foreach (var assignment in assignments)
         {
@@ -138,11 +139,11 @@ public static class ProductivityCalculator
     /// <summary>
     /// Gets productivity breakdown per worker including ability effects.
     /// </summary>
-    public static Dictionary<int, float> GetProductivityBreakdown(
+    public static Dictionary<Guid, float> GetProductivityBreakdown(
         List<Workspace> workspaces,
         List<WorkhorseAssignment> assignments)
     {
-        var breakdown = new Dictionary<int, float>();
+        var breakdown = new Dictionary<Guid, float>();
         var workspaceDict = BuildWorkspaceDictionary(workspaces);
         var abilitySynergies = SynergySystem.Instance.AllSynergies.OfType<AbilitySynergy>().ToList();
 
@@ -196,9 +197,9 @@ public static class ProductivityCalculator
         return breakdown;
     }
 
-    private static Dictionary<int, Workspace> BuildWorkspaceDictionary(List<Workspace> workspaces)
+    private static Dictionary<Guid, Workspace> BuildWorkspaceDictionary(List<Workspace> workspaces)
     {
-        var dict = new Dictionary<int, Workspace>();
+        var dict = new Dictionary<Guid, Workspace>();
         foreach (var workspace in workspaces)
         {
             dict[workspace.Id] = workspace;

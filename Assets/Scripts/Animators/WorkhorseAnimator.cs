@@ -1,5 +1,6 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 using TMPro;
 using DG.Tweening;
 
@@ -8,11 +9,11 @@ public class WorkhorseAnimator : MonoBehaviour
     public static string Tag = "WorkhorseAnimator";
 
     // Static registry
-    private static readonly Dictionary<int, WorkhorseAnimator> _animators = new();
+    private static readonly Dictionary<Guid, WorkhorseAnimator> _animators = new();
 
-    public static void Register(int entityId, WorkhorseAnimator animator) => _animators[entityId] = animator;
-    public static void Unregister(int entityId) => _animators.Remove(entityId);
-    public static WorkhorseAnimator GetAnimator(int entityId) => _animators.TryGetValue(entityId, out var animator) ? animator : null;
+    public static void Register(Guid entityId, WorkhorseAnimator animator) => _animators[entityId] = animator;
+    public static void Unregister(Guid entityId) => _animators.Remove(entityId);
+    public static WorkhorseAnimator GetAnimator(Guid entityId) => _animators.TryGetValue(entityId, out var animator) ? animator : null;
     public static void ClearRegistry() => _animators.Clear();
 
     // Default skeleton prefab path in Resources

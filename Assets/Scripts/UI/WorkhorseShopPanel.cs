@@ -16,10 +16,12 @@ public class WorkhorseShopPanel : MonoBehaviour
     private Button _refreshButton;
     private TextMeshProUGUI _refreshButtonText;
     private WorkhorseFireZone _fireZone;
+    private WorkspaceShopSlot _workspaceSlot;
 
     private int _totalSlots;
     private int _activeSlots;
     private bool _freeRefreshAvailable = true;
+    private bool _workspaceSoldOutThisTurn = false;
 
     public WorkhorseFireZone FireZone => _fireZone;
 
@@ -49,6 +51,10 @@ public class WorkhorseShopPanel : MonoBehaviour
         PlayerProgress.Instance.OnDollarChanged += HandleDollarChanged;
         TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
 
+        var inputSystem = FindObjectOfType<DragDropInputSystem>();
+        if (inputSystem != null)
+            inputSystem.OnWorkspacePlaced += HandleWorkspacePlaced;
+
         UpdateDollarDisplay();
     }
 
@@ -59,6 +65,10 @@ public class WorkhorseShopPanel : MonoBehaviour
 
         PlayerProgress.Instance.OnDollarChanged -= HandleDollarChanged;
         TurnManager.Instance.OnTurnStarted -= HandleTurnStarted;
+
+        var inputSystem = FindObjectOfType<DragDropInputSystem>();
+        if (inputSystem != null)
+            inputSystem.OnWorkspacePlaced -= HandleWorkspacePlaced;
     }
 
     private void BuildUI(GameObject root, float width, float height)
@@ -88,6 +98,8 @@ public class WorkhorseShopPanel : MonoBehaviour
         CreateHeader(root.transform, innerWidth, 50f);
         CreateSlots(root.transform, innerWidth, 45f);
         CreateRefreshButton(root.transform, innerWidth, 35f);
+        CreateDivider(root.transform, innerWidth);
+        CreateWorkspaceSection(root.transform, innerWidth, 45f);
         CreateFireZone(root.transform, innerWidth, 80f);
     }
 
@@ -186,6 +198,51 @@ public class WorkhorseShopPanel : MonoBehaviour
         _fireZone = WorkhorseFireZone.Create(parent, width, height);
     }
 
+    private void CreateDivider(Transform parent, float width)
+    {
+        GameObject divider = new GameObject("Divider");
+        divider.transform.SetParent(parent, false);
+        RectTransform rect = divider.AddComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(width, 2f);
+        Image img = divider.AddComponent<Image>();
+        img.color = new Color(0.4f, 0.4f, 0.5f, 0.8f);
+    }
+
+    private void CreateWorkspaceSection(Transform parent, float width, float height)
+    {
+        // Section header
+        GameObject headerObj = new GameObject("WorkspaceHeader");
+        headerObj.transform.SetParent(parent, false);
+        RectTransform headerRect = headerObj.AddComponent<RectTransform>();
+        headerRect.sizeDelta = new Vector2(width, 20f);
+        var headerText = headerObj.AddComponent<TextMeshProUGUI>();
+        headerText.text = "WORKSPACE";
+        headerText.fontSize = 14;
+        headerText.fontStyle = FontStyles.Bold;
+        headerText.color = Color.white;
+        headerText.alignment = TextAlignmentOptions.Center;
+
+        // Workspace slot
+        _workspaceSlot = WorkspaceShopSlot.Create(parent, width, height);
+        _workspaceSlot.OnBuyClicked += HandleWorkspaceBuyClicked;
+    }
+
+    private void HandleWorkspaceBuyClicked(WorkspaceShopSlot slot)
+    {
+        if (_workspaceSoldOutThisTurn) return;
+        if (!PlayerProgress.Instance.CanAfford(GameSettings.WorkspacePrice)) return;
+
+        // Enter placement mode
+        var inputSystem = FindObjectOfType<DragDropInputSystem>();
+        inputSystem.EnterWorkspacePlacementMode();
+    }
+
+    private void HandleWorkspacePlaced()
+    {
+        _workspaceSoldOutThisTurn = true;
+        _workspaceSlot.SetSoldOut(true);
+    }
+
     private void HandleSlotClicked(WorkhorseShopSlot slot)
     {
         if (!CheckModeManager.Instance.IsCheckModeActive) return;
@@ -246,6 +303,9 @@ public class WorkhorseShopPanel : MonoBehaviour
     {
         _freeRefreshAvailable = true;
         UpdateRefreshButtonText();
+
+        _workspaceSoldOutThisTurn = false;
+        _workspaceSlot?.SetSoldOut(false);
     }
 
     public void RefreshShop()

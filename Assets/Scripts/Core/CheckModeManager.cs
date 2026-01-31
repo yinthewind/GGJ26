@@ -7,7 +7,7 @@ public class CheckModeManager
     public bool IsCheckModeActive { get; private set; }
 
     public event Action<bool> OnCheckModeChanged;
-    public event Action<int, WorkhorseType> OnWorkhorseRevealed;
+    public event Action<Guid, WorkhorseType> OnWorkhorseRevealed;
 
     private CheckModeManager() { }
 
@@ -33,7 +33,7 @@ public class CheckModeManager
             EnterCheckMode();
     }
 
-    public void NotifyWorkhorseRevealed(int entityId, WorkhorseType type)
+    public void NotifyWorkhorseRevealed(Guid entityId, WorkhorseType type)
     {
         OnWorkhorseRevealed?.Invoke(entityId, type);
         ExitCheckMode();

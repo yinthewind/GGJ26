@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,7 +45,7 @@ public abstract class Synergy
 /// </summary>
 public struct Workspace
 {
-    public int Id;
+    public Guid Id;
     public WorkspaceType Type;
     public Vector2Int Position;
     public Vector2Int Size;
@@ -55,8 +56,8 @@ public struct Workspace
 /// </summary>
 public struct WorkhorseAssignment
 {
-    public int WorkerId;
-    public int WorkspaceId;
+    public Guid WorkerId;
+    public Guid WorkspaceId;
     public WorkhorseType Type;
     public int RoundsWorked;
 }

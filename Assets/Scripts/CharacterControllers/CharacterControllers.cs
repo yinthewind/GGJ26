@@ -11,7 +11,7 @@ public class CharacterControllers
 
     // Event fired when a worker is spawned
     // Parameters: entityId, workerType
-    public event Action<int, WorkhorseType> OnMonsterSpawned;
+    public event Action<Guid, WorkhorseType> OnMonsterSpawned;
 
     public IReadOnlyList<WorkhorseController> Skeletons => _skeletonControllers;
 
@@ -38,7 +38,7 @@ public class CharacterControllers
         _skeletonControllers.Clear();
     }
 
-    public WorkhorseController GetByEntityId(int entityId)
+    public WorkhorseController GetByEntityId(Guid entityId)
     {
         foreach (var controller in _skeletonControllers)
         {
@@ -59,6 +59,31 @@ public class CharacterControllers
         WorkhorseAnimator animator = go.GetComponent<WorkhorseAnimator>();
 
         WorkhorseController controller = new WorkhorseController(go.transform, type, animator);
+        WorkhorseAnimator.Register(controller.EntityId, animator);
+        Add(controller);
+
+        // If spawned above ground, animate fall
+        if (position.y > GroundY)
+        {
+            AnimateFall(go.transform, position.y);
+        }
+
+        // Notify listeners about the new worker
+        OnMonsterSpawned?.Invoke(controller.EntityId, type);
+
+        return controller;
+    }
+
+    /// <summary>
+    /// Spawns a worker with a specific entity ID (for restoring saved state).
+    /// </summary>
+    public WorkhorseController SpawnSkeletonWithId(Guid entityId, WorkhorseType type, Vector3 position)
+    {
+        string prefabPath = WorkhorsePrefabs.GetPrefabPath(type);
+        GameObject go = WorkhorseAnimator.Create(position, Quaternion.identity, prefabPath, type.ToString());
+        WorkhorseAnimator animator = go.GetComponent<WorkhorseAnimator>();
+
+        WorkhorseController controller = new WorkhorseController(entityId, go.transform, type, animator);
         WorkhorseAnimator.Register(controller.EntityId, animator);
         Add(controller);
 

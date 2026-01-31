@@ -22,6 +22,9 @@ public static class GameSettings
     // Reveal settings
     public const int RevealCost = 5;  // Dollar cost to reveal a masked workhorse (background check)
 
+    // Workspace settings
+    public const int WorkspacePrice = 15;
+
     // Fixed price for all shop workhorses
     public const int ShopWorkhorsePrice = 10;
 

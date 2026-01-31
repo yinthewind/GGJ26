@@ -33,6 +33,11 @@ public class LevelManager
             return;
         }
 
+        // Save game state BEFORE clearing
+        PlayerProgress.Instance.SaveGameState(
+            WorkspaceControllers.Instance.Workspaces,
+            CharacterControllers.Instance.Skeletons);
+
         // Clear existing game state
         ClearGameState();
 
@@ -136,30 +141,81 @@ public class LevelManager
         }
         WorkspaceControllers.Instance.Clear();
 
-        // Reset entity ID counters
-        WorkhorseController.ResetEntityIdCounter();
-        WorkspaceController.ResetEntityIdCounter();
+        // No entity ID counter reset needed - using GUIDs now
     }
 
     private void SpawnInitialSetup()
     {
-        // Spawn 3 basic workspaces in L shape
-        WorkspaceControllers.Instance.SpawnWorkspace(
-            new Vector3(0f, 1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace1");
-        WorkspaceControllers.Instance.SpawnWorkspace(
-            new Vector3(1f, 1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace2");
-        WorkspaceControllers.Instance.SpawnWorkspace(
-            new Vector3(1f, 2f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace3");
+        var savedWorkspaces = PlayerProgress.Instance.WorkspaceData;
+        var savedWorkhorses = PlayerProgress.Instance.WorkhorseData;
 
-        // Spawn initial workers based on available types
-        var availableTypes = _currentConfig.AvailableWorkhorseTypes;
-        if (availableTypes.Count > 0)
+        if (savedWorkspaces.Count > 0)
         {
-            CharacterControllers.Instance.SpawnSkeleton(availableTypes[0], new Vector3(-3f, 1f, 0f));
+            // Restore workspaces at saved positions with their original GUIDs
+            for (int i = 0; i < savedWorkspaces.Count; i++)
+            {
+                var data = savedWorkspaces[i];
+                var worldPos = GridSystem.GridToWorld(data.GridPosition);
+                var workspace = WorkspaceControllers.Instance.SpawnWorkspaceWithId(
+                    data.EntityId, worldPos, new Vector2Int(1, 1), WorkspaceType.Basic,
+                    $"Workspace{i + 1}");
+                Debug.Log($"[Restore] Workspace EntityId {workspace.EntityId} at grid {data.GridPosition}, world {worldPos}, center {workspace.WorldCenter}");
+            }
+
+            // Restore workhorses with their assignments - look up by saved workspace GUID
+            foreach (var data in savedWorkhorses)
+            {
+                Vector3 spawnPos;
+                WorkspaceController targetWorkspace = null;
+
+                if (data.AssignedWorkspaceId.HasValue)
+                {
+                    targetWorkspace = WorkspaceControllers.Instance.GetByEntityId(data.AssignedWorkspaceId.Value);
+                }
+
+                if (targetWorkspace != null)
+                {
+                    // Spawn at ground level to avoid triggering fall animation
+                    // AssignToWorkspace will position at workspace center
+                    spawnPos = new Vector3(0f, -3f, 0f);
+                }
+                else
+                {
+                    // Unassigned: use saved position
+                    spawnPos = data.Position;
+                }
+
+                var workhorse = CharacterControllers.Instance.SpawnSkeletonWithId(data.EntityId, data.Type, spawnPos);
+
+                // Re-establish assignment if applicable
+                if (targetWorkspace != null)
+                {
+                    Debug.Log($"[Restore] Workhorse {workhorse.EntityId} ({data.Type}) -> workspace {targetWorkspace.EntityId}, WorldCenter {targetWorkspace.WorldCenter}");
+                    targetWorkspace.AssignSkeleton(workhorse.EntityId);
+                    workhorse.AssignToWorkspace(targetWorkspace.EntityId, targetWorkspace.WorldCenter);
+                }
+            }
         }
-        if (availableTypes.Count > 1)
+        else
         {
-            CharacterControllers.Instance.SpawnSkeleton(availableTypes[1], new Vector3(3f, 1f, 0f));
+            // First level: spawn default 3 workspaces in L shape
+            WorkspaceControllers.Instance.SpawnWorkspace(
+                new Vector3(0f, 1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace1");
+            WorkspaceControllers.Instance.SpawnWorkspace(
+                new Vector3(1f, 1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace2");
+            WorkspaceControllers.Instance.SpawnWorkspace(
+                new Vector3(1f, 2f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace3");
+
+            // Spawn initial workers based on available types
+            var availableTypes = _currentConfig.AvailableWorkhorseTypes;
+            if (availableTypes.Count > 0)
+            {
+                CharacterControllers.Instance.SpawnSkeleton(availableTypes[0], new Vector3(-3f, 1f, 0f));
+            }
+            if (availableTypes.Count > 1)
+            {
+                CharacterControllers.Instance.SpawnSkeleton(availableTypes[1], new Vector3(3f, 1f, 0f));
+            }
         }
     }
 }

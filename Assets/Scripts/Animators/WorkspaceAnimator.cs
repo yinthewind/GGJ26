@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +7,11 @@ public class WorkspaceAnimator : MonoBehaviour
     public static string Tag = "WorkspaceAnimator";
 
     // Static registry
-    private static readonly Dictionary<int, WorkspaceAnimator> _animators = new();
+    private static readonly Dictionary<Guid, WorkspaceAnimator> _animators = new();
 
-    public static void Register(int entityId, WorkspaceAnimator animator) => _animators[entityId] = animator;
-    public static void Unregister(int entityId) => _animators.Remove(entityId);
-    public static WorkspaceAnimator GetAnimator(int entityId) => _animators.TryGetValue(entityId, out var animator) ? animator : null;
+    public static void Register(Guid entityId, WorkspaceAnimator animator) => _animators[entityId] = animator;
+    public static void Unregister(Guid entityId) => _animators.Remove(entityId);
+    public static WorkspaceAnimator GetAnimator(Guid entityId) => _animators.TryGetValue(entityId, out var animator) ? animator : null;
     public static void ClearRegistry() => _animators.Clear();
 
     private static readonly Color WorkspaceColor = new Color(0.5f, 0.5f, 0.5f, 1f);

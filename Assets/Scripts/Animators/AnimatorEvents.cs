@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum AnimatorEventType
@@ -12,7 +13,7 @@ public enum AnimatorEventType
 
 public struct AnimatorEvent
 {
-    public int EntityId;
+    public Guid EntityId;
     public AnimatorEventType Type;
     public Vector3 FacingDirection;
 }

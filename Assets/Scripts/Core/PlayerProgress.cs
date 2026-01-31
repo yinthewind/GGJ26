@@ -1,5 +1,20 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+
+public struct SavedWorkhorseData
+{
+    public Guid EntityId;
+    public WorkhorseType Type;
+    public Guid? AssignedWorkspaceId;
+    public Vector3 Position; // Used only for unassigned workhorses
+}
+
+public struct SavedWorkspaceData
+{
+    public Guid EntityId;
+    public Vector2Int GridPosition;
+}
 
 public class PlayerProgress
 {
@@ -9,11 +24,15 @@ public class PlayerProgress
     private int _totalTurnsPlayed = 0;
     private int _maxSynergiesInOneTurn = 0;
     private int _currentDollar = GameSettings.StartingDollar;
+    private List<SavedWorkspaceData> _workspaceData = new();
+    private List<SavedWorkhorseData> _workhorseData = new();
 
     public float TotalProductivity => _totalProductivity;
     public int TotalTurnsPlayed => _totalTurnsPlayed;
     public int MaxSynergiesInOneTurn => _maxSynergiesInOneTurn;
     public int CurrentDollar => _currentDollar;
+    public IReadOnlyList<SavedWorkspaceData> WorkspaceData => _workspaceData;
+    public IReadOnlyList<SavedWorkhorseData> WorkhorseData => _workhorseData;
 
     // Events
     public event Action<float> OnProductivityChanged;
@@ -62,6 +81,35 @@ public class PlayerProgress
 
         _currentDollar += amount;
         OnDollarChanged?.Invoke(_currentDollar);
+    }
+
+    public void SaveGameState(IReadOnlyList<WorkspaceController> workspaces, IReadOnlyList<WorkhorseController> workhorses)
+    {
+        // Save workspace data with GUIDs
+        _workspaceData.Clear();
+        foreach (var workspace in workspaces)
+        {
+            _workspaceData.Add(new SavedWorkspaceData
+            {
+                EntityId = workspace.EntityId,
+                GridPosition = workspace.GridPosition
+            });
+        }
+
+        // Save workhorse data - directly store workspace GUID (no index remapping needed)
+        _workhorseData.Clear();
+        foreach (var workhorse in workhorses)
+        {
+            Debug.Log($"[Save] Workhorse {workhorse.EntityId} ({workhorse.Type}) assigned to workspace {workhorse.AssignedWorkspaceId}");
+
+            _workhorseData.Add(new SavedWorkhorseData
+            {
+                EntityId = workhorse.EntityId,
+                Type = workhorse.Type,
+                AssignedWorkspaceId = workhorse.AssignedWorkspaceId,
+                Position = workhorse.Position
+            });
+        }
     }
 
     public void Reset()
