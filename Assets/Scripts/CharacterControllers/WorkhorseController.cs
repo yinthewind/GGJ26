@@ -255,6 +255,7 @@ public class WorkhorseController
 
     public void UnassignFromWorkspace()
     {
+        Debug.Log($"[Unassign] Workhorse {_entityId} unassigned from workspace {_assignedWorkspaceId}");
         _assignedWorkspaceId = null;
         ResetRoundsWorked();
 

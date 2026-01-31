@@ -200,11 +200,11 @@ public class LevelManager
         {
             // First level: spawn default 3 workspaces in L shape
             WorkspaceControllers.Instance.SpawnWorkspace(
-                new Vector3(0f, 1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace1");
+                new Vector3(0f, -1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace1");
             WorkspaceControllers.Instance.SpawnWorkspace(
-                new Vector3(1f, 1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace2");
+                new Vector3(1f, -1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace2");
             WorkspaceControllers.Instance.SpawnWorkspace(
-                new Vector3(1f, 2f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace3");
+                new Vector3(1f, 0f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace3");
 
             // Spawn initial workers based on available types
             var availableTypes = _currentConfig.AvailableWorkhorseTypes;

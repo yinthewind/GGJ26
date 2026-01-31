@@ -1,11 +1,10 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class DragDropInputSystem : MonoBehaviour
 {
-    private const float HitRadius = 0.75f;
-
     private enum DragType { None, Skeleton }
 
     private DragType _dragType = DragType.None;
@@ -32,22 +31,29 @@ public class DragDropInputSystem : MonoBehaviour
     {
         var mouse = Mouse.current;
         if (mouse == null) return;
+        if (!_dragEnabled) return;
 
         // Handle new workspace placement mode
         if (_isPlacingNewWorkspace)
         {
             UpdateWorkspacePlacement();
 
-            if (mouse.leftButton.wasPressedThisFrame)
+            if (mouse.leftButton.wasPressedThisFrame && !IsPointerOverUI())
                 TryConfirmWorkspacePlacement();
-            else if (mouse.rightButton.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame)
+            else if (Keyboard.current.escapeKey.wasPressedThisFrame ||
+                     (mouse.rightButton.wasPressedThisFrame && !IsPointerOverUI()))
                 CancelWorkspacePlacement();
 
             return; // Don't process other input while placing
         }
 
         if (mouse.leftButton.wasPressedThisFrame)
+        {
+            // Skip if clicking on UI elements, unless there's a draggable entity
+            if (IsPointerOverUI() && !HasDraggableEntityAtMouse())
+                return;
             TryStartDrag();
+        }
         else if (mouse.leftButton.wasReleasedThisFrame && _draggedEntityId.HasValue)
             EndDrag();
         else if (mouse.leftButton.isPressed && _draggedEntityId.HasValue)
@@ -68,28 +74,23 @@ public class DragDropInputSystem : MonoBehaviour
         }
 
         // Priority 1: Try to start dragging a skeleton
-        foreach (var controller in CharacterControllers.Instance.Skeletons)
+        var controller = GetWorkhorseAtPosition(clickWorldPos);
+        if (controller != null)
         {
-            var distance = Vector2.Distance(clickWorldPos, controller.Position);
-            if (distance < HitRadius)
+            _dragType = DragType.Skeleton;
+            _draggedEntityId = controller.EntityId;
+
+            // Unassign from workspace when starting to drag
+            if (controller.AssignedWorkspaceId.HasValue)
             {
-                _dragType = DragType.Skeleton;
-                _draggedEntityId = controller.EntityId;
-
-                // Unassign from workspace when starting to drag
-                if (controller.AssignedWorkspaceId.HasValue)
-                {
-                    var assignedWorkspace = WorkspaceControllers.Instance.GetByEntityId(controller.AssignedWorkspaceId.Value);
-                    assignedWorkspace?.UnassignSkeleton();
-                    controller.UnassignFromWorkspace();
-                }
-
-                controller.SetDragging(true);
-                controller.Animator.SetDragIndicator(true);
-                return;
+                var assignedWorkspace = WorkspaceControllers.Instance.GetByEntityId(controller.AssignedWorkspaceId.Value);
+                assignedWorkspace?.UnassignSkeleton();
+                controller.UnassignFromWorkspace();
             }
-        }
 
+            controller.SetDragging(true);
+            controller.Animator.SetDragIndicator(true);
+        }
     }
 
     private void UpdateDrag()
@@ -134,6 +135,7 @@ public class DragDropInputSystem : MonoBehaviour
         var controller = CharacterControllers.Instance.GetByEntityId(_draggedEntityId.Value);
         if (controller == null) return;
 
+        controller.SetDragging(false);
         controller.Animator.SetDragIndicator(false);
 
         // Check if dropped on fire zone first
@@ -168,11 +170,6 @@ public class DragDropInputSystem : MonoBehaviour
             // Assign the dropped skeleton to the workspace (centered on workspace)
             workspace.AssignSkeleton(controller.EntityId);
             controller.AssignToWorkspace(workspace.EntityId, workspace.WorldCenter);
-        }
-        else
-        {
-            // No workspace found - continue with existing falling/idle logic
-            controller.SetDragging(false);
         }
     }
 
@@ -228,30 +225,54 @@ public class DragDropInputSystem : MonoBehaviour
         return _mainCamera.ScreenToWorldPoint(mousePos);
     }
 
-    private bool TryRevealWorkhorse(Vector2 clickWorldPos)
+    private bool IsPointerOverUI()
     {
+        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(-1);
+    }
+
+    private bool HasDraggableEntityAtMouse()
+    {
+        var clickWorldPos = GetMouseWorldPosition();
+        return GetWorkhorseAtPosition(clickWorldPos) != null;
+    }
+
+    private WorkhorseController GetWorkhorseAtPosition(Vector2 worldPos)
+    {
+        var hit = Physics2D.OverlapPoint(worldPos);
+        if (hit == null) return null;
+
+        var animator = hit.GetComponentInParent<WorkhorseAnimator>();
+        if (animator == null) return null;
+
         foreach (var controller in CharacterControllers.Instance.Skeletons)
         {
-            var distance = Vector2.Distance(clickWorldPos, controller.Position);
-            if (distance < HitRadius)
-            {
-                if (controller.IsRevealed)
-                    continue;  // Already revealed
-
-                if (!PlayerProgress.Instance.CanAfford(GameSettings.RevealCost))
-                {
-                    controller.Animator.ShowFloatingText("Need $!");
-                    return true;
-                }
-
-                if (PlayerProgress.Instance.TrySpendDollar(GameSettings.RevealCost))
-                {
-                    controller.Reveal();
-                    controller.Animator.ShowFloatingText($"-${GameSettings.RevealCost}");
-                    return true;
-                }
-            }
+            if (controller.Animator == animator)
+                return controller;
         }
+        return null;
+    }
+
+    private bool TryRevealWorkhorse(Vector2 clickWorldPos)
+    {
+        var controller = GetWorkhorseAtPosition(clickWorldPos);
+        if (controller == null) return false;
+
+        if (controller.IsRevealed)
+            return false;
+
+        if (!PlayerProgress.Instance.CanAfford(GameSettings.RevealCost))
+        {
+            controller.Animator.ShowFloatingText("Need $!");
+            return true;
+        }
+
+        if (PlayerProgress.Instance.TrySpendDollar(GameSettings.RevealCost))
+        {
+            controller.Reveal();
+            controller.Animator.ShowFloatingText($"-${GameSettings.RevealCost}");
+            return true;
+        }
+
         return false;
     }
 

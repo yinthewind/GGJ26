@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public struct SavedWorkhorseData
@@ -110,6 +111,8 @@ public class PlayerProgress
                 Position = workhorse.Position
             });
         }
+
+        Debug.Log($"[Save] Saved {_workhorseData.Count} workhorses: {string.Join(", ", _workhorseData.Select(w => w.EntityId))}");
     }
 
     public void Reset()

@@ -50,6 +50,7 @@ public class WorkhorseShopPanel : MonoBehaviour
     {
         PlayerProgress.Instance.OnDollarChanged += HandleDollarChanged;
         TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
+        LevelManager.Instance.OnLevelLoaded += HandleLevelLoaded;
 
         var inputSystem = FindObjectOfType<DragDropInputSystem>();
         if (inputSystem != null)
@@ -65,6 +66,7 @@ public class WorkhorseShopPanel : MonoBehaviour
 
         PlayerProgress.Instance.OnDollarChanged -= HandleDollarChanged;
         TurnManager.Instance.OnTurnStarted -= HandleTurnStarted;
+        LevelManager.Instance.OnLevelLoaded -= HandleLevelLoaded;
 
         var inputSystem = FindObjectOfType<DragDropInputSystem>();
         if (inputSystem != null)
@@ -306,6 +308,11 @@ public class WorkhorseShopPanel : MonoBehaviour
 
         _workspaceSoldOutThisTurn = false;
         _workspaceSlot?.SetSoldOut(false);
+    }
+
+    private void HandleLevelLoaded(string levelId)
+    {
+        RefreshShop();
     }
 
     public void RefreshShop()

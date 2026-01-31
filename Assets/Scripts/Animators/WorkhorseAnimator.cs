@@ -96,6 +96,7 @@ public class WorkhorseAnimator : MonoBehaviour
         _spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
 
         CreateDragCircle();
+        CreateClickColliders();
 
         // Create mask for reveal system
         _maskAnimator = MaskAnimator.Create(transform);
@@ -127,6 +128,14 @@ public class WorkhorseAnimator : MonoBehaviour
         _dragCircle.material = new Material(Shader.Find("Sprites/Default"));
         _dragCircle.sortingOrder = 5;
         _dragCircle.enabled = false;
+    }
+
+    private void CreateClickColliders()
+    {
+        foreach (var renderer in _spriteRenderers)
+        {
+            renderer.gameObject.AddComponent<PolygonCollider2D>();
+        }
     }
 
     // Facade API
@@ -203,6 +212,17 @@ public class WorkhorseAnimator : MonoBehaviour
     }
 
     public bool IsMaskVisible => _maskAnimator?.IsVisible ?? false;
+
+    public bool ContainsWorldPoint(Vector2 worldPoint)
+    {
+        if (_spriteRenderers == null) return false;
+        foreach (var renderer in _spriteRenderers)
+        {
+            if (renderer.bounds.Contains(worldPoint))
+                return true;
+        }
+        return false;
+    }
 
     public void SetMaskVisible(bool visible)
     {

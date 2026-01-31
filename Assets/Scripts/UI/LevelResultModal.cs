@@ -41,18 +41,21 @@ public class LevelResultModal : MonoBehaviour
     public void ShowWin()
     {
         gameObject.SetActive(true);
+        ModalManager.Instance?.NotifyModalStateChanged(true);
         UpdateForWin();
     }
 
     public void ShowFail()
     {
         gameObject.SetActive(true);
+        ModalManager.Instance?.NotifyModalStateChanged(true);
         UpdateForFail();
     }
 
     public void Hide()
     {
         gameObject.SetActive(false);
+        ModalManager.Instance?.NotifyModalStateChanged(false);
     }
 
     private void BuildUI(GameObject root)
@@ -93,6 +96,7 @@ public class LevelResultModal : MonoBehaviour
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.sizeDelta = new Vector2(400f, 280f);
+        panelRect.anchoredPosition = new Vector2(0f, 250f);
 
         Image panelBg = _panel.AddComponent<Image>();
         panelBg.color = new Color(0.12f, 0.12f, 0.18f, 0.98f);
