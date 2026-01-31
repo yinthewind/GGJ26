@@ -18,7 +18,6 @@ public static class LevelDefinitions
                 },
                 turnLimit: 3,
                 goalName: "First Steps",
-                goalDescription: "Generate 20 total productivity",
                 goalType: GoalType.TotalProductivity,
                 goalTargetValue: 4,
                 projectReward: 50
@@ -38,7 +37,6 @@ public static class LevelDefinitions
                 },
                 turnLimit: 4,
                 goalName: "Team Building",
-                goalDescription: "Generate 40 total productivity",
                 goalType: GoalType.TotalProductivity,
                 goalTargetValue: 6,
                 projectReward: 75
@@ -60,7 +58,6 @@ public static class LevelDefinitions
                 },
                 turnLimit: 5,
                 goalName: "Office Politics",
-                goalDescription: "Generate 60 total productivity",
                 goalType: GoalType.TotalProductivity,
                 goalTargetValue: 10,
                 projectReward: 100
@@ -85,7 +82,6 @@ public static class LevelDefinitions
                 },
                 turnLimit: 5,
                 goalName: "Chaos Management",
-                goalDescription: "Generate 100 total productivity",
                 goalType: GoalType.TotalProductivity,
                 goalTargetValue: 20f,
                 projectReward: 150

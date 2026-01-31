@@ -9,9 +9,14 @@ public class LevelConfig
 
     // Goal fields
     public string GoalName;
-    public string GoalDescription;
     public GoalType GoalType;
     public float GoalTargetValue;
+
+    public string GoalDescription => GoalType switch
+    {
+        GoalType.TotalProductivity => $"Generate {GoalTargetValue} total productivity",
+        _ => $"Reach {GoalTargetValue}"
+    };
 
     // Reward for completing the project
     public int ProjectReward;
@@ -22,7 +27,6 @@ public class LevelConfig
         List<WorkhorseType> availableWorkhorseTypes,
         int turnLimit,
         string goalName,
-        string goalDescription,
         GoalType goalType,
         float goalTargetValue,
         int projectReward)
@@ -32,7 +36,6 @@ public class LevelConfig
         AvailableWorkhorseTypes = availableWorkhorseTypes;
         TurnLimit = turnLimit;
         GoalName = goalName;
-        GoalDescription = goalDescription;
         GoalType = goalType;
         GoalTargetValue = goalTargetValue;
         ProjectReward = projectReward;
