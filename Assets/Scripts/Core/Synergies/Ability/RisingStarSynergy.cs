@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// RisingStar (潜力股): 50 + 50n income, where n = rounds worked.
@@ -13,6 +14,7 @@ public class RisingStarSynergy : AbilitySynergy
 
     private const float BaseProductivity = 0.5f;      // 50 base
     private const float PerRoundBonus = 0.5f;         // +50 per round
+    private const float MaxProductivity = 2.5f;       // Max: 250
 
     public override float GetSelfProductivity(
         WorkhorseAssignment self,
@@ -23,6 +25,7 @@ public class RisingStarSynergy : AbilitySynergy
         if (self.Type != WorkhorseType.RisingStar)
             return baseProductivity;
 
-        return BaseProductivity + (self.RoundsWorked * PerRoundBonus);
+        float result = BaseProductivity + (self.RoundsWorked * PerRoundBonus);
+        return Mathf.Min(result, MaxProductivity);
     }
 }

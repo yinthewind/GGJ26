@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 /// <summary>
 /// Saboteur (破坏家): -15% total team income.
@@ -10,9 +11,10 @@ public class SaboteurSynergy : AbilitySynergy
     public override string Name => "Saboteur";
     public override WorkhorseType WorkhorseType => WorkhorseType.Saboteur;
     public override float BonusPercent => -15f;  // For display purposes
-    public override string Description => "-15% total team income";
+    public override string Description => "-15% total team income (max 70% reduction)";
 
     private const float TotalPenalty = 0.85f;  // -15%
+    private const float MaxPenalty = 0.7f;     // Max 70% reduction (floor at 30% productivity)
 
     public override float GetTotalMultiplier(List<WorkhorseAssignment> assignments)
     {
@@ -26,6 +28,6 @@ public class SaboteurSynergy : AbilitySynergy
         {
             multiplier *= TotalPenalty;
         }
-        return multiplier;
+        return Mathf.Max(1f - MaxPenalty, multiplier);  // Floor at 0.3
     }
 }

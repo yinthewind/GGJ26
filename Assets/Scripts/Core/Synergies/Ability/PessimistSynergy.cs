@@ -10,10 +10,11 @@ public class PessimistSynergy : AbilitySynergy
     public override string Name => "Pessimist";
     public override WorkhorseType WorkhorseType => WorkhorseType.Pessimist;
     public override float BonusPercent => 0f;
-    public override string Description => "-30 income each round (100 - 30n, min 0)";
+    public override string Description => "-30 income each round (100 - 30n, min -50)";
 
     private const float BaseProductivity = 1.0f;      // 100 base
     private const float PerRoundPenalty = 0.3f;       // -30 per round
+    private const float MinProductivity = -0.5f;      // Min: -50
 
     public override float GetSelfProductivity(
         WorkhorseAssignment self,
@@ -25,6 +26,6 @@ public class PessimistSynergy : AbilitySynergy
             return baseProductivity;
 
         float result = BaseProductivity - (self.RoundsWorked * PerRoundPenalty);
-        return Mathf.Max(0f, result);
+        return Mathf.Max(MinProductivity, result);
     }
 }
