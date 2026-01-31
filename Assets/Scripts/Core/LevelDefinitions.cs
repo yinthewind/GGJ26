@@ -12,13 +12,16 @@ public static class LevelDefinitions
                 availableWorkhorseTypes: new List<WorkhorseType>
                 {
                     WorkhorseType.InternNiuma,
-                    WorkhorseType.RegularNiuma
+                    WorkhorseType.RegularNiuma,
+                    WorkhorseType.ToxicWolf,
+                    WorkhorseType.Encourager
                 },
                 turnLimit: 3,
                 goalName: "First Steps",
                 goalDescription: "Generate 20 total productivity",
                 goalType: GoalType.TotalProductivity,
-                goalTargetValue: 20f
+                goalTargetValue: 4,
+                projectReward: 50
             )
         },
         {
@@ -37,7 +40,8 @@ public static class LevelDefinitions
                 goalName: "Team Building",
                 goalDescription: "Generate 40 total productivity",
                 goalType: GoalType.TotalProductivity,
-                goalTargetValue: 40f
+                goalTargetValue: 6,
+                projectReward: 75
             )
         },
         {
@@ -58,7 +62,8 @@ public static class LevelDefinitions
                 goalName: "Office Politics",
                 goalDescription: "Generate 60 total productivity",
                 goalType: GoalType.TotalProductivity,
-                goalTargetValue: 60f
+                goalTargetValue: 10,
+                projectReward: 100
             )
         },
         {
@@ -82,7 +87,8 @@ public static class LevelDefinitions
                 goalName: "Chaos Management",
                 goalDescription: "Generate 100 total productivity",
                 goalType: GoalType.TotalProductivity,
-                goalTargetValue: 100f
+                goalTargetValue: 20f,
+                projectReward: 150
             )
         }
     };

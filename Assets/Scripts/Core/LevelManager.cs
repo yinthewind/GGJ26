@@ -22,6 +22,7 @@ public class LevelManager
     public event Action OnLevelWon;
     public event Action OnLevelFailed;
     public event Action<int> OnTurnsRemainingChanged;
+    public event Action<int> OnProjectRewardEarned;
 
     public void LoadLevel(string levelId)
     {
@@ -79,6 +80,15 @@ public class LevelManager
         if (GoalManager.Instance.CurrentGoal?.IsCompleted == true)
         {
             _isLevelComplete = true;
+
+            // Award project completion reward
+            int reward = _currentConfig.ProjectReward;
+            if (reward > 0)
+            {
+                PlayerProgress.Instance.AddDollar(reward);
+                OnProjectRewardEarned?.Invoke(reward);
+            }
+
             OnLevelWon?.Invoke();
             return;
         }

@@ -134,7 +134,7 @@ public class WorkhorseFireZone : MonoBehaviour
             return;
 
         int sellPrice = GameSettings.GetSellPrice(controller.Type);
-        PlayerProgress.Instance.AddGold(sellPrice);
+        PlayerProgress.Instance.AddDollar(sellPrice);
 
         OnWorkhorseDropped?.Invoke(controller);
 

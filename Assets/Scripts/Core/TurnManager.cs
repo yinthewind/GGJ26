@@ -44,18 +44,11 @@ public class TurnManager
             OnSynergiesActivated?.Invoke(synergies);
         }
 
-        // Add to player progress
+        // Add to player progress (production accumulates toward goal, no per-turn dollar award)
         if (productivity > 0)
         {
             PlayerProgress.Instance.AddProductivity(productivity);
             OnProductivityGained?.Invoke(productivity);
-
-            // Award gold based on productivity
-            int goldEarned = Mathf.RoundToInt(productivity);
-            if (goldEarned > 0)
-            {
-                PlayerProgress.Instance.AddGold(goldEarned);
-            }
         }
 
         // Increment rounds worked for all working skeletons

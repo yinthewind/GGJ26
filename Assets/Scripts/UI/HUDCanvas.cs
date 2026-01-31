@@ -13,6 +13,7 @@ public class HUDCanvas : MonoBehaviour
     public SynergyPanel SynergyPanel { get; private set; }
     public ShowSynergiesButton ShowSynergiesButton { get; private set; }
     public SynergyModal SynergyModal { get; private set; }
+    public LevelResultModal LevelResultModal { get; private set; }
     public WorkhorseShopPanel ShopPanel { get; private set; }
     public CheckButton CheckButton { get; private set; }
     public RestartLevelButton RestartLevelButton { get; private set; }
@@ -28,6 +29,13 @@ public class HUDCanvas : MonoBehaviour
     }
 
     private void Awake() => Instance = this;
+
+    private void Start()
+    {
+        // Subscribe to level events
+        LevelManager.Instance.OnLevelWon += HandleLevelWon;
+        LevelManager.Instance.OnLevelFailed += HandleLevelFailed;
+    }
 
     private void BuildCanvas()
     {
@@ -81,6 +89,9 @@ public class HUDCanvas : MonoBehaviour
         SynergyModal = SynergyModal.Create(Canvas.transform);
         ShowSynergiesButton.BindModal(SynergyModal);
 
+        // Create Level Result Modal (hidden by default, on top of everything)
+        LevelResultModal = LevelResultModal.Create(Canvas.transform);
+
         // Create Workhorse Shop Panel (always visible, right side)
         ShopPanel = WorkhorseShopPanel.Create(
             Canvas.transform,
@@ -95,11 +106,24 @@ public class HUDCanvas : MonoBehaviour
         CheckButton.UpdateVisual(isActive);
     }
 
+    private void HandleLevelWon()
+    {
+        LevelResultModal.ShowWin();
+    }
+
+    private void HandleLevelFailed()
+    {
+        LevelResultModal.ShowFail();
+    }
+
     private void OnDestroy()
     {
         if (CheckModeManager.Instance != null)
         {
             CheckModeManager.Instance.OnCheckModeChanged -= HandleCheckModeChanged;
         }
+
+        LevelManager.Instance.OnLevelWon -= HandleLevelWon;
+        LevelManager.Instance.OnLevelFailed -= HandleLevelFailed;
     }
 }

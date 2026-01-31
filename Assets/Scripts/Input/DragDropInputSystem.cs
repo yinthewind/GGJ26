@@ -264,14 +264,14 @@ public class DragDropInputSystem : MonoBehaviour
 
                 if (!PlayerProgress.Instance.CanAfford(GameSettings.RevealCost))
                 {
-                    controller.Animator.ShowFloatingText("Need gold!");
+                    controller.Animator.ShowFloatingText("Need $!");
                     return true;
                 }
 
-                if (PlayerProgress.Instance.TrySpendGold(GameSettings.RevealCost))
+                if (PlayerProgress.Instance.TrySpendDollar(GameSettings.RevealCost))
                 {
                     controller.Reveal();
-                    controller.Animator.ShowFloatingText($"-{GameSettings.RevealCost}g");
+                    controller.Animator.ShowFloatingText($"-${GameSettings.RevealCost}");
                     return true;
                 }
             }

@@ -11,7 +11,7 @@ public class WorkhorseShopPanel : MonoBehaviour
     private RectTransform _rectTransform;
     private Image _background;
     private TextMeshProUGUI _titleText;
-    private TextMeshProUGUI _goldText;
+    private TextMeshProUGUI _dollarText;
     private List<WorkhorseShopSlot> _slots = new();
     private Button _refreshButton;
     private TextMeshProUGUI _refreshButtonText;
@@ -46,10 +46,10 @@ public class WorkhorseShopPanel : MonoBehaviour
 
     private void Start()
     {
-        PlayerProgress.Instance.OnGoldChanged += HandleGoldChanged;
+        PlayerProgress.Instance.OnDollarChanged += HandleDollarChanged;
         TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
 
-        UpdateGoldDisplay();
+        UpdateDollarDisplay();
     }
 
     private void OnDestroy()
@@ -57,7 +57,7 @@ public class WorkhorseShopPanel : MonoBehaviour
         if (Instance == this)
             Instance = null;
 
-        PlayerProgress.Instance.OnGoldChanged -= HandleGoldChanged;
+        PlayerProgress.Instance.OnDollarChanged -= HandleDollarChanged;
         TurnManager.Instance.OnTurnStarted -= HandleTurnStarted;
     }
 
@@ -116,14 +116,14 @@ public class WorkhorseShopPanel : MonoBehaviour
         _titleText.color = Color.white;
         _titleText.alignment = TextAlignmentOptions.Center;
 
-        // Gold display
-        GameObject goldObj = new GameObject("Gold");
-        goldObj.transform.SetParent(headerObj.transform, false);
-        _goldText = goldObj.AddComponent<TextMeshProUGUI>();
-        _goldText.text = "50 Gold";
-        _goldText.fontSize = 16;
-        _goldText.color = new Color(1f, 0.85f, 0.3f);
-        _goldText.alignment = TextAlignmentOptions.Center;
+        // Dollar display
+        GameObject dollarObj = new GameObject("Dollar");
+        dollarObj.transform.SetParent(headerObj.transform, false);
+        _dollarText = dollarObj.AddComponent<TextMeshProUGUI>();
+        _dollarText.text = "$50";
+        _dollarText.fontSize = 16;
+        _dollarText.color = new Color(0.3f, 0.85f, 0.3f);
+        _dollarText.alignment = TextAlignmentOptions.Center;
     }
 
     private void CreateSlots(Transform parent, float width, float slotHeight)
@@ -192,7 +192,7 @@ public class WorkhorseShopPanel : MonoBehaviour
         if (slot.IsRevealed || slot.IsEmpty || slot.IsLocked) return;
         if (slot.Workhorse == null) return;
 
-        if (PlayerProgress.Instance.TrySpendGold(GameSettings.RevealCost))
+        if (PlayerProgress.Instance.TrySpendDollar(GameSettings.RevealCost))
         {
             slot.Workhorse.Reveal();  // Reuse existing reveal logic
             slot.RefreshDisplay();    // Update UI to show revealed info
@@ -206,7 +206,7 @@ public class WorkhorseShopPanel : MonoBehaviour
 
         int price = GameSettings.ShopWorkhorsePrice;
 
-        if (!PlayerProgress.Instance.TrySpendGold(price))
+        if (!PlayerProgress.Instance.TrySpendDollar(price))
             return;
 
         // Enable and position the existing workhorse (already has correct reveal state)
@@ -229,15 +229,15 @@ public class WorkhorseShopPanel : MonoBehaviour
             return;
         }
 
-        if (PlayerProgress.Instance.TrySpendGold(GameSettings.ShopRefreshCost))
+        if (PlayerProgress.Instance.TrySpendDollar(GameSettings.ShopRefreshCost))
         {
             RefreshShop();
         }
     }
 
-    private void HandleGoldChanged(int newGold)
+    private void HandleDollarChanged(int newDollar)
     {
-        UpdateGoldDisplay();
+        UpdateDollarDisplay();
         UpdateAllSlotBuyButtons();
         UpdateRefreshButtonState();
     }
@@ -305,9 +305,9 @@ public class WorkhorseShopPanel : MonoBehaviour
         UpdateAllSlotBuyButtons();
     }
 
-    private void UpdateGoldDisplay()
+    private void UpdateDollarDisplay()
     {
-        _goldText.text = $"{PlayerProgress.Instance.CurrentGold} Gold";
+        _dollarText.text = $"${PlayerProgress.Instance.CurrentDollar}";
     }
 
     private void UpdateAllSlotBuyButtons()

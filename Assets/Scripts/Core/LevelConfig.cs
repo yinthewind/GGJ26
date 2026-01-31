@@ -13,6 +13,9 @@ public class LevelConfig
     public GoalType GoalType;
     public float GoalTargetValue;
 
+    // Reward for completing the project
+    public int ProjectReward;
+
     public LevelConfig(
         string levelId,
         string levelName,
@@ -21,7 +24,8 @@ public class LevelConfig
         string goalName,
         string goalDescription,
         GoalType goalType,
-        float goalTargetValue)
+        float goalTargetValue,
+        int projectReward)
     {
         LevelId = levelId;
         LevelName = levelName;
@@ -31,5 +35,6 @@ public class LevelConfig
         GoalDescription = goalDescription;
         GoalType = goalType;
         GoalTargetValue = goalTargetValue;
+        ProjectReward = projectReward;
     }
 }

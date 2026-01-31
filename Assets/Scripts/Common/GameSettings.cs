@@ -13,14 +13,14 @@ public static class GameSettings
     public static float WorldWidth = 10f;  // Total world width
 
     // Shop settings
-    public const int StartingGold = 50;
+    public const int StartingDollar = 50;
     public const float SellPriceMultiplier = 0.5f;
     public const int ShopRefreshCost = 5;
     public const int TotalShopSlots = 5;
     public const int InitialActiveSlots = 3;
 
     // Reveal settings
-    public const int RevealCost = 5;  // Gold cost to reveal a masked workhorse
+    public const int RevealCost = 5;  // Dollar cost to reveal a masked workhorse (background check)
 
     // Fixed price for all shop workhorses
     public const int ShopWorkhorsePrice = 10;
