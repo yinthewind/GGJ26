@@ -26,6 +26,9 @@ public class GameInstance : MonoBehaviour
         FloorGridAnimator.Create();
         new GameObject("DragDropInputSystem").AddComponent<DragDropInputSystem>();
         LevelManager.Instance.LoadLevel(LevelDefinitions.FirstLevelId);
+
+        MusicManager.Create();
+        MusicManager.Instance.PlayMusic("Sounds/Late-at-Night(chosic.com)");
     }
 
     private void SetupHUD()
