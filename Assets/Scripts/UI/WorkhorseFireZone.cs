@@ -96,7 +96,7 @@ public class WorkhorseFireZone : MonoBehaviour
         labelRect.offsetMax = new Vector2(-5f, 0f);
 
         _labelText = labelObj.AddComponent<TextMeshProUGUI>();
-        _labelText.text = "Drop to sell";
+        _labelText.text = "Drop to fire";
         _labelText.fontSize = 12;
         _labelText.color = new Color(0.8f, 0.8f, 0.8f);
         _labelText.alignment = TextAlignmentOptions.Center;
@@ -133,8 +133,8 @@ public class WorkhorseFireZone : MonoBehaviour
         if (controller == null)
             return;
 
-        int sellPrice = GameSettings.GetSellPrice(controller.Type);
-        PlayerProgress.Instance.AddDollar(sellPrice);
+        if (!PlayerProgress.Instance.TrySpendDollar(GameSettings.FireCost))
+            return;
 
         OnWorkhorseDropped?.Invoke(controller);
 
@@ -143,19 +143,29 @@ public class WorkhorseFireZone : MonoBehaviour
         SetHighlighted(false);
     }
 
+    public bool CanAffordFire()
+    {
+        return PlayerProgress.Instance.CanAfford(GameSettings.FireCost);
+    }
+
     public void SetHighlighted(bool highlighted, WorkhorseType? previewType = null)
     {
         _isHighlighted = highlighted;
 
         if (highlighted)
         {
-            _background.color = new Color(0.5f, 0.2f, 0.2f, 0.95f);
-
-            if (previewType.HasValue)
+            bool canAfford = CanAffordFire();
+            if (canAfford)
             {
-                int sellPrice = GameSettings.GetSellPrice(previewType.Value);
-                _sellPriceText.text = $"+{sellPrice}g";
+                _background.color = new Color(0.5f, 0.2f, 0.2f, 0.95f);
             }
+            else
+            {
+                _background.color = new Color(0.3f, 0.3f, 0.3f, 0.95f);
+            }
+
+            _sellPriceText.text = $"-{GameSettings.FireCost}g";
+            _sellPriceText.color = canAfford ? new Color(1f, 0.4f, 0.4f) : new Color(0.5f, 0.5f, 0.5f);
         }
         else
         {

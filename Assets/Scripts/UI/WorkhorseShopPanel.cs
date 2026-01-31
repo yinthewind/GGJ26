@@ -22,6 +22,8 @@ public class WorkhorseShopPanel : MonoBehaviour
     private int _activeSlots;
     private bool _freeRefreshAvailable = true;
     private bool _workspaceSoldOutThisTurn = false;
+    private int _refreshCount = 0;
+    private int _revealCount = 0;
 
     public WorkhorseFireZone FireZone => _fireZone;
 
@@ -251,8 +253,10 @@ public class WorkhorseShopPanel : MonoBehaviour
         if (slot.IsRevealed || slot.IsEmpty || slot.IsLocked) return;
         if (slot.Workhorse == null) return;
 
-        if (PlayerProgress.Instance.TrySpendDollar(GameSettings.RevealCost))
+        int revealCost = GameSettings.RevealCost + (_revealCount * GameSettings.RevealCostIncrement);
+        if (PlayerProgress.Instance.TrySpendDollar(revealCost))
         {
+            _revealCount++;
             slot.Workhorse.Reveal();  // Reuse existing reveal logic
             slot.RefreshDisplay();    // Update UI to show revealed info
         }
@@ -288,9 +292,12 @@ public class WorkhorseShopPanel : MonoBehaviour
             return;
         }
 
-        if (PlayerProgress.Instance.TrySpendDollar(GameSettings.ShopRefreshCost))
+        int refreshCost = GameSettings.ShopRefreshCost + (_refreshCount * GameSettings.ShopRefreshCostIncrement);
+        if (PlayerProgress.Instance.TrySpendDollar(refreshCost))
         {
+            _refreshCount++;
             RefreshShop();
+            UpdateRefreshButtonText();
         }
     }
 
@@ -312,6 +319,8 @@ public class WorkhorseShopPanel : MonoBehaviour
 
     private void HandleLevelLoaded(string levelId)
     {
+        _refreshCount = 0;
+        _revealCount = 0;
         RefreshShop();
     }
 
@@ -393,7 +402,8 @@ public class WorkhorseShopPanel : MonoBehaviour
         }
         else
         {
-            _refreshButtonText.text = $"REFRESH ({GameSettings.ShopRefreshCost}g)";
+            int refreshCost = GameSettings.ShopRefreshCost + (_refreshCount * GameSettings.ShopRefreshCostIncrement);
+            _refreshButtonText.text = $"REFRESH ({refreshCost}g)";
         }
 
         UpdateRefreshButtonState();
@@ -407,7 +417,8 @@ public class WorkhorseShopPanel : MonoBehaviour
         }
         else
         {
-            _refreshButton.interactable = PlayerProgress.Instance.CanAfford(GameSettings.ShopRefreshCost);
+            int refreshCost = GameSettings.ShopRefreshCost + (_refreshCount * GameSettings.ShopRefreshCostIncrement);
+            _refreshButton.interactable = PlayerProgress.Instance.CanAfford(refreshCost);
         }
     }
 }

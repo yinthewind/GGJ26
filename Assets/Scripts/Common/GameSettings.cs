@@ -14,19 +14,23 @@ public static class GameSettings
 
     // Shop settings
     public const int StartingDollar = 50;
-    public const float SellPriceMultiplier = 0.5f;
-    public const int ShopRefreshCost = 5;
+    public const int ShopRefreshCost = 10;
+    public const int ShopRefreshCostIncrement = 10;
     public const int TotalShopSlots = 5;
     public const int InitialActiveSlots = 3;
 
     // Reveal settings
-    public const int RevealCost = 5;  // Dollar cost to reveal a masked workhorse (background check)
+    public const int RevealCost = 15;
+    public const int RevealCostIncrement = 5;
 
     // Workspace settings
-    public const int WorkspacePrice = 15;
+    public const int WorkspacePrice = 20;
+
+    // Fire cost (cost to dismiss a workhorse)
+    public const int FireCost = 40;
 
     // Fixed price for all shop workhorses
-    public const int ShopWorkhorsePrice = 10;
+    public const int ShopWorkhorsePrice = 20;
 
     // Productivity multipliers per workspace type
     public static readonly Dictionary<WorkspaceType, float> WorkspaceProductivityMultipliers = new()
@@ -85,12 +89,4 @@ public static class GameSettings
         return workspaceMultiplier * workerRate;
     }
 
-    public static int GetSellPrice(WorkhorseType type)
-    {
-        if (WorkhorsePrices.TryGetValue(type, out int price))
-        {
-            return Mathf.RoundToInt(price * SellPriceMultiplier);
-        }
-        return 0;
-    }
 }
