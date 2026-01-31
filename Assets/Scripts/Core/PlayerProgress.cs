@@ -9,6 +9,7 @@ public struct SavedWorkhorseData
     public WorkhorseType Type;
     public Guid? AssignedWorkspaceId;
     public Vector3 Position; // Used only for unassigned workhorses
+    public bool IsRevealed;
 }
 
 public struct SavedWorkspaceData
@@ -108,7 +109,8 @@ public class PlayerProgress
                 EntityId = workhorse.EntityId,
                 Type = workhorse.Type,
                 AssignedWorkspaceId = workhorse.AssignedWorkspaceId,
-                Position = workhorse.Position
+                Position = workhorse.Position,
+                IsRevealed = workhorse.IsRevealed
             });
         }
 

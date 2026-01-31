@@ -287,16 +287,16 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         {
             // Revealed: show actual info
             WorkhorseType type = _workhorse.Type;
-            _nameText.text = type.ToString();
+            _nameText.text = WorkhorseAnimator.GetTypeAbbreviation(type);
             _iconImage.color = GameSettings.WorkhorseColors[type];
             _productivityText.text = $"+{GameSettings.WorkhorseProductivityRates[type]:F1}";
         }
         else
         {
             // Masked: hide info (except price)
-            _nameText.text = "???";
+            _nameText.text = "??";
             _iconImage.color = new Color(0.4f, 0.4f, 0.4f);
-            _productivityText.text = "???";
+            _productivityText.text = "??";
         }
         // Price is always visible
         _priceText.text = $"{GameSettings.ShopWorkhorsePrice}g";

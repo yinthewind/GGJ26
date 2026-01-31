@@ -16,14 +16,11 @@ public class WorkhorseAnimator : MonoBehaviour
     public static WorkhorseAnimator GetAnimator(Guid entityId) => _animators.TryGetValue(entityId, out var animator) ? animator : null;
     public static void ClearRegistry() => _animators.Clear();
 
-    // Default skeleton prefab path in Resources
-    private const string DefaultPrefabPath = "Addons/BasicPack/2_Prefab/Skelton/SPUM_20240911215639833";
-
-    private SPUM_Prefabs _spumPrefabs;
-    private readonly Dictionary<PlayerState, int> _animationIndices = new();
+    private SpriteRenderer _visualRenderer;
     private SpriteRenderer[] _spriteRenderers;
     private LineRenderer _dragCircle;
     private MaskAnimator _maskAnimator;
+    private TextMeshPro _typeLabel;
 
     private static readonly Color DragCircleColor = new Color(0.3f, 0.7f, 1f, 0.8f);
     private const float CircleRadius = 0.6f;
@@ -38,68 +35,95 @@ public class WorkhorseAnimator : MonoBehaviour
     private const float FloatingTextStartY = 1.0f; // Above skeleton head
     private const float FloatingTextFontSize = 3.6f;
 
-    public static GameObject Create(Vector3 position, Quaternion rotation, string prefabPath = null, string id = "Unknown")
+    // Visual configuration
+    private const float VisualSize = 1.0f;
+    private const float VisualYOffset = 0.5f;
+    private const float TypeLabelFontSize = 3f;
+
+    public static GameObject Create(Vector3 position, Quaternion rotation, WorkhorseType type, string id = "Unknown")
     {
         var go = new GameObject($"{Tag}:{id}");
         go.transform.SetPositionAndRotation(position, rotation);
 
         var animator = go.AddComponent<WorkhorseAnimator>();
-        animator.LoadPrefab(prefabPath ?? DefaultPrefabPath);
+        animator.BuildSimpleVisual(type);
 
         return go;
     }
 
-    private void LoadPrefab(string prefabPath)
+    private void BuildSimpleVisual(WorkhorseType type)
     {
-        var prefab = Resources.Load<SPUM_Prefabs>(prefabPath);
-        if (prefab == null)
-        {
-            Debug.LogError($"Failed to load SPUM prefab at: {prefabPath}");
-            return;
-        }
+        // Create Visual child GameObject
+        var visualGo = new GameObject("Visual");
+        visualGo.transform.SetParent(transform);
+        visualGo.transform.localPosition = new Vector3(0f, VisualYOffset, 0f);
+        visualGo.transform.localScale = new Vector3(VisualSize, VisualSize, 1f);
 
-        var instance = Instantiate(prefab, transform);
-        instance.transform.localPosition = Vector3.zero;
-        instance.transform.localScale = Vector3.one;
-        _spumPrefabs = instance;
+        // Add SpriteRenderer with programmatic 1x1 white texture, colored black
+        _visualRenderer = visualGo.AddComponent<SpriteRenderer>();
+        _visualRenderer.sprite = CreateWhiteSquareSprite();
+        _visualRenderer.color = Color.black;
+        _visualRenderer.sortingOrder = 1;
 
-        InitializeAfterLoad();
-    }
+        // Create TextMeshPro child for type name
+        var labelGo = new GameObject("TypeLabel");
+        labelGo.transform.SetParent(visualGo.transform);
+        labelGo.transform.localPosition = new Vector3(0f, 0f, -0.1f); // Slightly in front
 
-    private void InitializeAfterLoad()
-    {
-        // Initialize animation system
-        if (!_spumPrefabs.allListsHaveItemsExist())
-        {
-            _spumPrefabs.PopulateAnimationLists();
-        }
-        _spumPrefabs.OverrideControllerInit();
+        _typeLabel = labelGo.AddComponent<TextMeshPro>();
+        _typeLabel.text = GetTypeAbbreviation(type);
+        _typeLabel.fontSize = TypeLabelFontSize;
+        _typeLabel.color = Color.white;
+        _typeLabel.alignment = TextAlignmentOptions.Center;
+        _typeLabel.sortingOrder = 2;
 
-        // Initialize animation indices
-        foreach (PlayerState state in System.Enum.GetValues(typeof(PlayerState)))
-        {
-            _animationIndices[state] = 0;
-        }
+        // Center the text in the square
+        var rectTransform = _typeLabel.GetComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(2f, 1f);
 
-        // Disable shadow (causes tinting artifacts)
-        var shadow = _spumPrefabs.transform.Find("UnitRoot/Shadow");
-        if (shadow != null)
-        {
-            shadow.gameObject.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning($"WorkhorseAnimator {_spumPrefabs.name}: Shadow object not found for disabling.");
-        }
+        // Cache sprite renderers for SetVisible/SetTransparent
+        _spriteRenderers = new SpriteRenderer[] { _visualRenderer };
 
-        // Cache sprite renderers for tinting
-        _spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+        // Add collider for click detection
+        var collider = visualGo.AddComponent<BoxCollider2D>();
+        collider.size = Vector2.one;
 
         CreateDragCircle();
-        CreateClickColliders();
 
         // Create mask for reveal system
         _maskAnimator = MaskAnimator.Create(transform);
+    }
+
+    private static Sprite _cachedWhiteSquare;
+
+    public static string GetTypeAbbreviation(WorkhorseType type)
+    {
+        return type switch
+        {
+            WorkhorseType.InternNiuma => "IN",
+            WorkhorseType.RegularNiuma => "RN",
+            WorkhorseType.SuperNiuma => "SN",
+            WorkhorseType.ToxicWolf => "TW",
+            WorkhorseType.Encourager => "EN",
+            WorkhorseType.RisingStar => "RS",
+            WorkhorseType.FreeSpirit => "FS",
+            WorkhorseType.Pessimist => "PE",
+            WorkhorseType.Saboteur => "SA",
+            _ => "??"
+        };
+    }
+
+    private static Sprite CreateWhiteSquareSprite()
+    {
+        if (_cachedWhiteSquare != null)
+            return _cachedWhiteSquare;
+
+        var texture = new Texture2D(1, 1);
+        texture.SetPixel(0, 0, Color.white);
+        texture.Apply();
+
+        _cachedWhiteSquare = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+        return _cachedWhiteSquare;
     }
 
     private void CreateDragCircle()
@@ -130,35 +154,18 @@ public class WorkhorseAnimator : MonoBehaviour
         _dragCircle.enabled = false;
     }
 
-    private void CreateClickColliders()
-    {
-        foreach (var renderer in _spriteRenderers)
-        {
-            renderer.gameObject.AddComponent<PolygonCollider2D>();
-        }
-    }
+    // Facade API - now no-ops since we have no skeletal animation
+    public void PlayIdle(int index = 0) { }
+    public void PlayMove(int index = 0) { }
+    public void PlayAttack(int index = 0) { }
+    public void PlayDamaged(int index = 0) { }
+    public void PlayDebuff(int index = 0) { }
+    public void PlayDeath(int index = 0) { }
+    public void PlayOther(int index = 0) { }
 
-    // Facade API
-    public void PlayIdle(int index = 0) => PlayAnimation(PlayerState.IDLE, index);
-    public void PlayMove(int index = 0) => PlayAnimation(PlayerState.MOVE, index);
-    public void PlayAttack(int index = 0) => PlayAnimation(PlayerState.ATTACK, index);
-    public void PlayDamaged(int index = 0) => PlayAnimation(PlayerState.DAMAGED, index);
-    public void PlayDebuff(int index = 0) => PlayAnimation(PlayerState.DEBUFF, index);
-    public void PlayDeath(int index = 0) => PlayAnimation(PlayerState.DEATH, index);
-    public void PlayOther(int index = 0) => PlayAnimation(PlayerState.OTHER, index);
+    public void PlayAnimation(PlayerState state, int index = 0) { }
 
-    public void PlayAnimation(PlayerState state, int index = 0)
-    {
-        if (_spumPrefabs == null) return;
-        _animationIndices[state] = index;
-        _spumPrefabs.PlayAnimation(state, index);
-    }
-
-    public void SetFacing(bool faceRight)
-    {
-        if (_spumPrefabs == null) return;
-        _spumPrefabs.transform.localScale = new Vector3(faceRight ? -1 : 1, 1, 1);
-    }
+    public void SetFacing(bool faceRight) { }
 
     public void SetDragIndicator(bool visible)
     {
@@ -228,5 +235,11 @@ public class WorkhorseAnimator : MonoBehaviour
     {
         _maskAnimator?.SetVisible(visible);
         SetVisible(!visible);  // Hide real sprites when masked
+
+        // Hide type label when masked (unrevealed)
+        if (_typeLabel != null)
+        {
+            _typeLabel.enabled = !visible;
+        }
     }
 }

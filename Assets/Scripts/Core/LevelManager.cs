@@ -187,6 +187,12 @@ public class LevelManager
 
                 var workhorse = CharacterControllers.Instance.SpawnSkeletonWithId(data.EntityId, data.Type, spawnPos);
 
+                // Restore reveal state
+                if (data.IsRevealed)
+                {
+                    workhorse.Reveal();
+                }
+
                 // Re-establish assignment if applicable
                 if (targetWorkspace != null)
                 {

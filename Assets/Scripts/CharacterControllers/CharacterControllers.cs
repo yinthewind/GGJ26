@@ -54,8 +54,7 @@ public class CharacterControllers
     /// </summary>
     public WorkhorseController SpawnSkeleton(WorkhorseType type, Vector3 position)
     {
-        string prefabPath = WorkhorsePrefabs.GetPrefabPath(type);
-        GameObject go = WorkhorseAnimator.Create(position, Quaternion.identity, prefabPath, type.ToString());
+        GameObject go = WorkhorseAnimator.Create(position, Quaternion.identity, type, type.ToString());
         WorkhorseAnimator animator = go.GetComponent<WorkhorseAnimator>();
 
         WorkhorseController controller = new WorkhorseController(go.transform, type, animator);
@@ -79,8 +78,7 @@ public class CharacterControllers
     /// </summary>
     public WorkhorseController SpawnSkeletonWithId(Guid entityId, WorkhorseType type, Vector3 position)
     {
-        string prefabPath = WorkhorsePrefabs.GetPrefabPath(type);
-        GameObject go = WorkhorseAnimator.Create(position, Quaternion.identity, prefabPath, type.ToString());
+        GameObject go = WorkhorseAnimator.Create(position, Quaternion.identity, type, type.ToString());
         WorkhorseAnimator animator = go.GetComponent<WorkhorseAnimator>();
 
         WorkhorseController controller = new WorkhorseController(entityId, go.transform, type, animator);
