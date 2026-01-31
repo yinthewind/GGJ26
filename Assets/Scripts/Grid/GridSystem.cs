@@ -1,8 +1,21 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class GridSystem
 {
     public const float CellSize = 1.0f;
+
+    // Valid workspace positions form a diamond (45° rotated square)
+    private static readonly HashSet<Vector2Int> ValidWorkspacePositions = new()
+    {
+        new(0, 0), new(2, 0), new(-2, 0), new(0, 2), new(0, -2),
+        new(1, 1), new(-1, 1), new(1, -1), new(-1, -1)
+    };
+
+    public static bool IsValidWorkspacePosition(Vector2Int gridPosition)
+    {
+        return ValidWorkspacePositions.Contains(gridPosition);
+    }
 
     public static Vector3 SnapToGrid(Vector3 worldPosition)
     {
@@ -29,12 +42,13 @@ public static class GridSystem
 
     public static Vector2Int[] GetAdjacentPositions(Vector2Int gridPosition)
     {
+        // Diagonal neighbors for the rotated diamond grid
         return new Vector2Int[]
         {
-            gridPosition + Vector2Int.up,
-            gridPosition + Vector2Int.down,
-            gridPosition + Vector2Int.left,
-            gridPosition + Vector2Int.right
+            gridPosition + new Vector2Int(-1, 1),   // upper-left
+            gridPosition + new Vector2Int(1, 1),    // upper-right
+            gridPosition + new Vector2Int(-1, -1),  // lower-left
+            gridPosition + new Vector2Int(1, -1)    // lower-right
         };
     }
 }

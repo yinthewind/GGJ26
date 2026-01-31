@@ -204,13 +204,13 @@ public class LevelManager
         }
         else
         {
-            // First level: spawn default 3 workspaces in L shape
+            // First level: spawn 3 workspaces in the diamond grid
             WorkspaceControllers.Instance.SpawnWorkspace(
-                new Vector3(0f, -1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace1");
+                GridSystem.GridToWorld(new Vector2Int(0, 0)), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace1");
             WorkspaceControllers.Instance.SpawnWorkspace(
-                new Vector3(1f, -1f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace2");
+                GridSystem.GridToWorld(new Vector2Int(1, 1)), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace2");
             WorkspaceControllers.Instance.SpawnWorkspace(
-                new Vector3(1f, 0f, 0f), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace3");
+                GridSystem.GridToWorld(new Vector2Int(-1, 1)), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace3");
 
             // Spawn initial workers based on available types
             var availableTypes = _currentConfig.AvailableWorkhorseTypes;

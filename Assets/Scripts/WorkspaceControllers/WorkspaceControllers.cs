@@ -63,6 +63,10 @@ public class WorkspaceControllers
 
     public bool IsValidPlacement(Vector2Int gridPos, Vector2Int gridSize, Guid? excludeEntityId = null)
     {
+        // Must be a valid workspace position in the diamond grid
+        if (!GridSystem.IsValidWorkspacePosition(gridPos))
+            return false;
+
         // Check all cells the workspace would occupy at target position
         for (int x = 0; x < gridSize.x; x++)
         {
