@@ -45,6 +45,7 @@ public class WorkspaceAnimator : MonoBehaviour
         var offsetX = (_gridSize.x - 1) * 0.5f;
         var offsetY = (_gridSize.y - 1) * 0.5f;
         visualGo.transform.localPosition = new Vector3(offsetX, offsetY, 0f);
+        visualGo.transform.localRotation = Quaternion.Euler(0, 0, 45f);
         visualGo.transform.localScale = new Vector3(_gridSize.x, _gridSize.y, 1f);
 
         _spriteRenderer = visualGo.AddComponent<SpriteRenderer>();
@@ -67,6 +68,7 @@ public class WorkspaceAnimator : MonoBehaviour
         var outlineGo = new GameObject("Outline");
         outlineGo.transform.SetParent(transform);
         outlineGo.transform.localPosition = Vector3.zero;
+        outlineGo.transform.localRotation = Quaternion.Euler(0, 0, 45f);
 
         _outlineRenderer = outlineGo.AddComponent<LineRenderer>();
         _outlineRenderer.useWorldSpace = false;

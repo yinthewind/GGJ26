@@ -47,6 +47,7 @@ public class WorkspacePreviewAnimator : MonoBehaviour
         var offsetX = (_gridSize.x - 1) * 0.5f;
         var offsetY = (_gridSize.y - 1) * 0.5f;
         _visualTransform.localPosition = new Vector3(offsetX, offsetY, 0f);
+        _visualTransform.localRotation = Quaternion.Euler(0, 0, 45f);
         _visualTransform.localScale = new Vector3(_gridSize.x, _gridSize.y, 1f);
     }
 
