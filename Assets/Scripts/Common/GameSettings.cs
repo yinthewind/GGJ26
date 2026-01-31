@@ -68,6 +68,20 @@ public static class GameSettings
         { WorkhorseType.Saboteur, ShopWorkhorsePrice },
     };
 
+    // Whether each workhorse type is always revealed (not masked)
+    public static readonly Dictionary<WorkhorseType, bool> WorkhorseAlwaysRevealed = new()
+    {
+        { WorkhorseType.InternNiuma, true },
+        { WorkhorseType.RegularNiuma, true },
+        { WorkhorseType.SuperNiuma, false },
+        { WorkhorseType.ToxicWolf, false },
+        { WorkhorseType.Encourager, false },
+        { WorkhorseType.RisingStar, false },
+        { WorkhorseType.FreeSpirit, false },
+        { WorkhorseType.Pessimist, false },
+        { WorkhorseType.Saboteur, false },
+    };
+
     // Placeholder colors for worker type icons (until sprites are added)
     public static readonly Dictionary<WorkhorseType, Color> WorkhorseColors = new()
     {

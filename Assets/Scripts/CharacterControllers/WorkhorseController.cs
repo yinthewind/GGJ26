@@ -51,8 +51,16 @@ public class WorkhorseController
 
         EnterState(SkeletonState.Idle);
 
-        // Start masked
-        _animator.SetMaskVisible(true);
+        // Normal NiuMa types are always revealed, others start masked
+        if (GameSettings.WorkhorseAlwaysRevealed[_type])
+        {
+            _isRevealed = true;
+            _animator.SetMaskVisible(false);
+        }
+        else
+        {
+            _animator.SetMaskVisible(true);
+        }
     }
 
     public Guid EntityId => _entityId;
