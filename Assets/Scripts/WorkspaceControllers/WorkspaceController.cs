@@ -5,6 +5,8 @@ public class WorkspaceController
 {
     private static int _nextEntityId = 0;
 
+    public static void ResetEntityIdCounter() => _nextEntityId = 0;
+
     private readonly int _entityId;
     private readonly Transform _transform;
     private readonly Vector2Int _gridSize;

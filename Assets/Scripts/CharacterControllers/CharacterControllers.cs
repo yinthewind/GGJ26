@@ -63,7 +63,7 @@ public class CharacterControllers
         Add(controller);
 
         // If spawned above ground, animate fall
-        if (position.y > 0f)
+        if (position.y > GroundY)
         {
             AnimateFall(go.transform, position.y);
         }
@@ -74,10 +74,13 @@ public class CharacterControllers
         return controller;
     }
 
+    private const float GroundY = -3f;
+
     private void AnimateFall(Transform target, float startY)
     {
-        float fallDuration = startY * 0.15f; // ~0.75s for 5 units
-        target.DOMoveY(0f, fallDuration).SetEase(Ease.InQuad);
+        float fallDistance = startY - GroundY;
+        float fallDuration = fallDistance * 0.15f; // ~0.75s for 5 units
+        target.DOMoveY(GroundY, fallDuration).SetEase(Ease.InQuad);
     }
 
     /// <summary>

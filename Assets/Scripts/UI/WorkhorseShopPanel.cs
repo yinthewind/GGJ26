@@ -250,14 +250,14 @@ public class WorkhorseShopPanel : MonoBehaviour
 
     public void RefreshShop()
     {
-        WorkhorseType[] allTypes = (WorkhorseType[])Enum.GetValues(typeof(WorkhorseType));
+        List<WorkhorseType> availableTypes = GetAvailableWorkhorseTypes();
 
         for (int i = 0; i < _slots.Count; i++)
         {
             if (i < _activeSlots)
             {
-                // Generate random workhorse for active slots
-                WorkhorseType randomType = allTypes[UnityEngine.Random.Range(0, allTypes.Length)];
+                // Generate random workhorse from available types
+                WorkhorseType randomType = availableTypes[UnityEngine.Random.Range(0, availableTypes.Count)];
                 _slots[i].SetStock(randomType);
                 _slots[i].SetLocked(false);
             }
@@ -271,9 +271,23 @@ public class WorkhorseShopPanel : MonoBehaviour
         UpdateAllSlotBuyButtons();
     }
 
+    private List<WorkhorseType> GetAvailableWorkhorseTypes()
+    {
+        var result = new List<WorkhorseType>();
+        foreach (WorkhorseType type in Enum.GetValues(typeof(WorkhorseType)))
+        {
+            if (LevelManager.Instance.IsWorkhorseTypeAvailable(type))
+            {
+                result.Add(type);
+            }
+        }
+        return result;
+    }
+
     public void SetActiveSlots(int count)
     {
         _activeSlots = Mathf.Clamp(count, 0, _totalSlots);
+        List<WorkhorseType> availableTypes = GetAvailableWorkhorseTypes();
 
         for (int i = 0; i < _slots.Count; i++)
         {
@@ -283,8 +297,7 @@ public class WorkhorseShopPanel : MonoBehaviour
             // If we just unlocked a slot, give it stock
             if (!isLocked && _slots[i].IsEmpty)
             {
-                WorkhorseType[] allTypes = (WorkhorseType[])Enum.GetValues(typeof(WorkhorseType));
-                WorkhorseType randomType = allTypes[UnityEngine.Random.Range(0, allTypes.Length)];
+                WorkhorseType randomType = availableTypes[UnityEngine.Random.Range(0, availableTypes.Count)];
                 _slots[i].SetStock(randomType);
             }
         }

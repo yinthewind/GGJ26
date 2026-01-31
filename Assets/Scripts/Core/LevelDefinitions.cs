@@ -1,0 +1,111 @@
+using System.Collections.Generic;
+
+public static class LevelDefinitions
+{
+    public static readonly Dictionary<string, LevelConfig> Levels = new()
+    {
+        {
+            "level_1",
+            new LevelConfig(
+                levelId: "level_1",
+                levelName: "Getting Started",
+                availableWorkhorseTypes: new List<WorkhorseType>
+                {
+                    WorkhorseType.InternNiuma,
+                    WorkhorseType.RegularNiuma
+                },
+                turnLimit: 3,
+                goalName: "First Steps",
+                goalDescription: "Generate 20 total productivity",
+                goalType: GoalType.TotalProductivity,
+                goalTargetValue: 20f
+            )
+        },
+        {
+            "level_2",
+            new LevelConfig(
+                levelId: "level_2",
+                levelName: "Team Building",
+                availableWorkhorseTypes: new List<WorkhorseType>
+                {
+                    WorkhorseType.InternNiuma,
+                    WorkhorseType.RegularNiuma,
+                    WorkhorseType.SuperNiuma,
+                    WorkhorseType.Encourager
+                },
+                turnLimit: 4,
+                goalName: "Team Building",
+                goalDescription: "Generate 40 total productivity",
+                goalType: GoalType.TotalProductivity,
+                goalTargetValue: 40f
+            )
+        },
+        {
+            "level_3",
+            new LevelConfig(
+                levelId: "level_3",
+                levelName: "Office Politics",
+                availableWorkhorseTypes: new List<WorkhorseType>
+                {
+                    WorkhorseType.InternNiuma,
+                    WorkhorseType.RegularNiuma,
+                    WorkhorseType.SuperNiuma,
+                    WorkhorseType.ToxicWolf,
+                    WorkhorseType.Encourager,
+                    WorkhorseType.Pessimist
+                },
+                turnLimit: 5,
+                goalName: "Office Politics",
+                goalDescription: "Generate 60 total productivity",
+                goalType: GoalType.TotalProductivity,
+                goalTargetValue: 60f
+            )
+        },
+        {
+            "level_4",
+            new LevelConfig(
+                levelId: "level_4",
+                levelName: "Chaos Management",
+                availableWorkhorseTypes: new List<WorkhorseType>
+                {
+                    WorkhorseType.InternNiuma,
+                    WorkhorseType.RegularNiuma,
+                    WorkhorseType.SuperNiuma,
+                    WorkhorseType.ToxicWolf,
+                    WorkhorseType.Encourager,
+                    WorkhorseType.RisingStar,
+                    WorkhorseType.FreeSpirit,
+                    WorkhorseType.Pessimist,
+                    WorkhorseType.Saboteur
+                },
+                turnLimit: 5,
+                goalName: "Chaos Management",
+                goalDescription: "Generate 100 total productivity",
+                goalType: GoalType.TotalProductivity,
+                goalTargetValue: 100f
+            )
+        }
+    };
+
+    public static string FirstLevelId => "level_1";
+
+    public static LevelConfig GetLevel(string levelId)
+    {
+        if (Levels.TryGetValue(levelId, out var config))
+        {
+            return config;
+        }
+        return null;
+    }
+
+    public static string GetNextLevelId(string currentLevelId)
+    {
+        return currentLevelId switch
+        {
+            "level_1" => "level_2",
+            "level_2" => "level_3",
+            "level_3" => "level_4",
+            _ => null
+        };
+    }
+}

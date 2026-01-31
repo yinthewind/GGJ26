@@ -21,12 +21,19 @@ public class TurnCounter : MonoBehaviour
     private void Start()
     {
         TurnManager.Instance.OnTurnStarted += UpdateDisplay;
+        LevelManager.Instance.OnLevelLoaded += HandleLevelLoaded;
         UpdateDisplay();
     }
 
     private void OnDestroy()
     {
         TurnManager.Instance.OnTurnStarted -= UpdateDisplay;
+        LevelManager.Instance.OnLevelLoaded -= HandleLevelLoaded;
+    }
+
+    private void HandleLevelLoaded(string levelId)
+    {
+        UpdateDisplay();
     }
 
     private void BuildUI(GameObject root, float width, float height)
@@ -57,7 +64,7 @@ public class TurnCounter : MonoBehaviour
         textRect.offsetMax = new Vector2(-10f, -5f);
 
         _turnText = textObj.AddComponent<TextMeshProUGUI>();
-        _turnText.text = "Turn 1";
+        _turnText.text = "Lv.1 - Turn 1/10";
         _turnText.fontSize = 22;
         _turnText.fontStyle = FontStyles.Bold;
         _turnText.color = Color.white;
@@ -66,6 +73,10 @@ public class TurnCounter : MonoBehaviour
 
     private void UpdateDisplay()
     {
-        _turnText.text = $"Turn {TurnManager.Instance.CurrentTurn}";
+        int currentTurn = TurnManager.Instance.CurrentTurn;
+        int turnLimit = LevelManager.Instance.CurrentConfig?.TurnLimit ?? 0;
+        string levelId = LevelManager.Instance.CurrentLevelId ?? "level_1";
+        string levelNumber = levelId.Replace("level_", "");
+        _turnText.text = $"Lv.{levelNumber} - Turn {currentTurn}/{turnLimit}";
     }
 }

@@ -14,6 +14,8 @@ public class WorkhorseController
 {
     private static int _nextEntityId = 0;
 
+    public static void ResetEntityIdCounter() => _nextEntityId = 0;
+
     private readonly int _entityId;
     private readonly Transform _transform;
     private readonly WorkhorseType _type;
@@ -120,13 +122,15 @@ public class WorkhorseController
         }
     }
 
+    private const float GroundY = -3f;
+
     private void UpdateFalling(float deltaTime)
     {
         _transform.position += Vector3.down * _fallSpeed * deltaTime;
 
-        if (_transform.position.y <= 0)
+        if (_transform.position.y <= GroundY)
         {
-            _transform.position = new Vector3(_transform.position.x, 0, _transform.position.z);
+            _transform.position = new Vector3(_transform.position.x, GroundY, _transform.position.z);
             EnterState(SkeletonState.Idle);
         }
     }
@@ -200,7 +204,7 @@ public class WorkhorseController
         }
         else
         {
-            if (_transform.position.y > 0)
+            if (_transform.position.y > GroundY)
             {
                 EnterState(SkeletonState.Falling);
             }
@@ -218,7 +222,7 @@ public class WorkhorseController
 
     public void StartFallingIfAboveGround()
     {
-        if (_transform.position.y > 0)
+        if (_transform.position.y > GroundY)
         {
             EnterState(SkeletonState.Falling);
         }
@@ -250,7 +254,7 @@ public class WorkhorseController
         ResetRoundsWorked();
 
         // Fall to ground if above ground level
-        if (_transform.position.y > 0)
+        if (_transform.position.y > GroundY)
         {
             EnterState(SkeletonState.Falling);
         }

@@ -3,21 +3,21 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class EndTurnButton : MonoBehaviour
+public class RestartLevelButton : MonoBehaviour
 {
     public UnityEvent OnClicked { get; private set; } = new UnityEvent();
 
     private Button _button;
     private Action _onClick;
 
-    private static readonly Color ButtonColor = new Color(0.2f, 0.6f, 0.3f, 1f);
+    private static readonly Color ButtonColor = new Color(0.6f, 0.3f, 0.2f, 1f);
 
-    public static EndTurnButton Create(Transform parent, float width, float height, Action onClick)
+    public static RestartLevelButton Create(Transform parent, float width, float height, Action onClick)
     {
-        GameObject obj = new GameObject("EndTurnButton");
+        GameObject obj = new GameObject("RestartLevelButton");
         obj.transform.SetParent(parent, false);
 
-        EndTurnButton component = obj.AddComponent<EndTurnButton>();
+        RestartLevelButton component = obj.AddComponent<RestartLevelButton>();
         component._onClick = onClick;
         component.BuildUI(obj);
 
@@ -26,7 +26,7 @@ public class EndTurnButton : MonoBehaviour
 
     private void BuildUI(GameObject root)
     {
-        _button = UiUtils.CreateTextButton(root, "END TURN", ButtonColor, HandleClick, fontSize: 24);
+        _button = UiUtils.CreateTextButton(root, "RESTART", ButtonColor, HandleClick, fontSize: 20);
     }
 
     private void HandleClick()

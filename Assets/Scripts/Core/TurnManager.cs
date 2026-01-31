@@ -77,6 +77,9 @@ public class TurnManager
 
         // Check goals after turn resolution
         GoalManager.Instance?.CheckGoals();
+
+        // Notify level manager for win/lose checks
+        LevelManager.Instance.OnTurnEnded();
     }
 
     /// <summary>

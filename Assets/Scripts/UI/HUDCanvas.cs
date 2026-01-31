@@ -15,7 +15,8 @@ public class HUDCanvas : MonoBehaviour
     public SynergyModal SynergyModal { get; private set; }
     public WorkhorseShopPanel ShopPanel { get; private set; }
     public CheckButton CheckButton { get; private set; }
-    public ButtonContainer ButtonContainer { get; private set; }
+    public RestartLevelButton RestartLevelButton { get; private set; }
+    public HUDButtonContainer HUDButtonContainer { get; private set; }
 
     public static HUDCanvas Create()
     {
@@ -42,7 +43,7 @@ public class HUDCanvas : MonoBehaviour
     private void BuildUI()
     {
         // Create Turn Counter (top-left)
-        TurnCounter = TurnCounter.Create(Canvas.transform, 100f, 40f);
+        TurnCounter = TurnCounter.Create(Canvas.transform, 170f, 40f);
 
         // Create Productivity Panel (top-center)
         ProductivityPanel = ProductivityPanel.Create(Canvas.transform, 180f, 60f);
@@ -50,18 +51,28 @@ public class HUDCanvas : MonoBehaviour
         // Create Goal Panel (top-right)
         GoalPanel = GoalPanel.Create(Canvas.transform, 200f, 80f);
 
-        // Create Button Container (bottom-right) for stacked buttons
-        ButtonContainer = ButtonContainer.Create(Canvas.transform, 140f);
+        // Create HUD Button Container (left-center) for stacked buttons
+        HUDButtonContainer = HUDButtonContainer.Create(Canvas.transform, 140f);
 
-        // Create buttons and add to container (order: EndTurn at bottom, Check above, Synergies on top)
-        EndTurnButton = EndTurnButton.Create(ButtonContainer.transform, 140f, 50f);
-        ButtonContainer.AddButton(EndTurnButton.gameObject, 50f);
+        // Create buttons and add to container (top to bottom: Synergies, Check, EndTurn)
+        ShowSynergiesButton = ShowSynergiesButton.Create(HUDButtonContainer.transform, 140f, 40f);
+        HUDButtonContainer.AddButton(ShowSynergiesButton.gameObject, 40f);
 
-        CheckButton = CheckButton.Create(ButtonContainer.transform, 140f, 40f);
-        ButtonContainer.AddButton(CheckButton.gameObject, 40f);
+        CheckButton = CheckButton.Create(HUDButtonContainer.transform, 140f, 40f, () => CheckModeManager.Instance.ToggleCheckMode());
+        HUDButtonContainer.AddButton(CheckButton.gameObject, 40f);
+        CheckModeManager.Instance.OnCheckModeChanged += HandleCheckModeChanged;
 
-        ShowSynergiesButton = ShowSynergiesButton.Create(ButtonContainer.transform, 140f, 40f);
-        ButtonContainer.AddButton(ShowSynergiesButton.gameObject, 40f);
+        RestartLevelButton = RestartLevelButton.Create(HUDButtonContainer.transform, 140f, 40f, () => LevelManager.Instance.RestartLevel());
+        HUDButtonContainer.AddButton(RestartLevelButton.gameObject, 40f);
+
+        // Create End Turn Button (bottom-right corner)
+        EndTurnButton = EndTurnButton.Create(Canvas.transform, 160f, 50f, () => TurnManager.Instance.EndTurn());
+        RectTransform endTurnRect = EndTurnButton.GetComponent<RectTransform>();
+        endTurnRect.anchorMin = new Vector2(1, 0);
+        endTurnRect.anchorMax = new Vector2(1, 0);
+        endTurnRect.pivot = new Vector2(1, 0);
+        endTurnRect.anchoredPosition = new Vector2(-20, 20);
+        endTurnRect.sizeDelta = new Vector2(160f, 50f);
 
         // Create Synergy Panel (bottom-left)
         SynergyPanel = SynergyPanel.Create(Canvas.transform, 200f, 320f);
@@ -77,5 +88,18 @@ public class HUDCanvas : MonoBehaviour
             450f,
             GameSettings.TotalShopSlots,
             GameSettings.InitialActiveSlots);
+    }
+
+    private void HandleCheckModeChanged(bool isActive)
+    {
+        CheckButton.UpdateVisual(isActive);
+    }
+
+    private void OnDestroy()
+    {
+        if (CheckModeManager.Instance != null)
+        {
+            CheckModeManager.Instance.OnCheckModeChanged -= HandleCheckModeChanged;
+        }
     }
 }
