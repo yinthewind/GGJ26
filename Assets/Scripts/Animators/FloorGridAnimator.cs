@@ -1,44 +1,63 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Creates a single floor sprite background that covers all 9 workspace positions
-/// in the diamond grid area.
+/// Creates 9 individual floor sprites, one for each workspace position,
+/// using separate sprites from the floors folder.
 /// </summary>
 public class FloorGridAnimator : MonoBehaviour
 {
     public static string Tag = "FloorGridAnimator";
 
-    private SpriteRenderer _spriteRenderer;
+    private static readonly Dictionary<Vector2Int, string> FloorSpriteNames = new()
+    {
+        { new Vector2Int(-1, 1), "D1-2" },
+        { new Vector2Int(0, 2), "D1-3" },
+        { new Vector2Int(1, 1), "D2-3" },
+        { new Vector2Int(-2, 0), "D1-1" },
+        { new Vector2Int(0, 0), "D2-2" },
+        { new Vector2Int(2, 0), "D3-3" },
+        { new Vector2Int(-1, -1), "D2-1" },
+        { new Vector2Int(0, -2), "D3-1" },
+        { new Vector2Int(1, -1), "D3-2" },
+    };
 
-    /// <summary>
-    /// Creates the floor grid background centered at (0, 0).
-    /// The 9 valid positions span from (-2, -2) to (2, 2), so the floor
-    /// covers a 5x5 grid area, rotated 45 degrees to match the diamond grid aesthetic.
-    /// </summary>
     public static GameObject Create()
     {
         var go = new GameObject(Tag);
         go.transform.position = Vector3.zero;
 
         var animator = go.AddComponent<FloorGridAnimator>();
-        animator.CreateVisual();
+        animator.CreateVisuals();
 
         return go;
     }
 
-    private void CreateVisual()
+    private void CreateVisuals()
     {
-        var visualGo = new GameObject("Visual");
-        visualGo.transform.SetParent(transform);
-        visualGo.transform.localPosition = Vector3.zero;
+        foreach (var (gridPos, spriteName) in FloorSpriteNames)
+        {
+            CreateFloorTile(gridPos, spriteName);
+        }
+    }
 
-        // Scale to cover the diamond area (positions span -2 to 2, plus 0.5 margin on each side)
-        // The diamond spans 5 units, so we scale to cover that area
-        visualGo.transform.localScale = new Vector3(5f, 5f, 1f);
+    private void CreateFloorTile(Vector2Int gridPos, string spriteName)
+    {
+        var tileGo = new GameObject($"Floor_{spriteName}");
+        tileGo.transform.SetParent(transform);
+        tileGo.transform.localPosition = WorkspacePositionMap.GetWorldPosition(gridPos);
+        tileGo.transform.localScale = Vector3.one * 0.5f;
 
-        _spriteRenderer = visualGo.AddComponent<SpriteRenderer>();
-        _spriteRenderer.sprite = SpriteLoader.Instance.GetSprite("Sprites/floor");
-        _spriteRenderer.color = Color.white;
-        _spriteRenderer.sortingOrder = -2; // Behind workspace desks which are -1
+        var sr = tileGo.AddComponent<SpriteRenderer>();
+        sr.sprite = SpriteLoader.Instance.GetSprite($"Sprites/floors/{spriteName}");
+        sr.color = Color.white;
+        sr.sortingOrder = -2;
+
+        // Add collider for raycast-based grid position detection
+        var collider = tileGo.AddComponent<PolygonCollider2D>();
+
+        // Store the grid position for lookups
+        var floorInfo = tileGo.AddComponent<FloorTileInfo>();
+        floorInfo.GridPosition = gridPos;
     }
 }

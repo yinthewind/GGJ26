@@ -183,10 +183,20 @@ public class DragDropInputSystem : MonoBehaviour
     private void UpdateWorkspacePlacement()
     {
         var mouseWorldPos = GetMouseWorldPosition();
-        var snappedPos = GridSystem.SnapToGrid(new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0f));
-        var gridPos = GridSystem.WorldToGrid(snappedPos);
-        var isValid = WorkspaceControllers.Instance.IsValidPlacement(gridPos, new Vector2Int(1, 1));
-        _placementPreview.UpdatePreview(snappedPos, isValid);
+        var gridPosResult = GridSystem.RaycastToGridPosition(new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0f));
+
+        if (gridPosResult.HasValue)
+        {
+            var gridPos = gridPosResult.Value;
+            var snappedPos = GridSystem.GridToWorld(gridPos);
+            var isValid = WorkspaceControllers.Instance.IsValidPlacement(gridPos, new Vector2Int(1, 1));
+            _placementPreview.UpdatePreview(snappedPos, isValid, gridPos);
+        }
+        else
+        {
+            // No floor tile under cursor - show invalid preview at mouse position
+            _placementPreview.UpdatePreview(new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0f), false, null);
+        }
     }
 
     private void TryConfirmWorkspacePlacement()
@@ -203,7 +213,7 @@ public class DragDropInputSystem : MonoBehaviour
         // Spawn workspace at valid position
         var worldPos = GridSystem.GridToWorld(gridPos);
         WorkspaceControllers.Instance.SpawnWorkspace(
-            worldPos, gridSize, WorkspaceType.Basic,
+            worldPos, gridSize, gridPos, WorkspaceType.Basic,
             $"Workspace{WorkspaceControllers.Instance.Workspaces.Count + 1}");
 
         // Exit placement mode and notify shop

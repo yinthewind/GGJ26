@@ -157,7 +157,7 @@ public class LevelManager
                 var data = savedWorkspaces[i];
                 var worldPos = GridSystem.GridToWorld(data.GridPosition);
                 var workspace = WorkspaceControllers.Instance.SpawnWorkspaceWithId(
-                    data.EntityId, worldPos, new Vector2Int(1, 1), WorkspaceType.Basic,
+                    data.EntityId, worldPos, new Vector2Int(1, 1), data.GridPosition, WorkspaceType.Basic,
                     $"Workspace{i + 1}");
                 Debug.Log($"[Restore] Workspace EntityId {workspace.EntityId} at grid {data.GridPosition}, world {worldPos}, center {workspace.WorldCenter}");
             }
@@ -206,11 +206,11 @@ public class LevelManager
         {
             // First level: spawn 3 workspaces in the diamond grid
             WorkspaceControllers.Instance.SpawnWorkspace(
-                GridSystem.GridToWorld(new Vector2Int(0, 0)), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace1");
+                GridSystem.GridToWorld(new Vector2Int(0, 0)), new Vector2Int(1, 1), new Vector2Int(0, 0), WorkspaceType.Basic, "Workspace1");
             WorkspaceControllers.Instance.SpawnWorkspace(
-                GridSystem.GridToWorld(new Vector2Int(1, 1)), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace2");
+                GridSystem.GridToWorld(new Vector2Int(1, 1)), new Vector2Int(1, 1), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace2");
             WorkspaceControllers.Instance.SpawnWorkspace(
-                GridSystem.GridToWorld(new Vector2Int(-1, 1)), new Vector2Int(1, 1), WorkspaceType.Basic, "Workspace3");
+                GridSystem.GridToWorld(new Vector2Int(-1, 1)), new Vector2Int(1, 1), new Vector2Int(-1, 1), WorkspaceType.Basic, "Workspace3");
 
             // Spawn initial workers based on available types
             var availableTypes = _currentConfig.AvailableWorkhorseTypes;

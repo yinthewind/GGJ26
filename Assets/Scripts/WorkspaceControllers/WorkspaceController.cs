@@ -7,6 +7,7 @@ public class WorkspaceController
     private readonly Guid _entityId;
     private readonly Transform _transform;
     private readonly Vector2Int _gridSize;
+    private readonly Vector2Int _gridPosition;
     private readonly WorkspaceType _type;
     private readonly WorkspaceAnimator _animator;
 
@@ -14,16 +15,17 @@ public class WorkspaceController
     private bool _isDragging;
     private Vector3 _originalPosition;
 
-    public WorkspaceController(Transform transform, Vector2Int gridSize, WorkspaceType type, WorkspaceAnimator animator)
-        : this(Guid.NewGuid(), transform, gridSize, type, animator)
+    public WorkspaceController(Transform transform, Vector2Int gridSize, Vector2Int gridPosition, WorkspaceType type, WorkspaceAnimator animator)
+        : this(Guid.NewGuid(), transform, gridSize, gridPosition, type, animator)
     {
     }
 
-    public WorkspaceController(Guid entityId, Transform transform, Vector2Int gridSize, WorkspaceType type, WorkspaceAnimator animator)
+    public WorkspaceController(Guid entityId, Transform transform, Vector2Int gridSize, Vector2Int gridPosition, WorkspaceType type, WorkspaceAnimator animator)
     {
         _entityId = entityId;
         _transform = transform;
         _gridSize = gridSize;
+        _gridPosition = gridPosition;
         _type = type;
         _animator = animator;
     }
@@ -34,7 +36,7 @@ public class WorkspaceController
     public Guid? AssignedSkeletonId => _assignedSkeletonId;
     public bool IsOccupied => _assignedSkeletonId.HasValue;
     public bool IsDragging => _isDragging;
-    public Vector2Int GridPosition => GridSystem.WorldToGrid(_transform.position);
+    public Vector2Int GridPosition => _gridPosition;
     public Vector2Int GridSize => _gridSize;
     public WorkspaceType Type => _type;
 

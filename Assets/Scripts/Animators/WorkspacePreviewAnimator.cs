@@ -8,8 +8,9 @@ public class WorkspacePreviewAnimator : MonoBehaviour
     private Vector2Int _gridSize = Vector2Int.one;
     private SpriteRenderer _spriteRenderer;
     private Transform _visualTransform;
+    private Vector2Int? _gridPosition;
 
-    public Vector2Int GridPosition => GridSystem.WorldToGrid(transform.position);
+    public Vector2Int GridPosition => _gridPosition ?? Vector2Int.zero;
 
     public static WorkspacePreviewAnimator Create()
     {
@@ -70,9 +71,10 @@ public class WorkspacePreviewAnimator : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void UpdatePreview(Vector3 position, bool isValid)
+    public void UpdatePreview(Vector3 position, bool isValid, Vector2Int? gridPosition = null)
     {
         transform.position = position;
         _spriteRenderer.color = isValid ? ValidColor : InvalidColor;
+        _gridPosition = gridPosition;
     }
 }

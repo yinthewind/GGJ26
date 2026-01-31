@@ -105,22 +105,22 @@ public class WorkspaceControllers
         return false;  // No adjacent workspace found
     }
 
-    public WorkspaceController SpawnWorkspace(Vector3 position, Vector2Int gridSize, WorkspaceType type, string id = "Unknown")
+    public WorkspaceController SpawnWorkspace(Vector3 position, Vector2Int gridSize, Vector2Int gridPosition, WorkspaceType type, string id = "Unknown")
     {
         var go = WorkspaceAnimator.Create(position, gridSize, id);
         var animator = go.GetComponent<WorkspaceAnimator>();
-        var controller = new WorkspaceController(go.transform, gridSize, type, animator);
+        var controller = new WorkspaceController(go.transform, gridSize, gridPosition, type, animator);
         WorkspaceAnimator.Register(controller.EntityId, animator);
         Add(controller);
 
         return controller;
     }
 
-    public WorkspaceController SpawnWorkspaceWithId(Guid entityId, Vector3 position, Vector2Int gridSize, WorkspaceType type, string id = "Unknown")
+    public WorkspaceController SpawnWorkspaceWithId(Guid entityId, Vector3 position, Vector2Int gridSize, Vector2Int gridPosition, WorkspaceType type, string id = "Unknown")
     {
         var go = WorkspaceAnimator.Create(position, gridSize, id);
         var animator = go.GetComponent<WorkspaceAnimator>();
-        var controller = new WorkspaceController(entityId, go.transform, gridSize, type, animator);
+        var controller = new WorkspaceController(entityId, go.transform, gridSize, gridPosition, type, animator);
         WorkspaceAnimator.Register(controller.EntityId, animator);
         Add(controller);
 

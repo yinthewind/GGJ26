@@ -58,4 +58,20 @@ public static class GridSystem
             gridPosition + new Vector2Int(1, -1)    // lower-right
         };
     }
+
+    /// <summary>
+    /// Raycast to find the grid position of a floor tile at the given world position.
+    /// Returns null if no floor tile is found.
+    /// </summary>
+    public static Vector2Int? RaycastToGridPosition(Vector3 worldPosition)
+    {
+        var hit = Physics2D.OverlapPoint(worldPosition);
+        if (hit != null)
+        {
+            var floorInfo = hit.GetComponent<FloorTileInfo>();
+            if (floorInfo != null)
+                return floorInfo.GridPosition;
+        }
+        return null;
+    }
 }
