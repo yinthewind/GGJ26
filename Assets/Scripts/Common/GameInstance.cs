@@ -30,5 +30,6 @@ public class GameInstance : MonoBehaviour
     private void SetupHUD()
     {
         HUDCanvas.Create();
+        WorldSpaceProductionGraph.Create(new Vector3(0f, -3f, 0f));
     }
 }
