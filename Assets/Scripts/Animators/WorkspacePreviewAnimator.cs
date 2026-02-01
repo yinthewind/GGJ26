@@ -2,63 +2,29 @@ using UnityEngine;
 
 public class WorkspacePreviewAnimator : MonoBehaviour
 {
-    private static readonly Color ValidColor = new Color(0f, 1f, 0f, 0.4f);
-    private static readonly Color InvalidColor = new Color(1f, 0f, 0f, 0.4f);
+    private static readonly Color DeskPreviewColor = new Color(1f, 1f, 1f, 0.5f);
 
-    private Vector2Int _gridSize = Vector2Int.one;
-    private SpriteRenderer _spriteRenderer;
-    private Transform _visualTransform;
-    private Vector2Int? _gridPosition;
+    private Vector2Int? _currentHighlightedPosition;
+    private SpriteRenderer _deskPreview;
 
-    public Vector2Int GridPosition => _gridPosition ?? Vector2Int.zero;
+    public Vector2Int GridPosition => _currentHighlightedPosition ?? Vector2Int.zero;
 
     public static WorkspacePreviewAnimator Create()
     {
         var go = new GameObject("WorkspacePreviewAnimator");
         var preview = go.AddComponent<WorkspacePreviewAnimator>();
         preview.Initialize();
+        preview.Hide();
         return preview;
     }
 
     private void Initialize()
     {
-        var visualGo = new GameObject("Visual");
-        visualGo.transform.SetParent(transform);
-        _visualTransform = visualGo.transform;
-        UpdateVisualTransform();
-
-        _spriteRenderer = visualGo.AddComponent<SpriteRenderer>();
-        _spriteRenderer.sprite = CreateWhiteSquareSprite();
-        _spriteRenderer.sortingOrder = 10;
-
-        Hide();
-    }
-
-    public void SetSize(Vector2Int gridSize)
-    {
-        _gridSize = gridSize;
-        UpdateVisualTransform();
-    }
-
-    private void UpdateVisualTransform()
-    {
-        if (_visualTransform == null) return;
-
-        // Offset visual to center over the full footprint (anchor is bottom-left)
-        var offsetX = (_gridSize.x - 1) * 0.5f;
-        var offsetY = (_gridSize.y - 1) * 0.5f;
-        _visualTransform.localPosition = new Vector3(offsetX, offsetY, 0f);
-        _visualTransform.localRotation = Quaternion.Euler(0, 0, 45f);
-        _visualTransform.localScale = new Vector3(_gridSize.x, _gridSize.y, 1f);
-    }
-
-    private static Sprite CreateWhiteSquareSprite()
-    {
-        var texture = new Texture2D(1, 1);
-        texture.SetPixel(0, 0, Color.white);
-        texture.Apply();
-
-        return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+        _deskPreview = gameObject.AddComponent<SpriteRenderer>();
+        _deskPreview.sprite = SpriteLoader.Instance.GetSprite("Sprites/desk");
+        _deskPreview.color = DeskPreviewColor;
+        _deskPreview.sortingOrder = 10;
+        _deskPreview.enabled = false;
     }
 
     public void Show()
@@ -68,13 +34,36 @@ public class WorkspacePreviewAnimator : MonoBehaviour
 
     public void Hide()
     {
+        ClearCurrentHighlight();
+        _deskPreview.enabled = false;
         gameObject.SetActive(false);
     }
 
     public void UpdatePreview(Vector3 position, bool isValid, Vector2Int? gridPosition = null)
     {
+        // Clear previous highlight if position changed
+        if (_currentHighlightedPosition != gridPosition)
+            ClearCurrentHighlight();
+
+        // Set new highlight if we have a valid grid position
+        if (gridPosition.HasValue)
+        {
+            var highlightType = isValid ? HighlightType.Valid : HighlightType.Invalid;
+            FloorGridAnimatorManager.SetHighlight(gridPosition.Value, highlightType);
+            _currentHighlightedPosition = gridPosition;
+        }
+
+        // Position and show desk preview only when valid
         transform.position = position;
-        _spriteRenderer.color = isValid ? ValidColor : InvalidColor;
-        _gridPosition = gridPosition;
+        _deskPreview.enabled = isValid && gridPosition.HasValue;
+    }
+
+    private void ClearCurrentHighlight()
+    {
+        if (_currentHighlightedPosition.HasValue)
+        {
+            FloorGridAnimatorManager.ClearHighlight(_currentHighlightedPosition.Value);
+            _currentHighlightedPosition = null;
+        }
     }
 }

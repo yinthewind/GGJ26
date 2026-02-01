@@ -59,5 +59,8 @@ public class FloorGridAnimator : MonoBehaviour
         // Store the grid position for lookups
         var floorInfo = tileGo.AddComponent<FloorTileInfo>();
         floorInfo.GridPosition = gridPos;
+
+        // Register with the manager for highlight operations
+        FloorGridAnimatorManager.Register(gridPos, sr);
     }
 }

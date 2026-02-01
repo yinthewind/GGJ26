@@ -176,7 +176,6 @@ public class DragDropInputSystem : MonoBehaviour
     public void EnterWorkspacePlacementMode()
     {
         _isPlacingNewWorkspace = true;
-        _placementPreview.SetSize(new Vector2Int(1, 1));
         _placementPreview.Show();
     }
 
