@@ -50,7 +50,9 @@ public class SynergyPanel : MonoBehaviour
         rect.anchoredPosition = new Vector2(10f, 10f);
 
         _background = root.AddComponent<Image>();
-        _background.color = new Color(0.1f, 0.1f, 0.15f, 0.9f);
+        _background.sprite = SpriteLoader.Instance.GetSprite("Sprites/UIUX/ComboList");
+        _background.type = Image.Type.Sliced;  // Enable 9-slice scaling
+        _background.color = Color.white;       // Use white to show sprite's true colors
 
         CreateTitle(root.transform, width);
         CreateSynergyRows(root.transform, width);
