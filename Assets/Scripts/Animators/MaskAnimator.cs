@@ -1,10 +1,10 @@
 using UnityEngine;
-using TMPro;
 
 public class MaskAnimator : MonoBehaviour
 {
     private SpriteRenderer _spriteRenderer;
-    private TextMeshPro _questionText;
+    private Sprite _standingSprite;
+    private Sprite _sittingSprite;
 
     public bool IsVisible => _spriteRenderer != null && _spriteRenderer.enabled;
 
@@ -22,49 +22,30 @@ public class MaskAnimator : MonoBehaviour
 
     private void BuildVisual(GameObject root)
     {
+        // Load Mask character sprites
+        _standingSprite = SpriteLoader.Instance.GetTexture("Sprites/Characters/Mask");
+        _sittingSprite = SpriteLoader.Instance.GetTexture("Sprites/Characters/Mask_Sit");
+
         _spriteRenderer = root.AddComponent<SpriteRenderer>();
-
-        // Create 1x1 white texture
-        Texture2D texture = new Texture2D(1, 1);
-        texture.SetPixel(0, 0, Color.white);
-        texture.Apply();
-
-        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
-        _spriteRenderer.sprite = sprite;
-
-        // Darker gray color
-        _spriteRenderer.color = new Color(0.2f, 0.2f, 0.25f, 1f);
+        _spriteRenderer.sprite = _standingSprite;
+        _spriteRenderer.color = Color.white;
 
         // Above workhorse sprites
         _spriteRenderer.sortingOrder = 10;
 
-        // Scale down
-        root.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+        // Match workhorse visual scale
+        root.transform.localScale = new Vector3(1.0f, 1.0f, 1f);
 
         // Set default visible
         _spriteRenderer.enabled = true;
-
-        // Create ??? text
-        CreateQuestionText(root.transform);
     }
 
-    private void CreateQuestionText(Transform parent)
+    public void SetSitting(bool sitting)
     {
-        GameObject textObj = new GameObject("QuestionText");
-        textObj.transform.SetParent(parent, false);
-        textObj.transform.localPosition = new Vector3(0f, 0f, -0.1f);  // Slightly in front
-
-        _questionText = textObj.AddComponent<TextMeshPro>();
-        _questionText.text = "???";
-        _questionText.fontSize = 4f;
-        _questionText.fontStyle = FontStyles.Bold;
-        _questionText.color = new Color(0.6f, 0.6f, 0.6f, 1f);
-        _questionText.alignment = TextAlignmentOptions.Center;
-        _questionText.sortingOrder = 11;  // Above the mask sprite
-
-        // Size the text rect
-        RectTransform textRect = _questionText.rectTransform;
-        textRect.sizeDelta = new Vector2(2f, 1f);
+        if (_spriteRenderer != null)
+        {
+            _spriteRenderer.sprite = sitting ? _sittingSprite : _standingSprite;
+        }
     }
 
     public void SetVisible(bool visible)
@@ -72,10 +53,6 @@ public class MaskAnimator : MonoBehaviour
         if (_spriteRenderer != null)
         {
             _spriteRenderer.enabled = visible;
-        }
-        if (_questionText != null)
-        {
-            _questionText.enabled = visible;
         }
     }
 }

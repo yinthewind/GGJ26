@@ -67,9 +67,6 @@ public class HUDCanvas : MonoBehaviour
         // Create Turn Counter (top-left)
         TurnCounter = TurnCounter.Create(Canvas.transform, 170f, 40f);
 
-        // Create Money Panel (below TurnCounter)
-        MoneyPanel = MoneyPanel.Create(Canvas.transform, 160f, 40f);
-
         // Create Productivity Panel (top-center)
         ProductivityPanel = ProductivityPanel.Create(Canvas.transform, 180f, 60f);
 
@@ -107,6 +104,11 @@ public class HUDCanvas : MonoBehaviour
 
         // Bind synergy modal to shop panel's synergies button
         ShopPanel.BindSynergyModal(SynergyModal);
+
+        // Create Money Panel (above shop panel)
+        MoneyPanel = MoneyPanel.Create(Canvas.transform, shopWidth, 40f);
+        RectTransform moneyRect = MoneyPanel.GetComponent<RectTransform>();
+        moneyRect.anchoredPosition = new Vector2(-10f, shopHeight / 2f + 30f);
 
         // Create Hover Tooltip (follows mouse, on top of everything)
         HoverTooltip = WorkspaceHoverTooltip.Create(Canvas.transform);

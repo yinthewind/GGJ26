@@ -163,27 +163,32 @@ public class WorkhorseController
         {
             case SkeletonState.Idle:
                 _stateTimer = UnityEngine.Random.Range(_minIdleTime, _maxIdleTime);
+                _animator.SetSitting(false);
                 _animator.PlayIdle();
                 break;
 
             case SkeletonState.Walking:
                 _stateTimer = UnityEngine.Random.Range(_minWalkTime, _maxWalkTime);
                 _walkDirection = PickRandomDirection();
+                _animator.SetSitting(false);
                 _animator.SetFacing(_walkDirection.x > 0);
                 _animator.PlayMove();
                 break;
 
             case SkeletonState.Attacking:
                 _stateTimer = 1f;
+                _animator.SetSitting(false);
                 _animator.PlayAttack();
                 break;
 
             case SkeletonState.Falling:
+                _animator.SetSitting(false);
                 _animator.PlayIdle();
                 break;
 
             case SkeletonState.Working:
                 _stateTimer = _workingAnimationInterval;
+                _animator.SetSitting(true);
                 _animator.PlayOther(0);
                 break;
         }

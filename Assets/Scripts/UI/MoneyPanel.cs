@@ -35,11 +35,10 @@ public class MoneyPanel : MonoBehaviour
     private void BuildUI(GameObject root, float width, float height)
     {
         RectTransform rect = root.AddComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0f, 1f);
-        rect.anchorMax = new Vector2(0f, 1f);
-        rect.pivot = new Vector2(0f, 1f);
+        rect.anchorMin = new Vector2(1f, 0.5f);
+        rect.anchorMax = new Vector2(1f, 0.5f);
+        rect.pivot = new Vector2(1f, 0.5f);
         rect.sizeDelta = new Vector2(width, height);
-        rect.anchoredPosition = new Vector2(10f, -60f); // Below TurnCounter
 
         // Background using money sprite
         _background = root.AddComponent<Image>();

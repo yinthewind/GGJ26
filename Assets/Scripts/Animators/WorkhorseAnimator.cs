@@ -16,7 +16,21 @@ public class WorkhorseAnimator : MonoBehaviour
     public static WorkhorseAnimator GetAnimator(Guid entityId) => _animators.TryGetValue(entityId, out var animator) ? animator : null;
     public static void ClearRegistry() => _animators.Clear();
 
+    // Character sprite sets (standing, sitting) for random assignment
+    private static readonly (string standing, string sitting)[] CharacterSprites = new[]
+    {
+        ("Sprites/Characters/NiuMa", "Sprites/Characters/NiuMaSit"),
+        ("Sprites/Characters/ToxicWolf", "Sprites/Characters/ToxicWolf_Sit"),
+        ("Sprites/Characters/Encourager", "Sprites/Characters/Encourager_Sit"),
+        ("Sprites/Characters/RisingStar", "Sprites/Characters/RisingStar_Sit"),
+        ("Sprites/Characters/FreeSpirit", "Sprites/Characters/FreeSpirit_Sit"),
+        ("Sprites/Characters/Pessimist", "Sprites/Characters/pessimist_sit"),
+        ("Sprites/Characters/Saboteur", "Sprites/Characters/Saboteur_Sit"),
+    };
+
     private SpriteRenderer _visualRenderer;
+    private Sprite _standingSprite;
+    private Sprite _sittingSprite;
     private SpriteRenderer[] _spriteRenderers;
     private LineRenderer _dragCircle;
     private MaskAnimator _maskAnimator;
@@ -56,9 +70,15 @@ public class WorkhorseAnimator : MonoBehaviour
         visualGo.transform.localPosition = Vector3.zero;
         visualGo.transform.localScale = new Vector3(VisualSize, VisualSize, 1f);
 
-        // Add SpriteRenderer with ENFJ_sit sprite
+        // Randomly select a character sprite set
+        int characterIndex = UnityEngine.Random.Range(0, CharacterSprites.Length);
+        var (standingPath, sittingPath) = CharacterSprites[characterIndex];
+        _standingSprite = SpriteLoader.Instance.GetTexture(standingPath);
+        _sittingSprite = SpriteLoader.Instance.GetTexture(sittingPath);
+
+        // Add SpriteRenderer with standing sprite (default state)
         _visualRenderer = visualGo.AddComponent<SpriteRenderer>();
-        _visualRenderer.sprite = SpriteLoader.Instance.GetTexture("Sprites/Workhorses/Sit/ENFJ_sit");
+        _visualRenderer.sprite = _standingSprite;
         _visualRenderer.color = Color.white;  // Use sprite's natural colors
         _visualRenderer.sortingOrder = 1;
 
@@ -132,6 +152,15 @@ public class WorkhorseAnimator : MonoBehaviour
     public void PlayAnimation(PlayerState state, int index = 0) { }
 
     public void SetFacing(bool faceRight) { }
+
+    public void SetSitting(bool sitting)
+    {
+        if (_visualRenderer != null)
+        {
+            _visualRenderer.sprite = sitting ? _sittingSprite : _standingSprite;
+        }
+        _maskAnimator?.SetSitting(sitting);
+    }
 
     public void SetDragIndicator(bool visible)
     {
