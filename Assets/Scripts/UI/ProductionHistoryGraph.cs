@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -88,28 +89,55 @@ public class ProductionHistoryGraph : MonoBehaviour
 
     private GameObject CreateBar(float value, float maxValue, float barWidth)
     {
+        // Create container for bar + label
+        GameObject container = new GameObject("BarContainer");
+        container.transform.SetParent(transform, false);
+
+        RectTransform containerRect = container.AddComponent<RectTransform>();
+        containerRect.anchorMin = new Vector2(0.5f, 0f);
+        containerRect.anchorMax = new Vector2(0.5f, 0f);
+        containerRect.pivot = new Vector2(0.5f, 0f);
+        containerRect.sizeDelta = new Vector2(barWidth, _height);
+
+        // Add LayoutElement to control size in parent layout group
+        LayoutElement containerLayout = container.AddComponent<LayoutElement>();
+        containerLayout.preferredWidth = barWidth;
+        containerLayout.preferredHeight = _height;
+
+        // Create the bar image
         GameObject barObj = new GameObject("Bar");
-        barObj.transform.SetParent(transform, false);
+        barObj.transform.SetParent(container.transform, false);
 
-        // Create RectTransform
-        RectTransform rect = barObj.AddComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0f);
-        rect.anchorMax = new Vector2(0.5f, 0f);
-        rect.pivot = new Vector2(0.5f, 0f);
+        RectTransform barRect = barObj.AddComponent<RectTransform>();
+        barRect.anchorMin = new Vector2(0.5f, 0f);
+        barRect.anchorMax = new Vector2(0.5f, 0f);
+        barRect.pivot = new Vector2(0.5f, 0f);
 
-        // Calculate proportional height
-        float barHeight = maxValue > 0 ? (value / maxValue) * _height : 0f;
-        rect.sizeDelta = new Vector2(barWidth, barHeight);
+        float labelHeight = 16f;
+        float barHeight = maxValue > 0 ? (value / maxValue) * (_height - labelHeight) : 0f;
+        barRect.sizeDelta = new Vector2(barWidth, barHeight);
+        barRect.anchoredPosition = new Vector2(0f, labelHeight);
 
-        // Add background image
         Image image = barObj.AddComponent<Image>();
         image.color = _barColor;
 
-        // Add LayoutElement to control size in layout group
-        LayoutElement layoutElement = barObj.AddComponent<LayoutElement>();
-        layoutElement.preferredWidth = barWidth;
-        layoutElement.preferredHeight = barHeight;
+        // Create the value label below the bar
+        GameObject labelObj = new GameObject("ValueLabel");
+        labelObj.transform.SetParent(container.transform, false);
 
-        return barObj;
+        RectTransform labelRect = labelObj.AddComponent<RectTransform>();
+        labelRect.anchorMin = new Vector2(0.5f, 0f);
+        labelRect.anchorMax = new Vector2(0.5f, 0f);
+        labelRect.pivot = new Vector2(0.5f, 0f);
+        labelRect.sizeDelta = new Vector2(barWidth, labelHeight);
+        labelRect.anchoredPosition = Vector2.zero;
+
+        TextMeshProUGUI label = labelObj.AddComponent<TextMeshProUGUI>();
+        label.text = value.ToString("F1");
+        label.fontSize = 12f;
+        label.alignment = TextAlignmentOptions.Center;
+        label.color = Color.white;
+
+        return container;
     }
 }

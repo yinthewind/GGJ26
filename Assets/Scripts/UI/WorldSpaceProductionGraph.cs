@@ -13,7 +13,7 @@ public class WorldSpaceProductionGraph : MonoBehaviour
     {
         GameObject obj = new GameObject("WorldSpaceProductionGraph");
         obj.transform.position = worldPosition;
-        obj.transform.rotation = Quaternion.Euler(0f, 0f, 30f);
+        obj.transform.rotation = Quaternion.Euler(0f, 0f, -26.5f);
 
         WorldSpaceProductionGraph component = obj.AddComponent<WorldSpaceProductionGraph>();
         component.BuildCanvas();
@@ -58,7 +58,7 @@ public class WorldSpaceProductionGraph : MonoBehaviour
             200f,   // width
             100f,   // height
             new Color(0.3f, 0.7f, 0.3f),  // green bars
-            4f);    // spacing
+            10f);    // spacing
 
         RectTransform graphRect = _graph.GetComponent<RectTransform>();
         graphRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -66,17 +66,28 @@ public class WorldSpaceProductionGraph : MonoBehaviour
         graphRect.anchoredPosition = Vector2.zero;
     }
 
+    private List<float> GetPaddedHistory()
+    {
+        int turnLimit = LevelManager.Instance.CurrentConfig?.TurnLimit ?? 0;
+        var padded = new List<float>(_productionHistory);
+        while (padded.Count < turnLimit)
+        {
+            padded.Add(0f);
+        }
+        return padded;
+    }
+
     private void HandleProductivityGained(float productivity)
     {
         _productionHistory.Add(productivity);
-        _graph.SetData(_productionHistory);
+        _graph.SetData(GetPaddedHistory());
         Debug.Log($"ProductionHistory updated: {productivity}, total bars: {_productionHistory.Count}");
     }
 
     private void HandleLevelLoaded(string levelId)
     {
         _productionHistory.Clear();
-        _graph.SetData(_productionHistory);
+        _graph.SetData(GetPaddedHistory());
     }
 
     private void OnDestroy()
