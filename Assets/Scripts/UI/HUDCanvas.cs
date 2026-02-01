@@ -49,6 +49,22 @@ public class HUDCanvas : MonoBehaviour
         canvasObj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
     }
 
+    private Canvas BuildPixelPerfectCanvas(string name)
+    {
+        GameObject canvasObj = new GameObject(name);
+        canvasObj.transform.SetParent(transform, false);
+
+        Canvas canvas = canvasObj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+        var scaler = canvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
+        scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ConstantPixelSize;
+
+        canvasObj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+
+        return canvas;
+    }
+
     private void BuildUI()
     {
         // Create Turn Counter (top-left)
@@ -83,8 +99,9 @@ public class HUDCanvas : MonoBehaviour
         endTurnRect.anchoredPosition = new Vector2(-20, 20);
         endTurnRect.sizeDelta = new Vector2(160f, 50f);
 
-        // Create Synergy Panel (bottom-left)
-        SynergyPanel = SynergyPanel.Create(Canvas.transform, 200f, 320f);
+        // Create Synergy Panel (bottom-left) on pixel-perfect canvas
+        Canvas synergyCanvas = BuildPixelPerfectCanvas("SynergyCanvas");
+        SynergyPanel = SynergyPanel.Create(synergyCanvas.transform, 256f, 488f);
 
         // Create Synergy Modal (hidden by default, on top of everything)
         SynergyModal = SynergyModal.Create(Canvas.transform);

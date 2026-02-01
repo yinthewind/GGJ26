@@ -51,7 +51,7 @@ public class SynergyPanel : MonoBehaviour
 
         _background = root.AddComponent<Image>();
         _background.sprite = SpriteLoader.Instance.GetSprite("Sprites/UIUX/ComboList");
-        _background.type = Image.Type.Sliced;  // Enable 9-slice scaling
+        _background.type = Image.Type.Simple;
         _background.color = Color.white;       // Use white to show sprite's true colors
 
         CreateTitle(root.transform, width);
@@ -69,7 +69,7 @@ public class SynergyPanel : MonoBehaviour
         titleRect.anchorMax = new Vector2(1f, 1f);
         titleRect.pivot = new Vector2(0.5f, 1f);
         titleRect.sizeDelta = new Vector2(0f, 25f);
-        titleRect.anchoredPosition = Vector2.zero;
+        titleRect.anchoredPosition = new Vector2(0f, -20f);
 
         _titleText = titleObj.AddComponent<TextMeshProUGUI>();
         _titleText.text = "SYNERGIES";
@@ -82,7 +82,7 @@ public class SynergyPanel : MonoBehaviour
     private void CreateSynergyRows(Transform parent, float width)
     {
         float rowHeight = 18f;
-        float startY = -28f; // Below title
+        float startY = -48f; // Below title with 20px top padding
         float currentY = startY;
 
         // Ability synergies section (workhorse-specific abilities)
@@ -139,7 +139,7 @@ public class SynergyPanel : MonoBehaviour
         headerRect.anchorMax = new Vector2(1f, 1f);
         headerRect.pivot = new Vector2(0f, 1f);
         headerRect.sizeDelta = new Vector2(0f, 14f);
-        headerRect.anchoredPosition = new Vector2(5f, currentY);
+        headerRect.anchoredPosition = new Vector2(25f, currentY);
 
         TextMeshProUGUI headerText = headerObj.AddComponent<TextMeshProUGUI>();
         headerText.text = sectionName;
@@ -258,7 +258,7 @@ public class SynergyPanel : MonoBehaviour
         bulletRect.anchorMax = new Vector2(0f, 0.5f);
         bulletRect.pivot = new Vector2(0.5f, 0.5f);
         bulletRect.sizeDelta = new Vector2(10f, 10f);
-        bulletRect.anchoredPosition = new Vector2(12f, 0f);
+        bulletRect.anchoredPosition = new Vector2(32f, 0f);
 
         Image bulletImage = bulletObj.AddComponent<Image>();
         bulletImage.raycastTarget = false;
@@ -272,8 +272,8 @@ public class SynergyPanel : MonoBehaviour
         textRect.anchorMin = new Vector2(0f, 0f);
         textRect.anchorMax = new Vector2(1f, 1f);
         textRect.sizeDelta = Vector2.zero;
-        textRect.offsetMin = new Vector2(22f, 0f);
-        textRect.offsetMax = new Vector2(-5f, 0f);
+        textRect.offsetMin = new Vector2(42f, 0f);
+        textRect.offsetMax = new Vector2(-25f, 0f);
 
         TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
         text.raycastTarget = false;
