@@ -97,7 +97,7 @@ public class CharacterControllers
         return controller;
     }
 
-    private const float GroundY = -3f;
+    private const float GroundY = 1f;
 
     private void AnimateFall(Transform target, float startY)
     {

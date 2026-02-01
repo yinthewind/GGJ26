@@ -18,6 +18,7 @@ public class HUDCanvas : MonoBehaviour
     public CheckButton CheckButton { get; private set; }
     public RestartLevelButton RestartLevelButton { get; private set; }
     public HUDButtonContainer HUDButtonContainer { get; private set; }
+    public WorkspaceHoverTooltip HoverTooltip { get; private set; }
 
     public static HUDCanvas Create()
     {
@@ -99,6 +100,9 @@ public class HUDCanvas : MonoBehaviour
             450f,
             GameSettings.TotalShopSlots,
             GameSettings.InitialActiveSlots);
+
+        // Create Hover Tooltip (follows mouse, on top of everything)
+        HoverTooltip = WorkspaceHoverTooltip.Create(Canvas.transform);
     }
 
     private void HandleCheckModeChanged(bool isActive)

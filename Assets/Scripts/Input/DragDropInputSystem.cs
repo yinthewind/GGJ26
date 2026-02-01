@@ -14,7 +14,16 @@ public class DragDropInputSystem : MonoBehaviour
     private bool _dragEnabled = true;
     private bool _isPlacingNewWorkspace = false;
 
+    public static DragDropInputSystem Instance { get; private set; }
+    public bool IsPlacingWorkspace => _isPlacingNewWorkspace;
+    public bool IsDragging => _draggedEntityId.HasValue;
+
     public event Action OnWorkspacePlaced;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {

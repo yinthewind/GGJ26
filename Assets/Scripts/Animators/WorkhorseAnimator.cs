@@ -20,7 +20,6 @@ public class WorkhorseAnimator : MonoBehaviour
     private SpriteRenderer[] _spriteRenderers;
     private LineRenderer _dragCircle;
     private MaskAnimator _maskAnimator;
-    private TextMeshPro _typeLabel;
 
     private static readonly Color DragCircleColor = new Color(0.3f, 0.7f, 1f, 0.8f);
     private const float CircleRadius = 0.6f;
@@ -37,8 +36,6 @@ public class WorkhorseAnimator : MonoBehaviour
 
     // Visual configuration
     private const float VisualSize = 1.0f;
-    private const float VisualYOffset = 0.5f;
-    private const float TypeLabelFontSize = 3f;
 
     public static GameObject Create(Vector3 position, Quaternion rotation, WorkhorseType type, string id = "Unknown")
     {
@@ -56,30 +53,14 @@ public class WorkhorseAnimator : MonoBehaviour
         // Create Visual child GameObject
         var visualGo = new GameObject("Visual");
         visualGo.transform.SetParent(transform);
-        visualGo.transform.localPosition = new Vector3(0f, VisualYOffset, 0f);
+        visualGo.transform.localPosition = Vector3.zero;
         visualGo.transform.localScale = new Vector3(VisualSize, VisualSize, 1f);
 
-        // Add SpriteRenderer with programmatic 1x1 white texture, colored black
+        // Add SpriteRenderer with ENFJ_sit sprite
         _visualRenderer = visualGo.AddComponent<SpriteRenderer>();
-        _visualRenderer.sprite = CreateWhiteSquareSprite();
-        _visualRenderer.color = Color.black;
+        _visualRenderer.sprite = SpriteLoader.Instance.GetTexture("Sprites/Workhorses/Sit/ENFJ_sit");
+        _visualRenderer.color = Color.white;  // Use sprite's natural colors
         _visualRenderer.sortingOrder = 1;
-
-        // Create TextMeshPro child for type name
-        var labelGo = new GameObject("TypeLabel");
-        labelGo.transform.SetParent(visualGo.transform);
-        labelGo.transform.localPosition = new Vector3(0f, 0f, -0.1f); // Slightly in front
-
-        _typeLabel = labelGo.AddComponent<TextMeshPro>();
-        _typeLabel.text = GetTypeAbbreviation(type);
-        _typeLabel.fontSize = TypeLabelFontSize;
-        _typeLabel.color = Color.white;
-        _typeLabel.alignment = TextAlignmentOptions.Center;
-        _typeLabel.sortingOrder = 2;
-
-        // Center the text in the square
-        var rectTransform = _typeLabel.GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(2f, 1f);
 
         // Cache sprite renderers for SetVisible/SetTransparent
         _spriteRenderers = new SpriteRenderer[] { _visualRenderer };
@@ -93,8 +74,6 @@ public class WorkhorseAnimator : MonoBehaviour
         // Create mask for reveal system
         _maskAnimator = MaskAnimator.Create(transform);
     }
-
-    private static Sprite _cachedWhiteSquare;
 
     public static string GetTypeAbbreviation(WorkhorseType type)
     {
@@ -111,19 +90,6 @@ public class WorkhorseAnimator : MonoBehaviour
             WorkhorseType.Saboteur => "SA",
             _ => "??"
         };
-    }
-
-    private static Sprite CreateWhiteSquareSprite()
-    {
-        if (_cachedWhiteSquare != null)
-            return _cachedWhiteSquare;
-
-        var texture = new Texture2D(1, 1);
-        texture.SetPixel(0, 0, Color.white);
-        texture.Apply();
-
-        _cachedWhiteSquare = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
-        return _cachedWhiteSquare;
     }
 
     private void CreateDragCircle()
@@ -235,11 +201,5 @@ public class WorkhorseAnimator : MonoBehaviour
     {
         _maskAnimator?.SetVisible(visible);
         SetVisible(!visible);  // Hide real sprites when masked
-
-        // Hide type label when masked (unrevealed)
-        if (_typeLabel != null)
-        {
-            _typeLabel.enabled = !visible;
-        }
     }
 }

@@ -10,6 +10,8 @@ public class ModalManager
 
     public event Action<bool> OnModalStateChanged;
 
+    public bool HasModal { get; private set; }
+
     public static void Initialize()
     {
         Instance = new ModalManager();
@@ -17,6 +19,7 @@ public class ModalManager
 
     public void NotifyModalStateChanged(bool hasModal)
     {
+        HasModal = hasModal;
         OnModalStateChanged?.Invoke(hasModal);
     }
 }

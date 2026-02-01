@@ -241,12 +241,11 @@ public class WorkhorseController
 
     public void AlignToWorkspaceCenter(Vector3 workspaceCenter)
     {
-        // Align skeleton bottom with workspace bottom
-        // Workspace has center pivot, so its bottom is at y - 0.5f
-        // Skeleton has bottom-center pivot (feet), so its bottom is at y
+        // Apply workhorse pivot offset (convert from pixel space to world units)
+        var offset = WorkspacePositionMap.WorkhorsePivotOffset / 100f;
         var alignedPosition = new Vector3(
-            workspaceCenter.x,
-            workspaceCenter.y - 0.5f,
+            workspaceCenter.x + offset.x,
+            workspaceCenter.y + offset.y,
             workspaceCenter.z
         );
         _transform.position = alignedPosition;

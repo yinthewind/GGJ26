@@ -45,6 +45,19 @@ public class WorkspaceControllers
         return null;
     }
 
+    public WorkspaceController GetWorkspaceAtGridPosition(Vector2Int gridPos)
+    {
+        foreach (var controller in _workspaceControllers)
+        {
+            foreach (var cell in controller.GetOccupiedGridCells())
+            {
+                if (cell == gridPos)
+                    return controller;
+            }
+        }
+        return null;
+    }
+
     public bool IsGridPositionOccupied(Vector2Int gridPos, Guid? excludeEntityId = null)
     {
         foreach (var controller in _workspaceControllers)

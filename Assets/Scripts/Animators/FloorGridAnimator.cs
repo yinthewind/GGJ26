@@ -46,7 +46,7 @@ public class FloorGridAnimator : MonoBehaviour
         var tileGo = new GameObject($"Floor_{spriteName}");
         tileGo.transform.SetParent(transform);
         tileGo.transform.localPosition = WorkspacePositionMap.GetWorldPosition(gridPos);
-        tileGo.transform.localScale = Vector3.one * 0.5f;
+        // tileGo.transform.localScale = Vector3.one * 0.5f;
 
         var sr = tileGo.AddComponent<SpriteRenderer>();
         sr.sprite = SpriteLoader.Instance.GetSprite($"Sprites/floors/{spriteName}");
