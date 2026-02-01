@@ -7,10 +7,10 @@ using UnityEngine;
 /// </summary>
 public class RisingStarSynergy : AbilitySynergy
 {
-    public override string Name => "Rising Star";
+    public override string Name => "潜力股";
     public override WorkhorseType WorkhorseType => WorkhorseType.RisingStar;
     public override float BonusPercent => 0f;
-    public override string Description => "+50 income each round (50 + 50n)";
+    public override string Description => "每回合收入+50（50+50n）";
 
     private const float BaseProductivity = 0.5f;      // 50 base
     private const float PerRoundBonus = 0.5f;         // +50 per round

@@ -3,10 +3,10 @@ using System.Linq;
 
 public class DiverseTeamSynergy : Synergy
 {
-    public override string Name => "Diverse Team";
+    public override string Name => "多元团队";
     public override SynergyType Type => SynergyType.Global;
     public override float BonusPercent => 15f;
-    public override string Description => "3+ different worker types";
+    public override string Description => "3种以上不同劳动者";
 
     public override bool CheckActive(List<Workspace> workspaces, List<WorkhorseAssignment> assignments)
     {

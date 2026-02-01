@@ -96,10 +96,11 @@ public class WorkhorseFireZone : MonoBehaviour
         labelRect.offsetMax = new Vector2(-5f, 0f);
 
         _labelText = labelObj.AddComponent<TextMeshProUGUI>();
-        _labelText.text = "Drop to fire";
+        _labelText.text = "拖放解雇";
         _labelText.fontSize = 12;
         _labelText.color = new Color(0.8f, 0.8f, 0.8f);
         _labelText.alignment = TextAlignmentOptions.Center;
+        _labelText.font = UiUtils.GetChineseFont();
     }
 
     private void CreateSellPriceText(Transform parent)

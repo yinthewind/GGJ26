@@ -59,8 +59,9 @@ public class ProductivityPanel : MonoBehaviour
         textRect.offsetMax = new Vector2(-10f, -5f);
 
         _totalText = textObj.AddComponent<TextMeshProUGUI>();
-        _totalText.text = "Goal: 0/0";
+        _totalText.text = "目标: 0/0";
         _totalText.fontSize = 24;
+        _totalText.font = UiUtils.GetChineseFont();
         _totalText.fontStyle = FontStyles.Bold;
         _totalText.color = Color.white;
         _totalText.alignment = TextAlignmentOptions.Center;
@@ -75,6 +76,6 @@ public class ProductivityPanel : MonoBehaviour
     {
         float current = PlayerProgress.Instance.TotalProductivity;
         float target = GoalManager.Instance.CurrentGoal?.TargetValue ?? 0f;
-        _totalText.text = $"Goal: {current:F0}/{target:F0}";
+        _totalText.text = $"目标: {current:F0}/{target:F0}";
     }
 }

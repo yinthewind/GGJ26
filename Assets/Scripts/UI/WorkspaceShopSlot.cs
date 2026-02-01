@@ -82,11 +82,12 @@ public class WorkspaceShopSlot : MonoBehaviour
         GameObject nameObj = new GameObject("Name");
         nameObj.transform.SetParent(infoObj.transform, false);
         _nameText = nameObj.AddComponent<TextMeshProUGUI>();
-        _nameText.text = "Workspace";
+        _nameText.text = "工位";
         _nameText.fontSize = 14;
         _nameText.fontStyle = FontStyles.Bold;
         _nameText.color = Color.white;
         _nameText.alignment = TextAlignmentOptions.Left;
+        _nameText.font = UiUtils.GetChineseFont();
 
         // Price text
         GameObject priceObj = new GameObject("Price");
@@ -135,11 +136,12 @@ public class WorkspaceShopSlot : MonoBehaviour
         textRect.sizeDelta = Vector2.zero;
 
         _buyButtonText = textObj.AddComponent<TextMeshProUGUI>();
-        _buyButtonText.text = "BUY";
+        _buyButtonText.text = "购买";
         _buyButtonText.fontSize = 14;
         _buyButtonText.fontStyle = FontStyles.Bold;
         _buyButtonText.color = Color.white;
         _buyButtonText.alignment = TextAlignmentOptions.Center;
+        _buyButtonText.font = UiUtils.GetChineseFont();
     }
 
     private void CreateSoldOutOverlay(Transform parent, float width, float height)
@@ -166,11 +168,12 @@ public class WorkspaceShopSlot : MonoBehaviour
         soldOutTextRect.sizeDelta = Vector2.zero;
 
         TextMeshProUGUI soldOutText = soldOutTextObj.AddComponent<TextMeshProUGUI>();
-        soldOutText.text = "SOLD OUT";
+        soldOutText.text = "售罄";
         soldOutText.fontSize = 16;
         soldOutText.fontStyle = FontStyles.Bold;
         soldOutText.color = new Color(0.5f, 0.5f, 0.5f);
         soldOutText.alignment = TextAlignmentOptions.Center;
+        soldOutText.font = UiUtils.GetChineseFont();
 
         _soldOutOverlay.SetActive(false);
     }

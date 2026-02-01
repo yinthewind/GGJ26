@@ -27,7 +27,7 @@ public static class GameSettings
     public const int WorkspacePrice = 20;
 
     // Fire cost (cost to dismiss a workhorse)
-    public const int FireCost = 40;
+    public const int FireCost = 20;
 
     // Fixed price for all shop workhorses
     public const int ShopWorkhorsePrice = 20;

@@ -72,7 +72,8 @@ public class SynergyPanel : MonoBehaviour
         titleRect.anchoredPosition = new Vector2(0f, -20f);
 
         _titleText = titleObj.AddComponent<TextMeshProUGUI>();
-        _titleText.text = "SYNERGIES";
+        _titleText.text = "协同效果";
+        _titleText.font = UiUtils.GetChineseFont();
         _titleText.fontSize = 30;
         _titleText.fontStyle = FontStyles.Bold;
         _titleText.color = Color.black;
@@ -88,7 +89,7 @@ public class SynergyPanel : MonoBehaviour
         // Ability synergies section (workhorse-specific abilities)
         if (SynergySystem.Instance.AbilitySynergies.Count > 0)
         {
-            CreateSectionHeader(parent, "Abilities", ref currentY);
+            CreateSectionHeader(parent, "能力", ref currentY);
             foreach (var synergy in SynergySystem.Instance.AbilitySynergies)
             {
                 CreateRow(parent, synergy, width, rowHeight, ref currentY);
@@ -99,7 +100,7 @@ public class SynergyPanel : MonoBehaviour
         // Global synergies section
         if (SynergySystem.Instance.GlobalSynergies.Count > 0)
         {
-            CreateSectionHeader(parent, "Global", ref currentY);
+            CreateSectionHeader(parent, "全局", ref currentY);
             foreach (var synergy in SynergySystem.Instance.GlobalSynergies)
             {
                 CreateRow(parent, synergy, width, rowHeight, ref currentY);
@@ -110,7 +111,7 @@ public class SynergyPanel : MonoBehaviour
         // Adjacent synergies section
         if (SynergySystem.Instance.AdjacentSynergies.Count > 0)
         {
-            CreateSectionHeader(parent, "Adjacent", ref currentY);
+            CreateSectionHeader(parent, "相邻", ref currentY);
             foreach (var synergy in SynergySystem.Instance.AdjacentSynergies)
             {
                 CreateRow(parent, synergy, width, rowHeight, ref currentY);
@@ -121,7 +122,7 @@ public class SynergyPanel : MonoBehaviour
         // Position synergies section
         if (SynergySystem.Instance.PositionSynergies.Count > 0)
         {
-            CreateSectionHeader(parent, "Position", ref currentY);
+            CreateSectionHeader(parent, "位置", ref currentY);
             foreach (var synergy in SynergySystem.Instance.PositionSynergies)
             {
                 CreateRow(parent, synergy, width, rowHeight, ref currentY);
@@ -143,6 +144,7 @@ public class SynergyPanel : MonoBehaviour
 
         TextMeshProUGUI headerText = headerObj.AddComponent<TextMeshProUGUI>();
         headerText.text = sectionName;
+        headerText.font = UiUtils.GetChineseFont();
         headerText.fontSize = 24;
         headerText.fontStyle = FontStyles.Italic;
         headerText.color = Color.black;
@@ -177,6 +179,7 @@ public class SynergyPanel : MonoBehaviour
         textRect.offsetMax = new Vector2(-8f, -5f);
 
         _tooltipText = textObj.AddComponent<TextMeshProUGUI>();
+        _tooltipText.font = UiUtils.GetChineseFont();
         _tooltipText.fontSize = 26;
         _tooltipText.fontStyle = FontStyles.Italic;
         _tooltipText.color = Color.black;
@@ -195,7 +198,7 @@ public class SynergyPanel : MonoBehaviour
         }
         else
         {
-            _tooltipText.text = $"+{synergy.BonusPercent:F0}% Productivity\n{synergy.Description}";
+            _tooltipText.text = $"+{synergy.BonusPercent:F0}% 生产力\n{synergy.Description}";
         }
 
         // Force layout update to get proper text bounds
@@ -276,6 +279,7 @@ public class SynergyPanel : MonoBehaviour
         textRect.offsetMax = new Vector2(-25f, 0f);
 
         TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
+        text.font = UiUtils.GetChineseFont();
         text.raycastTarget = false;
         // For ability synergies, show just the name; for others show name + bonus
         if (synergy.Type == SynergyType.WorkhorseAbility)

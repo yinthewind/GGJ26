@@ -127,10 +127,8 @@ public class PlayerProgress
         _totalProductivity = 0f;
         _totalTurnsPlayed = 0;
         _maxSynergiesInOneTurn = 0;
-        _currentDollar = GameSettings.StartingDollar;
 
         OnProductivityChanged?.Invoke(_totalProductivity);
         OnTurnsPlayedChanged?.Invoke(_totalTurnsPlayed);
-        OnDollarChanged?.Invoke(_currentDollar);
     }
 }

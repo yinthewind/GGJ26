@@ -3,10 +3,10 @@ using System.Linq;
 
 public class GroundedSynergy : Synergy
 {
-    public override string Name => "Grounded";
+    public override string Name => "接地";
     public override SynergyType Type => SynergyType.Position;
     public override float BonusPercent => 10f;
-    public override string Description => "Worker on bottom row";
+    public override string Description => "劳动者位于底层";
 
     public override bool CheckActive(List<Workspace> workspaces, List<WorkhorseAssignment> assignments)
     {

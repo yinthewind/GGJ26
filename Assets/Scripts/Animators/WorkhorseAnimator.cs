@@ -72,10 +72,10 @@ public class WorkhorseAnimator : MonoBehaviour
         visualGo.transform.localPosition = Vector3.zero;
         visualGo.transform.localScale = new Vector3(VisualSize, VisualSize, 1f);
 
-        // Use provided index or randomly select a character sprite set
+        // Use provided index or get sprite based on workhorse type
         CharacterIndex = providedCharacterIndex >= 0 && providedCharacterIndex < CharacterSprites.Length
             ? providedCharacterIndex
-            : UnityEngine.Random.Range(0, CharacterSprites.Length);
+            : GetSpriteIndexForType(type);
         var (standingPath, sittingPath) = CharacterSprites[CharacterIndex];
         _standingSprite = SpriteLoader.Instance.GetTexture(standingPath);
         _sittingSprite = SpriteLoader.Instance.GetTexture(sittingPath);
@@ -113,6 +113,23 @@ public class WorkhorseAnimator : MonoBehaviour
             WorkhorseType.Pessimist => "悲观者",
             WorkhorseType.Saboteur => "破坏者",
             _ => "??"
+        };
+    }
+
+    private static int GetSpriteIndexForType(WorkhorseType type)
+    {
+        return type switch
+        {
+            WorkhorseType.InternNiuma => 0,
+            WorkhorseType.RegularNiuma => 0,
+            WorkhorseType.SuperNiuma => 0,
+            WorkhorseType.ToxicWolf => 1,
+            WorkhorseType.Encourager => 2,
+            WorkhorseType.RisingStar => 3,
+            WorkhorseType.FreeSpirit => 4,
+            WorkhorseType.Pessimist => 5,
+            WorkhorseType.Saboteur => 6,
+            _ => 0,
         };
     }
 

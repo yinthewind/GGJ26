@@ -8,10 +8,10 @@ using UnityEngine;
 /// </summary>
 public class SaboteurSynergy : AbilitySynergy
 {
-    public override string Name => "Saboteur";
+    public override string Name => "破坏家";
     public override WorkhorseType WorkhorseType => WorkhorseType.Saboteur;
     public override float BonusPercent => -15f;  // For display purposes
-    public override string Description => "-15% total team income (max 70% reduction)";
+    public override string Description => "总团队收入-15%（最多减少70%）";
 
     private const float TotalPenalty = 0.85f;  // -15%
     private const float MaxPenalty = 0.7f;     // Max 70% reduction (floor at 30% productivity)

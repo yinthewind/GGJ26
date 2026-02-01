@@ -89,10 +89,10 @@ public class SynergyModal : MonoBehaviour
         panelRect.anchorMin = new Vector2(0.5f, 0.5f);
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.sizeDelta = new Vector2(500f, 550f);
+        panelRect.sizeDelta = new Vector2(650f, 700f);
 
         Image panelBg = _panel.AddComponent<Image>();
-        panelBg.color = new Color(0.12f, 0.12f, 0.18f, 0.98f);
+        panelBg.color = Color.white;
 
         CreateTitle(_panel.transform);
         CreateCloseButton(_panel.transform);
@@ -108,12 +108,13 @@ public class SynergyModal : MonoBehaviour
         titleRect.anchorMin = new Vector2(0f, 1f);
         titleRect.anchorMax = new Vector2(1f, 1f);
         titleRect.pivot = new Vector2(0.5f, 1f);
-        titleRect.sizeDelta = new Vector2(0f, 50f);
+        titleRect.sizeDelta = new Vector2(0f, 60f);
         titleRect.anchoredPosition = Vector2.zero;
 
         TextMeshProUGUI titleText = titleObj.AddComponent<TextMeshProUGUI>();
-        titleText.text = "ALL SYNERGIES";
-        titleText.fontSize = 34;
+        titleText.text = "所有协同效果";
+        titleText.font = UiUtils.GetChineseFont();
+        titleText.fontSize = 42;
         titleText.fontStyle = FontStyles.Bold;
         titleText.color = Color.black;
         titleText.alignment = TextAlignmentOptions.Center;
@@ -155,6 +156,7 @@ public class SynergyModal : MonoBehaviour
 
         TextMeshProUGUI xText = xObj.AddComponent<TextMeshProUGUI>();
         xText.text = "X";
+        xText.font = UiUtils.GetChineseFont();
         xText.fontSize = 24;
         xText.fontStyle = FontStyles.Bold;
         xText.color = Color.white;
@@ -171,15 +173,15 @@ public class SynergyModal : MonoBehaviour
         contentRect.anchorMax = new Vector2(1f, 1f);
         contentRect.sizeDelta = Vector2.zero;
         contentRect.offsetMin = new Vector2(20f, 20f);
-        contentRect.offsetMax = new Vector2(-20f, -55f);
+        contentRect.offsetMax = new Vector2(-20f, -65f);
 
-        float rowHeight = 32f;
+        float rowHeight = 42f;
         float currentY = 0f;
 
         // Ability synergies (workhorse-specific abilities)
         if (SynergySystem.Instance.AbilitySynergies.Count > 0)
         {
-            CreateSectionHeader(contentObj.transform, "WORKHORSE ABILITIES", ref currentY);
+            CreateSectionHeader(contentObj.transform, "劳动者能力", ref currentY);
             foreach (var synergy in SynergySystem.Instance.AbilitySynergies)
             {
                 CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
@@ -190,7 +192,7 @@ public class SynergyModal : MonoBehaviour
         // Global synergies
         if (SynergySystem.Instance.GlobalSynergies.Count > 0)
         {
-            CreateSectionHeader(contentObj.transform, "GLOBAL SYNERGIES", ref currentY);
+            CreateSectionHeader(contentObj.transform, "全局协同", ref currentY);
             foreach (var synergy in SynergySystem.Instance.GlobalSynergies)
             {
                 CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
@@ -201,7 +203,7 @@ public class SynergyModal : MonoBehaviour
         // Adjacent synergies
         if (SynergySystem.Instance.AdjacentSynergies.Count > 0)
         {
-            CreateSectionHeader(contentObj.transform, "ADJACENT SYNERGIES", ref currentY);
+            CreateSectionHeader(contentObj.transform, "相邻协同", ref currentY);
             foreach (var synergy in SynergySystem.Instance.AdjacentSynergies)
             {
                 CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
@@ -212,7 +214,7 @@ public class SynergyModal : MonoBehaviour
         // Position synergies
         if (SynergySystem.Instance.PositionSynergies.Count > 0)
         {
-            CreateSectionHeader(contentObj.transform, "POSITION SYNERGIES", ref currentY);
+            CreateSectionHeader(contentObj.transform, "位置协同", ref currentY);
             foreach (var synergy in SynergySystem.Instance.PositionSynergies)
             {
                 CreateRow(contentObj.transform, synergy, rowHeight, ref currentY);
@@ -229,17 +231,18 @@ public class SynergyModal : MonoBehaviour
         headerRect.anchorMin = new Vector2(0f, 1f);
         headerRect.anchorMax = new Vector2(1f, 1f);
         headerRect.pivot = new Vector2(0f, 1f);
-        headerRect.sizeDelta = new Vector2(0f, 24f);
+        headerRect.sizeDelta = new Vector2(0f, 32f);
         headerRect.anchoredPosition = new Vector2(0f, currentY);
 
         TextMeshProUGUI headerText = headerObj.AddComponent<TextMeshProUGUI>();
         headerText.text = text;
-        headerText.fontSize = 20;
+        headerText.font = UiUtils.GetChineseFont();
+        headerText.fontSize = 26;
         headerText.fontStyle = FontStyles.Bold | FontStyles.Italic;
         headerText.color = Color.black;
         headerText.alignment = TextAlignmentOptions.Left;
 
-        currentY -= 28f;
+        currentY -= 38f;
     }
 
     private void CreateRow(Transform parent, Synergy synergy, float height, ref float currentY)
@@ -280,6 +283,7 @@ public class SynergyModal : MonoBehaviour
         nameRect.offsetMax = Vector2.zero;
 
         TextMeshProUGUI nameText = nameObj.AddComponent<TextMeshProUGUI>();
+        nameText.font = UiUtils.GetChineseFont();
         // For ability synergies, show just the name; for others show name + bonus
         if (synergy.Type == SynergyType.WorkhorseAbility)
         {
@@ -289,7 +293,7 @@ public class SynergyModal : MonoBehaviour
         {
             nameText.text = $"{synergy.Name} (+{synergy.BonusPercent:F0}%)";
         }
-        nameText.fontSize = 22;
+        nameText.fontSize = 28;
         nameText.fontStyle = FontStyles.Bold;
         nameText.color = InactiveColor;
         nameText.alignment = TextAlignmentOptions.Left;
@@ -307,7 +311,8 @@ public class SynergyModal : MonoBehaviour
 
         TextMeshProUGUI descText = descObj.AddComponent<TextMeshProUGUI>();
         descText.text = synergy.Description;
-        descText.fontSize = 18;
+        descText.font = UiUtils.GetChineseFont();
+        descText.fontSize = 24;
         descText.fontStyle = FontStyles.Italic;
         descText.color = Color.black;
         descText.alignment = TextAlignmentOptions.Left;

@@ -6,10 +6,10 @@ using System.Collections.Generic;
 /// </summary>
 public class EncouragerSynergy : AbilitySynergy
 {
-    public override string Name => "Encourager";
+    public override string Name => "鼓励者";
     public override WorkhorseType WorkhorseType => WorkhorseType.Encourager;
     public override float BonusPercent => 0f;
-    public override string Description => "+50% income to adjacent workers";
+    public override string Description => "相邻劳动者收入+50%";
 
     private const float AdjacentBonus = 1.5f;  // +50%
 

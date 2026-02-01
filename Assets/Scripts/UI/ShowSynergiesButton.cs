@@ -27,7 +27,7 @@ public class ShowSynergiesButton : MonoBehaviour
     private void BuildUI(GameObject root)
     {
         Sprite sprite = SpriteLoader.Instance.GetSprite(ButtonSpritePath);
-        _button = UiUtils.CreateSpriteButton(root, "SYNERGIES", sprite, HandleClick, fontSize: 18);
+        _button = UiUtils.CreateSpriteButton(root, "协同效果", sprite, HandleClick, fontSize: 18);
     }
 
     private void HandleClick()

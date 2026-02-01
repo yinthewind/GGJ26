@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class CorneredSynergy : Synergy
 {
-    public override string Name => "Cornered";
+    public override string Name => "角落";
     public override SynergyType Type => SynergyType.Position;
     public override float BonusPercent => 20f;
-    public override string Description => "Worker in corner (2+ wall edges)";
+    public override string Description => "劳动者位于角落（2条以上边缘）";
 
     public override bool CheckActive(List<Workspace> workspaces, List<WorkhorseAssignment> assignments)
     {

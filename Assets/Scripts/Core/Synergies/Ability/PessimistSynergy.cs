@@ -7,10 +7,10 @@ using UnityEngine;
 /// </summary>
 public class PessimistSynergy : AbilitySynergy
 {
-    public override string Name => "Pessimist";
+    public override string Name => "消极派";
     public override WorkhorseType WorkhorseType => WorkhorseType.Pessimist;
     public override float BonusPercent => 0f;
-    public override string Description => "-30 income each round (100 - 30n, min -50)";
+    public override string Description => "每回合收入-30（100-30n，最低-50）";
 
     private const float BaseProductivity = 1.0f;      // 100 base
     private const float PerRoundPenalty = 0.3f;       // -30 per round

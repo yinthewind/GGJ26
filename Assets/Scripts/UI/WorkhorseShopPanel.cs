@@ -134,8 +134,9 @@ public class WorkhorseShopPanel : MonoBehaviour
         GameObject titleObj = new GameObject("Title");
         titleObj.transform.SetParent(headerObj.transform, false);
         _titleText = titleObj.AddComponent<TextMeshProUGUI>();
-        _titleText.text = "WORKHORSE SHOP";
+        _titleText.text = "劳动者商店";
         _titleText.fontSize = 18;
+        _titleText.font = UiUtils.GetChineseFont();
         _titleText.fontStyle = FontStyles.Bold;
         _titleText.color = Color.black;
         _titleText.alignment = TextAlignmentOptions.Center;
@@ -203,6 +204,7 @@ public class WorkhorseShopPanel : MonoBehaviour
 
         _refreshButtonText = textObj.AddComponent<TextMeshProUGUI>();
         _refreshButtonText.fontSize = 14;
+        _refreshButtonText.font = UiUtils.GetChineseFont();
         _refreshButtonText.fontStyle = FontStyles.Bold;
         _refreshButtonText.color = Color.black;
         _refreshButtonText.alignment = TextAlignmentOptions.Center;
@@ -273,8 +275,9 @@ public class WorkhorseShopPanel : MonoBehaviour
         RectTransform headerRect = headerObj.AddComponent<RectTransform>();
         headerRect.sizeDelta = new Vector2(width, 20f);
         var headerText = headerObj.AddComponent<TextMeshProUGUI>();
-        headerText.text = "New Seats";
+        headerText.text = "新增座位";
         headerText.fontSize = 20;
+        headerText.font = UiUtils.GetChineseFont();
         headerText.fontStyle = FontStyles.Bold;
         headerText.color = Color.black;
         headerText.alignment = TextAlignmentOptions.Center;
@@ -445,12 +448,12 @@ public class WorkhorseShopPanel : MonoBehaviour
     {
         if (_freeRefreshAvailable)
         {
-            _refreshButtonText.text = "REFRESH (Free)";
+            _refreshButtonText.text = "刷新 (免费)";
         }
         else
         {
             int refreshCost = GameSettings.ShopRefreshCost + (_refreshCount * GameSettings.ShopRefreshCostIncrement);
-            _refreshButtonText.text = $"REFRESH ({refreshCost}g)";
+            _refreshButtonText.text = $"刷新 ({refreshCost}g)";
         }
 
         UpdateRefreshButtonState();

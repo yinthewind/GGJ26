@@ -29,7 +29,7 @@ public class CheckButton : MonoBehaviour
     private void BuildUI(GameObject root)
     {
         Sprite sprite = SpriteLoader.Instance.GetSprite(ButtonSpritePath);
-        _button = UiUtils.CreateSpriteButton(root, "CHECK", sprite, HandleClick, fontSize: 20);
+        _button = UiUtils.CreateSpriteButton(root, "检查", sprite, HandleClick, fontSize: 20);
         _background = _button.targetGraphic as Image;
         _text = _button.GetComponentInChildren<TextMeshProUGUI>();
     }
@@ -41,7 +41,7 @@ public class CheckButton : MonoBehaviour
 
     public void UpdateVisual(bool isActive)
     {
-        _text.text = isActive ? "EXIT CHECK" : "CHECK";
+        _text.text = isActive ? "退出检查" : "检查";
         UpdateButtonTint(isActive);
     }
 

@@ -5,6 +5,16 @@ using TMPro;
 
 public static class UiUtils
 {
+    private static TMP_FontAsset _chineseFont;
+
+    public static TMP_FontAsset GetChineseFont()
+    {
+        if (_chineseFont == null)
+        {
+            _chineseFont = Resources.Load<TMP_FontAsset>("Fonts/NotoSansSC-Bold SDF");
+        }
+        return _chineseFont;
+    }
     public static Button CreateTextButton(
         GameObject root,
         string text,
@@ -91,6 +101,7 @@ public static class UiUtils
 
         TextMeshProUGUI tmp = textObj.AddComponent<TextMeshProUGUI>();
         tmp.text = text;
+        tmp.font = GetChineseFont();
         tmp.fontSize = fontSize;
         tmp.fontStyle = FontStyles.Bold;
         tmp.color = Color.white;

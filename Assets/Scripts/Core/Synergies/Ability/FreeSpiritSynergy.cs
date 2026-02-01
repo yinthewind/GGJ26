@@ -6,10 +6,10 @@ using System.Collections.Generic;
 /// </summary>
 public class FreeSpiritSynergy : AbilitySynergy
 {
-    public override string Name => "Free Spirit";
+    public override string Name => "自由派";
     public override WorkhorseType WorkhorseType => WorkhorseType.FreeSpirit;
     public override float BonusPercent => 0f;
-    public override string Description => "-30% income to adjacent workers";
+    public override string Description => "相邻劳动者收入-30%";
 
     private const float AdjacentPenalty = 0.7f;  // -30%
 

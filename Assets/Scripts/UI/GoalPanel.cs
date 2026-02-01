@@ -70,8 +70,9 @@ public class GoalPanel : MonoBehaviour
         textRect.offsetMax = new Vector2(-10f, textRect.offsetMax.y);
 
         _goalNameText = textObj.AddComponent<TextMeshProUGUI>();
-        _goalNameText.text = "Goal";
+        _goalNameText.text = "目标";
         _goalNameText.fontSize = 16;
+        _goalNameText.font = UiUtils.GetChineseFont();
         _goalNameText.fontStyle = FontStyles.Bold;
         _goalNameText.color = new Color(1f, 0.85f, 0.3f);
         _goalNameText.alignment = TextAlignmentOptions.Left;
@@ -92,8 +93,9 @@ public class GoalPanel : MonoBehaviour
         textRect.offsetMax = new Vector2(-10f, textRect.offsetMax.y);
 
         _goalDescText = textObj.AddComponent<TextMeshProUGUI>();
-        _goalDescText.text = "Description";
+        _goalDescText.text = "描述";
         _goalDescText.fontSize = 12;
+        _goalDescText.font = UiUtils.GetChineseFont();
         _goalDescText.color = new Color(0.8f, 0.8f, 0.8f);
         _goalDescText.alignment = TextAlignmentOptions.Left;
     }
@@ -166,8 +168,8 @@ public class GoalPanel : MonoBehaviour
 
         if (goal == null)
         {
-            _goalNameText.text = "All Goals Complete!";
-            _goalDescText.text = "Congratulations!";
+            _goalNameText.text = "所有目标已完成!";
+            _goalDescText.text = "恭喜!";
             SetProgress(1f);
             return;
         }

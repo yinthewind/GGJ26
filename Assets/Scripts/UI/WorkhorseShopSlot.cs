@@ -113,12 +113,7 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         _nameText.color = Color.black;
         _nameText.alignment = TextAlignmentOptions.Left;
 
-        // Load and apply Noto Sans SC font for Chinese text support
-        var chineseFont = Resources.Load<TMP_FontAsset>("Fonts/NotoSansSC-VariableFont_wght SDF");
-        if (chineseFont != null)
-        {
-            _nameText.font = chineseFont;
-        }
+        _nameText.font = UiUtils.GetChineseFont();
 
         // Stats row
         GameObject statsObj = new GameObject("Stats");
@@ -191,11 +186,12 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         textRect.sizeDelta = Vector2.zero;
 
         _buyButtonText = textObj.AddComponent<TextMeshProUGUI>();
-        _buyButtonText.text = "BUY";
+        _buyButtonText.text = "购买";
         _buyButtonText.fontSize = 14;
         _buyButtonText.fontStyle = FontStyles.Bold;
         _buyButtonText.color = Color.black;
         _buyButtonText.alignment = TextAlignmentOptions.Center;
+        _buyButtonText.font = UiUtils.GetChineseFont();
     }
 
     private void CreateLockedOverlay(Transform parent, float width, float height)
@@ -219,11 +215,12 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         lockTextRect.sizeDelta = Vector2.zero;
 
         _lockedText = lockTextObj.AddComponent<TextMeshProUGUI>();
-        _lockedText.text = "LOCKED";
+        _lockedText.text = "锁定";
         _lockedText.fontSize = 16;
         _lockedText.fontStyle = FontStyles.Bold;
         _lockedText.color = new Color(0.5f, 0.5f, 0.5f);
         _lockedText.alignment = TextAlignmentOptions.Center;
+        _lockedText.font = UiUtils.GetChineseFont();
 
         _lockedOverlay.SetActive(false);
     }

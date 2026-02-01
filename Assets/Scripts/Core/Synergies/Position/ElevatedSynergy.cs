@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class ElevatedSynergy : Synergy
 {
-    public override string Name => "Elevated";
+    public override string Name => "高位";
     public override SynergyType Type => SynergyType.Position;
     public override float BonusPercent => 15f;
-    public override string Description => "Worker on top of stack";
+    public override string Description => "劳动者位于顶层";
 
     public override bool CheckActive(List<Workspace> workspaces, List<WorkhorseAssignment> assignments)
     {

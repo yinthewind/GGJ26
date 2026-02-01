@@ -76,8 +76,9 @@ public class TurnCounter : MonoBehaviour
         textRect.offsetMax = new Vector2(-10f, -5f);
 
         _turnText = textObj.AddComponent<TextMeshProUGUI>();
-        _turnText.text = "Lv.1 - Turn 1/10";
+        _turnText.text = "第1关 - 回合 1/10";
         _turnText.fontSize = 22;
+        _turnText.font = UiUtils.GetChineseFont();
         _turnText.fontStyle = FontStyles.Bold;
         _turnText.color = Color.white;
         _turnText.alignment = TextAlignmentOptions.Center;
@@ -89,6 +90,6 @@ public class TurnCounter : MonoBehaviour
         int turnLimit = LevelManager.Instance.CurrentConfig?.TurnLimit ?? 0;
         string levelId = LevelManager.Instance.CurrentLevelId ?? "level_1";
         string levelNumber = levelId.Replace("level_", "");
-        _turnText.text = $"Lv.{levelNumber} - Turn {currentTurn}/{turnLimit}";
+        _turnText.text = $"第{levelNumber}关 - 回合 {currentTurn}/{turnLimit}";
     }
 }

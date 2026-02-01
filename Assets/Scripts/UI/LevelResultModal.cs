@@ -119,11 +119,12 @@ public class LevelResultModal : MonoBehaviour
         titleRect.anchoredPosition = new Vector2(0f, -10f);
 
         _titleText = titleObj.AddComponent<TextMeshProUGUI>();
-        _titleText.text = "LEVEL COMPLETE!";
+        _titleText.text = "关卡完成!";
         _titleText.fontSize = 32;
         _titleText.fontStyle = FontStyles.Bold;
         _titleText.color = WinTitleColor;
         _titleText.alignment = TextAlignmentOptions.Center;
+        _titleText.font = UiUtils.GetChineseFont();
     }
 
     private void CreateContent(Transform parent)
@@ -142,13 +143,13 @@ public class LevelResultModal : MonoBehaviour
         float currentY = 0f;
 
         // Level name
-        _levelNameText = CreateInfoRow(contentObj.transform, "Level:", "", ref currentY);
+        _levelNameText = CreateInfoRow(contentObj.transform, "关卡:", "", ref currentY);
 
         // Goal info
-        _goalInfoText = CreateInfoRow(contentObj.transform, "Goal:", "", ref currentY);
+        _goalInfoText = CreateInfoRow(contentObj.transform, "目标:", "", ref currentY);
 
         // Turns used
-        _turnsInfoText = CreateInfoRow(contentObj.transform, "Turns:", "", ref currentY);
+        _turnsInfoText = CreateInfoRow(contentObj.transform, "回合:", "", ref currentY);
 
         // Reward row (only visible on win)
         _rewardRow = new GameObject("RewardRow");
@@ -161,7 +162,7 @@ public class LevelResultModal : MonoBehaviour
         rewardRowRect.sizeDelta = new Vector2(0f, 28f);
         rewardRowRect.anchoredPosition = new Vector2(0f, currentY);
 
-        _rewardText = CreateLabelValuePair(_rewardRow.transform, "Reward:", "");
+        _rewardText = CreateLabelValuePair(_rewardRow.transform, "奖励:", "");
     }
 
     private TextMeshProUGUI CreateInfoRow(Transform parent, string label, string value, ref float currentY)
@@ -201,6 +202,7 @@ public class LevelResultModal : MonoBehaviour
         labelText.fontStyle = FontStyles.Normal;
         labelText.color = new Color(0.7f, 0.7f, 0.8f);
         labelText.alignment = TextAlignmentOptions.Left;
+        labelText.font = UiUtils.GetChineseFont();
 
         // Value
         GameObject valueObj = new GameObject("Value");
@@ -219,6 +221,7 @@ public class LevelResultModal : MonoBehaviour
         valueText.fontStyle = FontStyles.Bold;
         valueText.color = Color.white;
         valueText.alignment = TextAlignmentOptions.Left;
+        valueText.font = UiUtils.GetChineseFont();
 
         return valueText;
     }
@@ -237,7 +240,7 @@ public class LevelResultModal : MonoBehaviour
         containerRect.anchoredPosition = new Vector2(0f, 15f);
 
         // Primary button (left side when two buttons, center when one)
-        _primaryButton = CreateButton(buttonContainer.transform, "Next Level", GreenButtonColor, OnPrimaryClick);
+        _primaryButton = CreateButton(buttonContainer.transform, "下一关", GreenButtonColor, OnPrimaryClick);
         RectTransform primaryRect = _primaryButton.GetComponent<RectTransform>();
         primaryRect.anchorMin = new Vector2(0.1f, 0f);
         primaryRect.anchorMax = new Vector2(0.48f, 1f);
@@ -249,7 +252,7 @@ public class LevelResultModal : MonoBehaviour
         _primaryButtonText = _primaryButton.GetComponentInChildren<TextMeshProUGUI>();
 
         // Secondary button (right side, only visible on win)
-        _secondaryButton = CreateButton(buttonContainer.transform, "Replay", BlueButtonColor, OnSecondaryClick);
+        _secondaryButton = CreateButton(buttonContainer.transform, "重玩", BlueButtonColor, OnSecondaryClick);
         RectTransform secondaryRect = _secondaryButton.GetComponent<RectTransform>();
         secondaryRect.anchorMin = new Vector2(0.52f, 0f);
         secondaryRect.anchorMax = new Vector2(0.9f, 1f);
@@ -278,11 +281,11 @@ public class LevelResultModal : MonoBehaviour
         string currentLevelId = LevelManager.Instance.CurrentLevelId;
         string nextLevelId = LevelDefinitions.GetNextLevelId(currentLevelId);
 
-        _titleText.text = "LEVEL COMPLETE!";
+        _titleText.text = "关卡完成!";
         _titleText.color = WinTitleColor;
 
         _levelNameText.text = config?.LevelName ?? "Unknown";
-        _goalInfoText.text = $"{goal?.Name ?? "Unknown"} - Completed!";
+        _goalInfoText.text = $"{goal?.Name ?? "Unknown"} - 已完成!";
         _turnsInfoText.text = $"{TurnManager.Instance.CurrentTurn - 1} / {config?.TurnLimit ?? 0}";
 
         // Show reward
@@ -293,9 +296,9 @@ public class LevelResultModal : MonoBehaviour
         // Show both buttons if there's a next level
         if (nextLevelId != null)
         {
-            _primaryButtonText.text = "Next Level";
+            _primaryButtonText.text = "下一关";
             _secondaryButton.SetActive(true);
-            _secondaryButtonText.text = "Replay";
+            _secondaryButtonText.text = "重玩";
 
             // Reposition primary button to left side
             RectTransform primaryRect = _primaryButton.GetComponent<RectTransform>();
@@ -305,7 +308,7 @@ public class LevelResultModal : MonoBehaviour
         else
         {
             // Last level - only show replay
-            _primaryButtonText.text = "Replay";
+            _primaryButtonText.text = "重玩";
             _secondaryButton.SetActive(false);
 
             // Center the primary button
@@ -321,7 +324,7 @@ public class LevelResultModal : MonoBehaviour
         var goal = GoalManager.Instance.CurrentGoal;
         float progress = GoalManager.Instance.GetGoalProgress();
 
-        _titleText.text = "LEVEL FAILED";
+        _titleText.text = "关卡失败";
         _titleText.color = FailTitleColor;
 
         _levelNameText.text = config?.LevelName ?? "Unknown";
@@ -340,9 +343,9 @@ public class LevelResultModal : MonoBehaviour
 
         if (nextLevelId != null)
         {
-            _primaryButtonText.text = "Next Level";
+            _primaryButtonText.text = "下一关";
             _secondaryButton.SetActive(true);
-            _secondaryButtonText.text = "Retry";
+            _secondaryButtonText.text = "重试";
 
             // Reposition primary button to left side
             RectTransform primaryRect = _primaryButton.GetComponent<RectTransform>();
@@ -352,7 +355,7 @@ public class LevelResultModal : MonoBehaviour
         else
         {
             // Last level - only show retry
-            _primaryButtonText.text = "Retry";
+            _primaryButtonText.text = "重试";
             _secondaryButton.SetActive(false);
 
             // Center the primary button

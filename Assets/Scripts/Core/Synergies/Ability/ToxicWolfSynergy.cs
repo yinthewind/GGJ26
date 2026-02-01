@@ -6,10 +6,10 @@ using System.Collections.Generic;
 /// </summary>
 public class ToxicWolfSynergy : AbilitySynergy
 {
-    public override string Name => "Toxic Wolf";
+    public override string Name => "毒狼";
     public override WorkhorseType WorkhorseType => WorkhorseType.ToxicWolf;
     public override float BonusPercent => 0f;
-    public override string Description => "200 income alone, 50 if adjacent to others";
+    public override string Description => "独处收入200，有相邻者则为50";
 
     private const float AloneProductivity = 2.0f;    // 200 base
     private const float CrowdedProductivity = 0.5f;  // 50 base

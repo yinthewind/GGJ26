@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class CenteredSynergy : Synergy
 {
-    public override string Name => "Centered";
+    public override string Name => "中心";
     public override SynergyType Type => SynergyType.Position;
     public override float BonusPercent => 15f;
-    public override string Description => "Worker near geometric center";
+    public override string Description => "劳动者位于几何中心附近";
 
     public override bool CheckActive(List<Workspace> workspaces, List<WorkhorseAssignment> assignments)
     {

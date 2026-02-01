@@ -13,6 +13,7 @@ public class DragDropInputSystem : MonoBehaviour
     private WorkspacePreviewAnimator _placementPreview;
     private bool _dragEnabled = true;
     private bool _isPlacingNewWorkspace = false;
+    private bool _isOverFireZone = false;
 
     public static DragDropInputSystem Instance { get; private set; }
     public bool IsPlacingWorkspace => _isPlacingNewWorkspace;
@@ -119,12 +120,12 @@ public class DragDropInputSystem : MonoBehaviour
 
         controller.SetPosition(new Vector3(mouseWorldPos.x, mouseWorldPos.y, controller.Position.z));
 
-        // Update fire zone highlighting
+        // Update fire zone highlighting and cache state for EndSkeletonDrag
         var fireZone = WorkhorseShopPanel.Instance?.FireZone;
         if (fireZone != null)
         {
-            bool isOverFireZone = fireZone.ContainsScreenPoint(Mouse.current.position.ReadValue());
-            fireZone.SetHighlighted(isOverFireZone, isOverFireZone ? controller.Type : null);
+            _isOverFireZone = fireZone.ContainsScreenPoint(Mouse.current.position.ReadValue());
+            fireZone.SetHighlighted(_isOverFireZone, _isOverFireZone ? controller.Type : null);
         }
     }
 
@@ -137,6 +138,7 @@ public class DragDropInputSystem : MonoBehaviour
 
         _dragType = DragType.None;
         _draggedEntityId = null;
+        _isOverFireZone = false;
     }
 
     private void EndSkeletonDrag()
@@ -147,16 +149,17 @@ public class DragDropInputSystem : MonoBehaviour
         controller.SetDragging(false);
         controller.Animator.SetDragIndicator(false);
 
-        // Check if dropped on fire zone first
+        // Check if dropped on fire zone first (use cached state from last update)
         var fireZone = WorkhorseShopPanel.Instance?.FireZone;
+        if (fireZone != null && _isOverFireZone)
+        {
+            fireZone.HandleDrop(controller);
+            fireZone.SetHighlighted(false);
+            return;
+        }
+        // Clear highlighting when drag ends
         if (fireZone != null)
         {
-            if (fireZone.ContainsScreenPoint(Mouse.current.position.ReadValue()))
-            {
-                fireZone.HandleDrop(controller);
-                return;
-            }
-            // Clear highlighting when drag ends
             fireZone.SetHighlighted(false);
         }
 
