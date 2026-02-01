@@ -10,6 +10,7 @@ public struct SavedWorkhorseData
     public Guid? AssignedWorkspaceId;
     public Vector3 Position; // Used only for unassigned workhorses
     public bool IsRevealed;
+    public int CharacterIndex; // Persisted sprite index for visual consistency across levels
 }
 
 public struct SavedWorkspaceData
@@ -102,7 +103,10 @@ public class PlayerProgress
         _workhorseData.Clear();
         foreach (var workhorse in workhorses)
         {
-            Debug.Log($"[Save] Workhorse {workhorse.EntityId} ({workhorse.Type}) assigned to workspace {workhorse.AssignedWorkspaceId}");
+            var animator = WorkhorseAnimator.GetAnimator(workhorse.EntityId);
+            int characterIndex = animator?.CharacterIndex ?? -1;
+
+            Debug.Log($"[Save] Workhorse {workhorse.EntityId} ({workhorse.Type}) assigned to workspace {workhorse.AssignedWorkspaceId}, characterIndex {characterIndex}");
 
             _workhorseData.Add(new SavedWorkhorseData
             {
@@ -110,7 +114,8 @@ public class PlayerProgress
                 Type = workhorse.Type,
                 AssignedWorkspaceId = workhorse.AssignedWorkspaceId,
                 Position = workhorse.Position,
-                IsRevealed = workhorse.IsRevealed
+                IsRevealed = workhorse.IsRevealed,
+                CharacterIndex = characterIndex
             });
         }
 

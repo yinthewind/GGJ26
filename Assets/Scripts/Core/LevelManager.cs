@@ -185,7 +185,7 @@ public class LevelManager
                     spawnPos = data.Position;
                 }
 
-                var workhorse = CharacterControllers.Instance.SpawnSkeletonWithId(data.EntityId, data.Type, spawnPos);
+                var workhorse = CharacterControllers.Instance.SpawnSkeletonWithId(data.EntityId, data.Type, spawnPos, data.CharacterIndex);
 
                 // Restore reveal state
                 if (data.IsRevealed)
@@ -216,11 +216,11 @@ public class LevelManager
             var availableTypes = _currentConfig.AvailableWorkhorseTypes;
             if (availableTypes.Count > 0)
             {
-                CharacterControllers.Instance.SpawnSkeleton(availableTypes[0], new Vector3(-3f, 1f, 0f));
+                CharacterControllers.Instance.SpawnSkeleton(availableTypes[0], new Vector3(4f, 1f, 0f));
             }
             if (availableTypes.Count > 1)
             {
-                CharacterControllers.Instance.SpawnSkeleton(availableTypes[1], new Vector3(3f, 1f, 0f));
+                CharacterControllers.Instance.SpawnSkeleton(availableTypes[1], new Vector3(5f, 1f, 0f));
             }
         }
     }

@@ -35,6 +35,8 @@ public class WorkhorseAnimator : MonoBehaviour
     private LineRenderer _dragCircle;
     private MaskAnimator _maskAnimator;
 
+    public int CharacterIndex { get; private set; } = -1;
+
     private static readonly Color DragCircleColor = new Color(0.3f, 0.7f, 1f, 0.8f);
     private const float CircleRadius = 0.6f;
     private const float CircleLineWidth = 0.05f;
@@ -51,18 +53,18 @@ public class WorkhorseAnimator : MonoBehaviour
     // Visual configuration
     private const float VisualSize = 1.0f;
 
-    public static GameObject Create(Vector3 position, Quaternion rotation, WorkhorseType type, string id = "Unknown")
+    public static GameObject Create(Vector3 position, Quaternion rotation, WorkhorseType type, string id = "Unknown", int characterIndex = -1)
     {
         var go = new GameObject($"{Tag}:{id}");
         go.transform.SetPositionAndRotation(position, rotation);
 
         var animator = go.AddComponent<WorkhorseAnimator>();
-        animator.BuildSimpleVisual(type);
+        animator.BuildSimpleVisual(type, characterIndex);
 
         return go;
     }
 
-    private void BuildSimpleVisual(WorkhorseType type)
+    private void BuildSimpleVisual(WorkhorseType type, int providedCharacterIndex = -1)
     {
         // Create Visual child GameObject
         var visualGo = new GameObject("Visual");
@@ -70,9 +72,11 @@ public class WorkhorseAnimator : MonoBehaviour
         visualGo.transform.localPosition = Vector3.zero;
         visualGo.transform.localScale = new Vector3(VisualSize, VisualSize, 1f);
 
-        // Randomly select a character sprite set
-        int characterIndex = UnityEngine.Random.Range(0, CharacterSprites.Length);
-        var (standingPath, sittingPath) = CharacterSprites[characterIndex];
+        // Use provided index or randomly select a character sprite set
+        CharacterIndex = providedCharacterIndex >= 0 && providedCharacterIndex < CharacterSprites.Length
+            ? providedCharacterIndex
+            : UnityEngine.Random.Range(0, CharacterSprites.Length);
+        var (standingPath, sittingPath) = CharacterSprites[CharacterIndex];
         _standingSprite = SpriteLoader.Instance.GetTexture(standingPath);
         _sittingSprite = SpriteLoader.Instance.GetTexture(sittingPath);
 

@@ -20,7 +20,7 @@ public static class LevelDefinitions
                 goalName: "First Steps",
                 goalType: GoalType.TotalProductivity,
                 goalTargetValue: 4,
-                projectReward: 50
+                projectReward: 100
             )
         },
         {
@@ -32,14 +32,15 @@ public static class LevelDefinitions
                 {
                     WorkhorseType.InternNiuma,
                     WorkhorseType.RegularNiuma,
+                    WorkhorseType.ToxicWolf,
                     WorkhorseType.SuperNiuma,
                     WorkhorseType.Encourager
                 },
-                turnLimit: 4,
+                turnLimit: 5,
                 goalName: "Team Building",
                 goalType: GoalType.TotalProductivity,
-                goalTargetValue: 6,
-                projectReward: 75
+                goalTargetValue: 20,
+                projectReward: 200
             )
         },
         {
@@ -56,11 +57,11 @@ public static class LevelDefinitions
                     WorkhorseType.Encourager,
                     WorkhorseType.Pessimist
                 },
-                turnLimit: 5,
+                turnLimit: 8,
                 goalName: "Office Politics",
                 goalType: GoalType.TotalProductivity,
-                goalTargetValue: 10,
-                projectReward: 100
+                goalTargetValue: 40,
+                projectReward: 200
             )
         },
         {

@@ -76,9 +76,9 @@ public class CharacterControllers
     /// <summary>
     /// Spawns a worker with a specific entity ID (for restoring saved state).
     /// </summary>
-    public WorkhorseController SpawnSkeletonWithId(Guid entityId, WorkhorseType type, Vector3 position)
+    public WorkhorseController SpawnSkeletonWithId(Guid entityId, WorkhorseType type, Vector3 position, int characterIndex = -1)
     {
-        GameObject go = WorkhorseAnimator.Create(position, Quaternion.identity, type, type.ToString());
+        GameObject go = WorkhorseAnimator.Create(position, Quaternion.identity, type, type.ToString(), characterIndex);
         WorkhorseAnimator animator = go.GetComponent<WorkhorseAnimator>();
 
         WorkhorseController controller = new WorkhorseController(entityId, go.transform, type, animator);

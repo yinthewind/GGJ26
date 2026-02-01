@@ -68,10 +68,10 @@ public class HUDCanvas : MonoBehaviour
         TurnCounter = TurnCounter.Create(Canvas.transform, 170f, 40f);
 
         // Create Productivity Panel (top-center)
-        ProductivityPanel = ProductivityPanel.Create(Canvas.transform, 180f, 60f);
+        ProductivityPanel = ProductivityPanel.Create(Canvas.transform, 220f, 75f);
 
         // Create Goal Panel (top-right)
-        GoalPanel = GoalPanel.Create(Canvas.transform, 200f, 80f);
+        // GoalPanel = GoalPanel.Create(Canvas.transform, 200f, 80f);
 
         // Create End Turn Button (bottom-right corner)
         EndTurnButton = EndTurnButton.Create(Canvas.transform, () => TurnManager.Instance.EndTurn());
