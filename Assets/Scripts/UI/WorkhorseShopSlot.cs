@@ -9,8 +9,6 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
     public event Action<WorkhorseShopSlot> OnBuyClicked;
     public event Action<WorkhorseShopSlot> OnSlotClicked;
 
-    private Image _background;
-    private Image _iconImage;
     private TextMeshProUGUI _nameText;
     private TextMeshProUGUI _priceText;
     private TextMeshProUGUI _productivityText;
@@ -19,6 +17,7 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
     private GameObject _lockedOverlay;
     private TextMeshProUGUI _lockedText;
     private GameObject _contentContainer;
+    private Image _iconImage;
 
     private WorkhorseController _workhorse;
     private bool _isLocked;
@@ -48,9 +47,6 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.sizeDelta = new Vector2(width, height);
 
-        _background = root.AddComponent<Image>();
-        _background.color = new Color(0.15f, 0.15f, 0.2f, 0.95f);
-
         // Content container for icon, info, and buy button
         _contentContainer = new GameObject("Content");
         _contentContainer.transform.SetParent(root.transform, false);
@@ -64,7 +60,7 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
 
         // Horizontal layout on content container
         HorizontalLayoutGroup layout = _contentContainer.AddComponent<HorizontalLayoutGroup>();
-        layout.padding = new RectOffset(8, 8, 4, 4);
+        layout.padding = new RectOffset(40, 40, 4, 4);
         layout.spacing = 8f;
         layout.childAlignment = TextAnchor.MiddleLeft;
         layout.childControlWidth = false;
@@ -88,7 +84,7 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         iconRect.sizeDelta = new Vector2(size, size);
 
         _iconImage = iconObj.AddComponent<Image>();
-        _iconImage.color = Color.gray;
+        _iconImage.color = Color.white;
     }
 
     private void CreateInfoSection(Transform parent, float width, float height)
@@ -114,7 +110,7 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         _nameText.text = "Swordsman";
         _nameText.fontSize = 14;
         _nameText.fontStyle = FontStyles.Bold;
-        _nameText.color = Color.white;
+        _nameText.color = Color.black;
         _nameText.alignment = TextAlignmentOptions.Left;
 
         // Stats row
@@ -153,24 +149,30 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
 
     private void CreateBuyButton(Transform parent, float width, float height)
     {
+        Sprite buyButtonSprite = SpriteLoader.Instance.GetSprite("Sprites/UIUX/BuyButton");
+        float buttonWidth = buyButtonSprite.rect.width;
+        float buttonHeight = buyButtonSprite.rect.height;
+
         GameObject buttonObj = new GameObject("BuyButton");
         buttonObj.transform.SetParent(parent, false);
 
         RectTransform buttonRect = buttonObj.AddComponent<RectTransform>();
-        buttonRect.sizeDelta = new Vector2(width, height);
+        buttonRect.sizeDelta = new Vector2(buttonWidth, buttonHeight);
 
         Image buttonBg = buttonObj.AddComponent<Image>();
-        buttonBg.color = new Color(0.2f, 0.6f, 0.3f, 1f);
+        buttonBg.sprite = buyButtonSprite;
+        buttonBg.type = Image.Type.Simple;
+        buttonBg.color = Color.white;
 
         _buyButton = buttonObj.AddComponent<Button>();
         _buyButton.targetGraphic = buttonBg;
         _buyButton.onClick.AddListener(HandleBuyClick);
 
         ColorBlock colors = _buyButton.colors;
-        colors.normalColor = new Color(0.2f, 0.6f, 0.3f, 1f);
-        colors.highlightedColor = new Color(0.3f, 0.7f, 0.4f, 1f);
-        colors.pressedColor = new Color(0.15f, 0.5f, 0.25f, 1f);
-        colors.disabledColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(0.9f, 0.9f, 0.9f, 1f);
+        colors.pressedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+        colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
         _buyButton.colors = colors;
 
         GameObject textObj = new GameObject("Text");
@@ -185,7 +187,7 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         _buyButtonText.text = "BUY";
         _buyButtonText.fontSize = 14;
         _buyButtonText.fontStyle = FontStyles.Bold;
-        _buyButtonText.color = Color.white;
+        _buyButtonText.color = Color.black;
         _buyButtonText.alignment = TextAlignmentOptions.Center;
     }
 
@@ -200,9 +202,6 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         overlayRect.sizeDelta = Vector2.zero;
         overlayRect.offsetMin = Vector2.zero;
         overlayRect.offsetMax = Vector2.zero;
-
-        Image overlayBg = _lockedOverlay.AddComponent<Image>();
-        overlayBg.color = new Color(0.1f, 0.1f, 0.1f, 0.8f);
 
         GameObject lockTextObj = new GameObject("LockText");
         lockTextObj.transform.SetParent(_lockedOverlay.transform, false);
@@ -276,10 +275,11 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         if (_isEmpty || _workhorse == null)
         {
             _nameText.text = "---";
-            _iconImage.color = new Color(0.3f, 0.3f, 0.3f);
             _priceText.text = "";
             _productivityText.text = "";
             _buyButton.interactable = false;
+            _iconImage.sprite = null;
+            _iconImage.color = new Color(0.3f, 0.3f, 0.3f);
             return;
         }
 
@@ -288,15 +288,17 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
             // Revealed: show actual info
             WorkhorseType type = _workhorse.Type;
             _nameText.text = WorkhorseAnimator.GetTypeAbbreviation(type);
-            _iconImage.color = GameSettings.WorkhorseColors[type];
             _productivityText.text = $"+{GameSettings.WorkhorseProductivityRates[type]:F1}";
+            _iconImage.sprite = null;
+            _iconImage.color = Color.white;
         }
         else
         {
             // Masked: hide info (except price)
             _nameText.text = "??";
-            _iconImage.color = new Color(0.4f, 0.4f, 0.4f);
             _productivityText.text = "??";
+            _iconImage.sprite = SpriteLoader.Instance.GetSprite("Sprites/UIUX/mask_Icon");
+            _iconImage.color = Color.white;
         }
         // Price is always visible
         _priceText.text = $"{GameSettings.ShopWorkhorsePrice}g";

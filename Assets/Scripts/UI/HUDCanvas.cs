@@ -11,13 +11,9 @@ public class HUDCanvas : MonoBehaviour
     public TurnCounter TurnCounter { get; private set; }
     public GoalPanel GoalPanel { get; private set; }
     public SynergyPanel SynergyPanel { get; private set; }
-    public ShowSynergiesButton ShowSynergiesButton { get; private set; }
     public SynergyModal SynergyModal { get; private set; }
     public LevelResultModal LevelResultModal { get; private set; }
     public WorkhorseShopPanel ShopPanel { get; private set; }
-    public CheckButton CheckButton { get; private set; }
-    public RestartLevelButton RestartLevelButton { get; private set; }
-    public HUDButtonContainer HUDButtonContainer { get; private set; }
     public WorkspaceHoverTooltip HoverTooltip { get; private set; }
     public MoneyPanel MoneyPanel { get; private set; }
 
@@ -80,28 +76,13 @@ public class HUDCanvas : MonoBehaviour
         // Create Goal Panel (top-right)
         GoalPanel = GoalPanel.Create(Canvas.transform, 200f, 80f);
 
-        // Create HUD Button Container (left-center) for stacked buttons
-        HUDButtonContainer = HUDButtonContainer.Create(Canvas.transform, 140f);
-
-        // Create buttons and add to container (top to bottom: Synergies, Check, EndTurn)
-        ShowSynergiesButton = ShowSynergiesButton.Create(HUDButtonContainer.transform, 140f, 40f);
-        HUDButtonContainer.AddButton(ShowSynergiesButton.gameObject, 40f);
-
-        CheckButton = CheckButton.Create(HUDButtonContainer.transform, 140f, 40f, () => CheckModeManager.Instance.ToggleCheckMode());
-        HUDButtonContainer.AddButton(CheckButton.gameObject, 40f);
-        CheckModeManager.Instance.OnCheckModeChanged += HandleCheckModeChanged;
-
-        RestartLevelButton = RestartLevelButton.Create(HUDButtonContainer.transform, 140f, 40f, () => LevelManager.Instance.RestartLevel());
-        HUDButtonContainer.AddButton(RestartLevelButton.gameObject, 40f);
-
         // Create End Turn Button (bottom-right corner)
-        EndTurnButton = EndTurnButton.Create(Canvas.transform, 160f, 50f, () => TurnManager.Instance.EndTurn());
+        EndTurnButton = EndTurnButton.Create(Canvas.transform, () => TurnManager.Instance.EndTurn());
         RectTransform endTurnRect = EndTurnButton.GetComponent<RectTransform>();
         endTurnRect.anchorMin = new Vector2(1, 0);
         endTurnRect.anchorMax = new Vector2(1, 0);
         endTurnRect.pivot = new Vector2(1, 0);
         endTurnRect.anchoredPosition = new Vector2(-20, 20);
-        endTurnRect.sizeDelta = new Vector2(160f, 50f);
 
         // Create Synergy Panel (bottom-left) on pixel-perfect canvas
         Canvas synergyCanvas = BuildPixelPerfectCanvas("SynergyCanvas");
@@ -109,26 +90,26 @@ public class HUDCanvas : MonoBehaviour
 
         // Create Synergy Modal (hidden by default, on top of everything)
         SynergyModal = SynergyModal.Create(Canvas.transform);
-        ShowSynergiesButton.BindModal(SynergyModal);
 
         // Create Level Result Modal (hidden by default, on top of everything)
         LevelResultModal = LevelResultModal.Create(Canvas.transform);
 
         // Create Workhorse Shop Panel (always visible, right side)
+        Sprite shopSprite = SpriteLoader.Instance.GetSprite("Sprites/UIUX/Shop");
+        float shopWidth = shopSprite.rect.width;
+        float shopHeight = shopSprite.rect.height;
         ShopPanel = WorkhorseShopPanel.Create(
             Canvas.transform,
-            220f,
-            450f,
+            shopWidth,
+            shopHeight,
             GameSettings.TotalShopSlots,
             GameSettings.InitialActiveSlots);
 
+        // Bind synergy modal to shop panel's synergies button
+        ShopPanel.BindSynergyModal(SynergyModal);
+
         // Create Hover Tooltip (follows mouse, on top of everything)
         HoverTooltip = WorkspaceHoverTooltip.Create(Canvas.transform);
-    }
-
-    private void HandleCheckModeChanged(bool isActive)
-    {
-        CheckButton.UpdateVisual(isActive);
     }
 
     private void HandleLevelWon()
@@ -143,11 +124,6 @@ public class HUDCanvas : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (CheckModeManager.Instance != null)
-        {
-            CheckModeManager.Instance.OnCheckModeChanged -= HandleCheckModeChanged;
-        }
-
         LevelManager.Instance.OnLevelWon -= HandleLevelWon;
         LevelManager.Instance.OnLevelFailed -= HandleLevelFailed;
     }

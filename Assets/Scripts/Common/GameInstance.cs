@@ -23,12 +23,23 @@ public class GameInstance : MonoBehaviour
 
     private void SetupGame()
     {
+        CreateBackground();
         FloorGridAnimator.Create();
         new GameObject("DragDropInputSystem").AddComponent<DragDropInputSystem>();
         LevelManager.Instance.LoadLevel(LevelDefinitions.FirstLevelId);
 
         MusicManager.Create();
         MusicManager.Instance.PlayMusic("Sounds/Late-at-Night(chosic.com)");
+    }
+
+    private void CreateBackground()
+    {
+        GameObject bgObj = new GameObject("Background");
+        Vector3 camPos = Camera.main.transform.position;
+        bgObj.transform.position = new Vector3(camPos.x, camPos.y, 0f);
+        SpriteRenderer sr = bgObj.AddComponent<SpriteRenderer>();
+        sr.sprite = SpriteLoader.Instance.GetSprite("Sprites/UIUX/BACKGROUND");
+        sr.sortingOrder = -3;
     }
 
     private void SetupHUD()

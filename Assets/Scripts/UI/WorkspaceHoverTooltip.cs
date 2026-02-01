@@ -58,7 +58,7 @@ public class WorkspaceHoverTooltip : MonoBehaviour
         _tooltipRect.sizeDelta = new Vector2(TooltipWidth, 80f);
 
         Image panelBg = _tooltipPanel.AddComponent<Image>();
-        panelBg.color = new Color(0.1f, 0.1f, 0.15f, 0.95f);
+        panelBg.color = new Color(0.95f, 0.95f, 0.95f, 0.95f);
 
         VerticalLayoutGroup layout = _tooltipPanel.AddComponent<VerticalLayoutGroup>();
         layout.padding = new RectOffset((int)TooltipPadding, (int)TooltipPadding, (int)TooltipPadding, (int)TooltipPadding);
@@ -87,7 +87,7 @@ public class WorkspaceHoverTooltip : MonoBehaviour
         _titleText = titleObj.AddComponent<TextMeshProUGUI>();
         _titleText.fontSize = 16;
         _titleText.fontStyle = FontStyles.Bold;
-        _titleText.color = new Color(1f, 0.9f, 0.5f);
+        _titleText.color = new Color(0.2f, 0.2f, 0.2f);
         _titleText.alignment = TextAlignmentOptions.Left;
 
         LayoutElement titleLayout = titleObj.AddComponent<LayoutElement>();
@@ -102,7 +102,7 @@ public class WorkspaceHoverTooltip : MonoBehaviour
         _descriptionText = descObj.AddComponent<TextMeshProUGUI>();
         _descriptionText.fontSize = 13;
         _descriptionText.fontStyle = FontStyles.Italic;
-        _descriptionText.color = new Color(0.8f, 0.8f, 0.85f);
+        _descriptionText.color = new Color(0.3f, 0.3f, 0.3f);
         _descriptionText.alignment = TextAlignmentOptions.Left;
         _descriptionText.enableWordWrapping = true;
 

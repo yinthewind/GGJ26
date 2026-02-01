@@ -27,6 +27,40 @@ public static class UiUtils
         return button;
     }
 
+    public static Button CreateSpriteButton(
+        GameObject root,
+        string text,
+        Sprite sprite,
+        Action callback,
+        int fontSize = 20)
+    {
+        root.AddComponent<RectTransform>();
+
+        Image background = root.AddComponent<Image>();
+        background.sprite = sprite;
+        background.type = Image.Type.Sliced;
+        background.color = Color.white;
+
+        Button button = root.AddComponent<Button>();
+        button.targetGraphic = background;
+        button.onClick.AddListener(() => callback());
+        button.colors = CreateSpriteColorBlock();
+
+        CreateButtonText(root.transform, text, fontSize);
+
+        return button;
+    }
+
+    public static ColorBlock CreateSpriteColorBlock()
+    {
+        ColorBlock colors = ColorBlock.defaultColorBlock;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(1f, 1f, 1f, 0.9f);
+        colors.pressedColor = new Color(0.8f, 0.8f, 0.8f, 1f);
+        colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+        return colors;
+    }
+
     public static ColorBlock CreateColorBlock(Color baseColor)
     {
         ColorBlock colors = ColorBlock.defaultColorBlock;

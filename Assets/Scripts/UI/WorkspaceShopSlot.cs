@@ -7,8 +7,6 @@ public class WorkspaceShopSlot : MonoBehaviour
 {
     public event Action<WorkspaceShopSlot> OnBuyClicked;
 
-    private Image _background;
-    private Image _iconImage;
     private TextMeshProUGUI _nameText;
     private TextMeshProUGUI _priceText;
     private Button _buyButton;
@@ -38,9 +36,6 @@ public class WorkspaceShopSlot : MonoBehaviour
         rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.sizeDelta = new Vector2(width, height);
 
-        _background = root.AddComponent<Image>();
-        _background.color = new Color(0.15f, 0.15f, 0.2f, 0.95f);
-
         // Content container for icon, info, and buy button
         _contentContainer = new GameObject("Content");
         _contentContainer.transform.SetParent(root.transform, false);
@@ -54,7 +49,7 @@ public class WorkspaceShopSlot : MonoBehaviour
 
         // Horizontal layout on content container
         HorizontalLayoutGroup layout = _contentContainer.AddComponent<HorizontalLayoutGroup>();
-        layout.padding = new RectOffset(8, 8, 4, 4);
+        layout.padding = new RectOffset(40, 40, 4, 4);
         layout.spacing = 8f;
         layout.childAlignment = TextAnchor.MiddleLeft;
         layout.childControlWidth = false;
@@ -62,23 +57,9 @@ public class WorkspaceShopSlot : MonoBehaviour
         layout.childForceExpandWidth = false;
         layout.childForceExpandHeight = false;
 
-        float iconSize = height - 8f;
-        CreateIcon(_contentContainer.transform, iconSize);
-        CreateInfoSection(_contentContainer.transform, width - iconSize - 80f - 32f, height - 8f);
+        CreateInfoSection(_contentContainer.transform, width - 80f - 32f, height - 8f);
         CreateBuyButton(_contentContainer.transform, 60f, height - 12f);
         CreateSoldOutOverlay(root.transform, width, height);
-    }
-
-    private void CreateIcon(Transform parent, float size)
-    {
-        GameObject iconObj = new GameObject("Icon");
-        iconObj.transform.SetParent(parent, false);
-
-        RectTransform iconRect = iconObj.AddComponent<RectTransform>();
-        iconRect.sizeDelta = new Vector2(size, size);
-
-        _iconImage = iconObj.AddComponent<Image>();
-        _iconImage.color = new Color(0.55f, 0.35f, 0.2f); // Brown workspace color
     }
 
     private void CreateInfoSection(Transform parent, float width, float height)
@@ -119,24 +100,30 @@ public class WorkspaceShopSlot : MonoBehaviour
 
     private void CreateBuyButton(Transform parent, float width, float height)
     {
+        Sprite buyButtonSprite = SpriteLoader.Instance.GetSprite("Sprites/UIUX/BuyButton");
+        float buttonWidth = buyButtonSprite.rect.width;
+        float buttonHeight = buyButtonSprite.rect.height;
+
         GameObject buttonObj = new GameObject("BuyButton");
         buttonObj.transform.SetParent(parent, false);
 
         RectTransform buttonRect = buttonObj.AddComponent<RectTransform>();
-        buttonRect.sizeDelta = new Vector2(width, height);
+        buttonRect.sizeDelta = new Vector2(buttonWidth, buttonHeight);
 
         Image buttonBg = buttonObj.AddComponent<Image>();
-        buttonBg.color = new Color(0.2f, 0.6f, 0.3f, 1f);
+        buttonBg.sprite = buyButtonSprite;
+        buttonBg.type = Image.Type.Simple;
+        buttonBg.color = Color.white;
 
         _buyButton = buttonObj.AddComponent<Button>();
         _buyButton.targetGraphic = buttonBg;
         _buyButton.onClick.AddListener(HandleBuyClick);
 
         ColorBlock colors = _buyButton.colors;
-        colors.normalColor = new Color(0.2f, 0.6f, 0.3f, 1f);
-        colors.highlightedColor = new Color(0.3f, 0.7f, 0.4f, 1f);
-        colors.pressedColor = new Color(0.15f, 0.5f, 0.25f, 1f);
-        colors.disabledColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(0.9f, 0.9f, 0.9f, 1f);
+        colors.pressedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+        colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
         _buyButton.colors = colors;
 
         GameObject textObj = new GameObject("Text");

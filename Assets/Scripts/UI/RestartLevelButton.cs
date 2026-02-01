@@ -10,7 +10,7 @@ public class RestartLevelButton : MonoBehaviour
     private Button _button;
     private Action _onClick;
 
-    private static readonly Color ButtonColor = new Color(0.6f, 0.3f, 0.2f, 1f);
+    private static readonly string ButtonSpritePath = "Sprites/UIUX/performance_button";
 
     public static RestartLevelButton Create(Transform parent, float width, float height, Action onClick)
     {
@@ -26,7 +26,8 @@ public class RestartLevelButton : MonoBehaviour
 
     private void BuildUI(GameObject root)
     {
-        _button = UiUtils.CreateTextButton(root, "RESTART", ButtonColor, HandleClick, fontSize: 20);
+        Sprite sprite = SpriteLoader.Instance.GetSprite(ButtonSpritePath);
+        _button = UiUtils.CreateSpriteButton(root, "RESTART", sprite, HandleClick, fontSize: 20);
     }
 
     private void HandleClick()

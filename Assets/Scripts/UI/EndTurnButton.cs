@@ -8,11 +8,10 @@ public class EndTurnButton : MonoBehaviour
     public UnityEvent OnClicked { get; private set; } = new UnityEvent();
 
     private Button _button;
+    private Image _image;
     private Action _onClick;
 
-    private static readonly Color ButtonColor = new Color(0.2f, 0.6f, 0.3f, 1f);
-
-    public static EndTurnButton Create(Transform parent, float width, float height, Action onClick)
+    public static EndTurnButton Create(Transform parent, Action onClick)
     {
         GameObject obj = new GameObject("EndTurnButton");
         obj.transform.SetParent(parent, false);
@@ -26,7 +25,25 @@ public class EndTurnButton : MonoBehaviour
 
     private void BuildUI(GameObject root)
     {
-        _button = UiUtils.CreateTextButton(root, "END TURN", ButtonColor, HandleClick, fontSize: 24);
+        RectTransform rect = root.AddComponent<RectTransform>();
+
+        // Add Image component with EndTurn sprite
+        _image = root.AddComponent<Image>();
+        _image.sprite = SpriteLoader.Instance.GetSprite("Sprites/UIUX/EndTurn");
+        _image.SetNativeSize();
+
+        // Add Button component
+        _button = root.AddComponent<Button>();
+        _button.targetGraphic = _image;
+        _button.onClick.AddListener(HandleClick);
+
+        // Configure button colors for hover/pressed states
+        ColorBlock colors = _button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(0.9f, 0.9f, 0.9f, 1f);
+        colors.pressedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+        colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+        _button.colors = colors;
     }
 
     private void HandleClick()

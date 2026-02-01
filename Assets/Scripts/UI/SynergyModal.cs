@@ -9,8 +9,8 @@ public class SynergyModal : MonoBehaviour
     private GameObject _panel;
     private List<SynergyRow> _rows = new();
 
-    private static readonly Color ActiveColor = new Color(0.2f, 0.9f, 0.2f);
-    private static readonly Color InactiveColor = new Color(0.5f, 0.5f, 0.5f);
+    private static readonly Color ActiveColor = Color.black;
+    private static readonly Color InactiveColor = Color.black;
     private static readonly Color ActiveBullet = new Color(0.3f, 1f, 0.3f);
     private static readonly Color InactiveBullet = new Color(0.4f, 0.4f, 0.4f);
 
@@ -113,9 +113,9 @@ public class SynergyModal : MonoBehaviour
 
         TextMeshProUGUI titleText = titleObj.AddComponent<TextMeshProUGUI>();
         titleText.text = "ALL SYNERGIES";
-        titleText.fontSize = 28;
+        titleText.fontSize = 34;
         titleText.fontStyle = FontStyles.Bold;
-        titleText.color = new Color(1f, 0.9f, 0.5f);
+        titleText.color = Color.black;
         titleText.alignment = TextAlignmentOptions.Center;
     }
 
@@ -234,9 +234,9 @@ public class SynergyModal : MonoBehaviour
 
         TextMeshProUGUI headerText = headerObj.AddComponent<TextMeshProUGUI>();
         headerText.text = text;
-        headerText.fontSize = 16;
+        headerText.fontSize = 20;
         headerText.fontStyle = FontStyles.Bold | FontStyles.Italic;
-        headerText.color = new Color(0.8f, 0.8f, 0.9f);
+        headerText.color = Color.black;
         headerText.alignment = TextAlignmentOptions.Left;
 
         currentY -= 28f;
@@ -289,7 +289,7 @@ public class SynergyModal : MonoBehaviour
         {
             nameText.text = $"{synergy.Name} (+{synergy.BonusPercent:F0}%)";
         }
-        nameText.fontSize = 18;
+        nameText.fontSize = 22;
         nameText.fontStyle = FontStyles.Bold;
         nameText.color = InactiveColor;
         nameText.alignment = TextAlignmentOptions.Left;
@@ -307,9 +307,9 @@ public class SynergyModal : MonoBehaviour
 
         TextMeshProUGUI descText = descObj.AddComponent<TextMeshProUGUI>();
         descText.text = synergy.Description;
-        descText.fontSize = 14;
+        descText.fontSize = 18;
         descText.fontStyle = FontStyles.Italic;
-        descText.color = new Color(0.6f, 0.6f, 0.7f);
+        descText.color = Color.black;
         descText.alignment = TextAlignmentOptions.Left;
 
         var row = new SynergyRow

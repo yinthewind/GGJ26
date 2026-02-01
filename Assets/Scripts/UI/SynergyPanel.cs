@@ -15,8 +15,8 @@ public class SynergyPanel : MonoBehaviour
     private RectTransform _tooltipRect;
     private bool _tooltipVisible;
 
-    private static readonly Color ActiveColor = new Color(0.2f, 0.8f, 0.2f);
-    private static readonly Color InactiveColor = new Color(0.5f, 0.5f, 0.5f);
+    private static readonly Color ActiveColor = Color.black;
+    private static readonly Color InactiveColor = Color.black;
     private static readonly Color ActiveBullet = new Color(0.3f, 1f, 0.3f);
     private static readonly Color InactiveBullet = new Color(0.4f, 0.4f, 0.4f);
 
@@ -73,15 +73,15 @@ public class SynergyPanel : MonoBehaviour
 
         _titleText = titleObj.AddComponent<TextMeshProUGUI>();
         _titleText.text = "SYNERGIES";
-        _titleText.fontSize = 14;
+        _titleText.fontSize = 30;
         _titleText.fontStyle = FontStyles.Bold;
-        _titleText.color = new Color(1f, 0.9f, 0.5f);
+        _titleText.color = Color.black;
         _titleText.alignment = TextAlignmentOptions.Center;
     }
 
     private void CreateSynergyRows(Transform parent, float width)
     {
-        float rowHeight = 18f;
+        float rowHeight = 25;
         float startY = -48f; // Below title with 20px top padding
         float currentY = startY;
 
@@ -143,9 +143,9 @@ public class SynergyPanel : MonoBehaviour
 
         TextMeshProUGUI headerText = headerObj.AddComponent<TextMeshProUGUI>();
         headerText.text = sectionName;
-        headerText.fontSize = 10;
+        headerText.fontSize = 24;
         headerText.fontStyle = FontStyles.Italic;
-        headerText.color = new Color(0.7f, 0.7f, 0.8f);
+        headerText.color = Color.black;
         headerText.alignment = TextAlignmentOptions.Left;
 
         currentY -= 16f;
@@ -163,7 +163,7 @@ public class SynergyPanel : MonoBehaviour
         _tooltipRect.sizeDelta = new Vector2(200f, 60f);
 
         Image tooltipBg = _tooltip.AddComponent<Image>();
-        tooltipBg.color = new Color(0.08f, 0.08f, 0.12f, 0.95f);
+        tooltipBg.color = new Color(0.95f, 0.95f, 0.95f, 0.95f);
 
         // Text inside tooltip
         GameObject textObj = new GameObject("TooltipText");
@@ -177,9 +177,9 @@ public class SynergyPanel : MonoBehaviour
         textRect.offsetMax = new Vector2(-8f, -5f);
 
         _tooltipText = textObj.AddComponent<TextMeshProUGUI>();
-        _tooltipText.fontSize = 22;
+        _tooltipText.fontSize = 26;
         _tooltipText.fontStyle = FontStyles.Italic;
-        _tooltipText.color = new Color(0.85f, 0.85f, 0.9f);
+        _tooltipText.color = Color.black;
         _tooltipText.alignment = TextAlignmentOptions.Left;
         _tooltipText.enableWordWrapping = true;
 
@@ -286,7 +286,7 @@ public class SynergyPanel : MonoBehaviour
         {
             text.text = $"{synergy.Name} (+{synergy.BonusPercent:F0}%)";
         }
-        text.fontSize = 11;
+        text.fontSize = 24;
         text.color = InactiveColor;
         text.alignment = TextAlignmentOptions.Left;
 

@@ -6,7 +6,7 @@ public class ShowSynergiesButton : MonoBehaviour
     private Button _button;
     private SynergyModal _modal;
 
-    private static readonly Color ButtonColor = new Color(0.3f, 0.4f, 0.6f, 1f);
+    private static readonly string ButtonSpritePath = "Sprites/UIUX/performance_button";
 
     public static ShowSynergiesButton Create(Transform parent, float width, float height)
     {
@@ -26,7 +26,8 @@ public class ShowSynergiesButton : MonoBehaviour
 
     private void BuildUI(GameObject root)
     {
-        _button = UiUtils.CreateTextButton(root, "SYNERGIES", ButtonColor, HandleClick, fontSize: 18);
+        Sprite sprite = SpriteLoader.Instance.GetSprite(ButtonSpritePath);
+        _button = UiUtils.CreateSpriteButton(root, "SYNERGIES", sprite, HandleClick, fontSize: 18);
     }
 
     private void HandleClick()
