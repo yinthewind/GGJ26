@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WorkspacePreviewAnimator : MonoBehaviour
 {
-    private static readonly Color DeskPreviewColor = new Color(1f, 1f, 1f, 0.5f);
+    private static readonly Color DeskPreviewColor = new Color(1f, 1f, 1f, 0.7f);
 
     private Vector2Int? _currentHighlightedPosition;
     private SpriteRenderer _deskPreview;
