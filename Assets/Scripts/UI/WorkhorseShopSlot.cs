@@ -113,6 +113,13 @@ public class WorkhorseShopSlot : MonoBehaviour, IPointerClickHandler
         _nameText.color = Color.black;
         _nameText.alignment = TextAlignmentOptions.Left;
 
+        // Load and apply Noto Sans SC font for Chinese text support
+        var chineseFont = Resources.Load<TMP_FontAsset>("Fonts/NotoSansSC-VariableFont_wght SDF");
+        if (chineseFont != null)
+        {
+            _nameText.font = chineseFont;
+        }
+
         // Stats row
         GameObject statsObj = new GameObject("Stats");
         statsObj.transform.SetParent(infoObj.transform, false);

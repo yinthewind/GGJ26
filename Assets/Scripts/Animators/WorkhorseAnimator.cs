@@ -103,15 +103,15 @@ public class WorkhorseAnimator : MonoBehaviour
     {
         return type switch
         {
-            WorkhorseType.InternNiuma => "IN",
-            WorkhorseType.RegularNiuma => "RN",
-            WorkhorseType.SuperNiuma => "SN",
-            WorkhorseType.ToxicWolf => "TW",
-            WorkhorseType.Encourager => "EN",
-            WorkhorseType.RisingStar => "RS",
-            WorkhorseType.FreeSpirit => "FS",
-            WorkhorseType.Pessimist => "PE",
-            WorkhorseType.Saboteur => "SA",
+            WorkhorseType.InternNiuma => "实习牛马",
+            WorkhorseType.RegularNiuma => "普通牛马",
+            WorkhorseType.SuperNiuma => "超级牛马",
+            WorkhorseType.ToxicWolf => "职场恶狼",
+            WorkhorseType.Encourager => "鼓励师",
+            WorkhorseType.RisingStar => "新星",
+            WorkhorseType.FreeSpirit => "自由人",
+            WorkhorseType.Pessimist => "悲观者",
+            WorkhorseType.Saboteur => "破坏者",
             _ => "??"
         };
     }
