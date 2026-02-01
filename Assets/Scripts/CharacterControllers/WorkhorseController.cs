@@ -133,7 +133,7 @@ public class WorkhorseController
         }
     }
 
-    private const float GroundY = -3f;
+    private const float GroundY = 1f;
 
     private void UpdateFalling(float deltaTime)
     {
@@ -189,17 +189,19 @@ public class WorkhorseController
         }
     }
 
+    private const float WanderMinX = 1f;
+    private const float WanderMaxX = 7f;
+
     private Vector3 PickRandomDirection()
     {
-        const float edgeMargin = 1f;
         float posX = _transform.position.x;
 
         // Near left edge - must go right
-        if (posX <= CameraBounds.MinX + edgeMargin)
+        if (posX <= WanderMinX)
             return Vector3.right;
 
         // Near right edge - must go left
-        if (posX >= CameraBounds.MaxX - edgeMargin)
+        if (posX >= WanderMaxX)
             return Vector3.left;
 
         // In the middle - random direction
