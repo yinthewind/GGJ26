@@ -11,7 +11,6 @@ public class WorkhorseShopPanel : MonoBehaviour
     private RectTransform _rectTransform;
     private Image _background;
     private TextMeshProUGUI _titleText;
-    private TextMeshProUGUI _dollarText;
     private List<WorkhorseShopSlot> _slots = new();
     private Button _refreshButton;
     private TextMeshProUGUI _refreshButtonText;
@@ -57,8 +56,6 @@ public class WorkhorseShopPanel : MonoBehaviour
         var inputSystem = FindObjectOfType<DragDropInputSystem>();
         if (inputSystem != null)
             inputSystem.OnWorkspacePlaced += HandleWorkspacePlaced;
-
-        UpdateDollarDisplay();
     }
 
     private void OnDestroy()
@@ -131,15 +128,6 @@ public class WorkhorseShopPanel : MonoBehaviour
         _titleText.fontStyle = FontStyles.Bold;
         _titleText.color = Color.white;
         _titleText.alignment = TextAlignmentOptions.Center;
-
-        // Dollar display
-        GameObject dollarObj = new GameObject("Dollar");
-        dollarObj.transform.SetParent(headerObj.transform, false);
-        _dollarText = dollarObj.AddComponent<TextMeshProUGUI>();
-        _dollarText.text = "$50";
-        _dollarText.fontSize = 16;
-        _dollarText.color = new Color(0.3f, 0.85f, 0.3f);
-        _dollarText.alignment = TextAlignmentOptions.Center;
     }
 
     private void CreateSlots(Transform parent, float width, float slotHeight)
@@ -303,7 +291,6 @@ public class WorkhorseShopPanel : MonoBehaviour
 
     private void HandleDollarChanged(int newDollar)
     {
-        UpdateDollarDisplay();
         UpdateAllSlotBuyButtons();
         UpdateRefreshButtonState();
     }
@@ -379,11 +366,6 @@ public class WorkhorseShopPanel : MonoBehaviour
         }
 
         UpdateAllSlotBuyButtons();
-    }
-
-    private void UpdateDollarDisplay()
-    {
-        _dollarText.text = $"${PlayerProgress.Instance.CurrentDollar}";
     }
 
     private void UpdateAllSlotBuyButtons()

@@ -42,11 +42,23 @@ public class TurnCounter : MonoBehaviour
         rect.anchorMin = new Vector2(0f, 1f);
         rect.anchorMax = new Vector2(0f, 1f);
         rect.pivot = new Vector2(0f, 1f);
-        rect.sizeDelta = new Vector2(width, height);
         rect.anchoredPosition = new Vector2(10f, -10f);
 
         _background = root.AddComponent<Image>();
-        _background.color = new Color(0.1f, 0.1f, 0.15f, 0.9f);
+        _background.sprite = SpriteLoader.Instance.GetSprite("Sprites/UIUX/day");
+        _background.type = Image.Type.Sliced;
+
+        // Use the sprite's native size if available
+        if (_background.sprite != null)
+        {
+            _background.SetNativeSize();
+            width = rect.sizeDelta.x;
+            height = rect.sizeDelta.y;
+        }
+        else
+        {
+            rect.sizeDelta = new Vector2(width, height);
+        }
 
         CreateTurnText(root.transform, width, height);
     }

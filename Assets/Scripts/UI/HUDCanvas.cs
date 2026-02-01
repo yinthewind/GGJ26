@@ -19,6 +19,7 @@ public class HUDCanvas : MonoBehaviour
     public RestartLevelButton RestartLevelButton { get; private set; }
     public HUDButtonContainer HUDButtonContainer { get; private set; }
     public WorkspaceHoverTooltip HoverTooltip { get; private set; }
+    public MoneyPanel MoneyPanel { get; private set; }
 
     public static HUDCanvas Create()
     {
@@ -69,6 +70,9 @@ public class HUDCanvas : MonoBehaviour
     {
         // Create Turn Counter (top-left)
         TurnCounter = TurnCounter.Create(Canvas.transform, 170f, 40f);
+
+        // Create Money Panel (below TurnCounter)
+        MoneyPanel = MoneyPanel.Create(Canvas.transform, 160f, 40f);
 
         // Create Productivity Panel (top-center)
         ProductivityPanel = ProductivityPanel.Create(Canvas.transform, 180f, 60f);
